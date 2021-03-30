@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/">
+        <file>image/consumer.png</file>
+        <file>image/guest.png</file>
+        <file>image/seller.png</file>
+        <file>image/logo.png</file>
+        <file>image/password.png</file>
+        <file>image/search.png</file>
+        <file>image/user.png</file>
+        <file>qt/etc/qt.conf</file>
+    </qresource>
+</RCC>

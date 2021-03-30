@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>productList.qml</file>
+        <file>productListView.qml</file>
+    </qresource>
+</RCC>
