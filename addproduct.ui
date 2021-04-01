@@ -35,6 +35,9 @@
   <layout class="QHBoxLayout" name="horizontalLayout_6">
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
+     <property name="spacing">
+      <number>0</number>
+     </property>
      <item>
       <layout class="QVBoxLayout" name="verticalLayout" stretch="0,0,0,0,0,0">
        <item>
@@ -61,6 +64,12 @@
            <height>200</height>
           </size>
          </property>
+         <property name="maximumSize">
+          <size>
+           <width>160</width>
+           <height>200</height>
+          </size>
+         </property>
          <property name="cursor">
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
@@ -68,14 +77,17 @@
           <bool>true</bool>
          </property>
          <property name="toolTip">
-          <string/>
+          <string>添加图片</string>
          </property>
          <property name="styleSheet">
-          <string notr="true">border:2px groove gray;border-radius:30px;
-padding: -1;
-background-image: url(:/image/add.png);
-background-position: center;
-background-repeat: no-repeat;</string>
+          <string notr="true">.QPushButton
+{
+	border:2px dashed #D3D3D3;
+	padding: -1;
+	background-image: url(:/image/add.png);
+	background-position: center;
+	background-repeat: no-repeat;
+}</string>
          </property>
          <property name="text">
           <string/>
@@ -85,36 +97,68 @@ background-repeat: no-repeat;</string>
        <item>
         <layout class="QHBoxLayout" name="horizontalLayout_8">
          <item>
-          <widget class="QPushButton" name="pushButton_2">
-           <property name="minimumSize">
-            <size>
-             <width>20</width>
-             <height>100</height>
-            </size>
-           </property>
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="toolTip">
-            <string>上一张</string>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(255,255,255);border:none;;padding: -1;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="image.qrc">
-             <normaloff>:/image/left.png</normaloff>:/image/left.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </widget>
+          <layout class="QVBoxLayout" name="verticalLayout_12">
+           <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+            <widget class="QPushButton" name="prePhoto">
+             <property name="minimumSize">
+              <size>
+               <width>20</width>
+               <height>100</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>100</height>
+              </size>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>上一张</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">.QPushButton
+{
+background-color: rgb(255,255,255);border:none;;padding: -1;
+}</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="image.qrc">
+               <normaloff>:/image/left.png</normaloff>:/image/left.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_2">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>0</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="text">
+              <string>TextLabel</string>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
          <item>
           <layout class="QVBoxLayout" name="verticalLayout_6">
@@ -139,7 +183,10 @@ background-repeat: no-repeat;</string>
               <string>设为主图片</string>
              </property>
              <property name="styleSheet">
-              <string notr="true"/>
+              <string notr="true">.QLabel
+{
+	border:2px dashed #D3D3D3;
+}</string>
              </property>
              <property name="text">
               <string/>
@@ -179,7 +226,10 @@ background-repeat: no-repeat;</string>
               <string>删除这张图片</string>
              </property>
              <property name="styleSheet">
-              <string notr="true">border:none;background-color: rgb(255,255,255);padding: -1;color:gray</string>
+              <string notr="true">.QPushButton
+{
+border:none;background-color: rgb(255,255,255);padding: -1;color:gray
+}</string>
              </property>
              <property name="text">
               <string>删除</string>
@@ -209,6 +259,12 @@ background-repeat: no-repeat;</string>
              </property>
              <property name="toolTip">
               <string>设为主图片</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">.QLabel
+{
+	border:2px dashed #D3D3D3;
+}</string>
              </property>
              <property name="text">
               <string/>
@@ -244,7 +300,10 @@ background-repeat: no-repeat;</string>
               <string>删除这张图片</string>
              </property>
              <property name="styleSheet">
-              <string notr="true">border:none;background-color: rgb(255,255,255);padding: -1;color:gray</string>
+              <string notr="true">.QPushButton
+{
+border:none;background-color: rgb(255,255,255);padding: -1;color:gray
+}</string>
              </property>
              <property name="text">
               <string>删除</string>
@@ -274,6 +333,12 @@ background-repeat: no-repeat;</string>
              </property>
              <property name="toolTip">
               <string>设为主图片</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">.QLabel
+{
+	border:2px dashed #D3D3D3;
+}</string>
              </property>
              <property name="text">
               <string/>
@@ -315,7 +380,10 @@ background-repeat: no-repeat;</string>
               <string>删除这张图片</string>
              </property>
              <property name="styleSheet">
-              <string notr="true">border:none;background-color: rgb(255,255,255);padding: -1;color:gray</string>
+              <string notr="true">.QPushButton
+{
+border:none;background-color: rgb(255,255,255);padding: -1;color:gray
+}</string>
              </property>
              <property name="text">
               <string>删除</string>
@@ -345,6 +413,12 @@ background-repeat: no-repeat;</string>
              </property>
              <property name="toolTip">
               <string>设为主图片</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">.QLabel
+{
+	border:2px dashed #D3D3D3;
+}</string>
              </property>
              <property name="text">
               <string/>
@@ -380,7 +454,10 @@ background-repeat: no-repeat;</string>
               <string>删除这张图片</string>
              </property>
              <property name="styleSheet">
-              <string notr="true">border:none;background-color: rgb(255,255,255);padding: -1;color:gray</string>
+              <string notr="true">.QPushButton
+{
+border:none;background-color: rgb(255,255,255);padding: -1;color:gray
+}</string>
              </property>
              <property name="text">
               <string>删除</string>
@@ -389,43 +466,75 @@ background-repeat: no-repeat;</string>
            </item>
           </layout>
          </item>
-         <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-          <widget class="QPushButton" name="pushButton">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
-             <horstretch>1</horstretch>
-             <verstretch>1</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="minimumSize">
-            <size>
-             <width>20</width>
-             <height>100</height>
-            </size>
-           </property>
-           <property name="cursor">
-            <cursorShape>PointingHandCursor</cursorShape>
-           </property>
-           <property name="toolTip">
-            <string>下一张</string>
-           </property>
-           <property name="styleSheet">
-            <string notr="true">background-color: rgb(255,255,255);border:none;padding: -1;</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="image.qrc">
-             <normaloff>:/image/right.png</normaloff>:/image/right.png</iconset>
-           </property>
-           <property name="iconSize">
-            <size>
-             <width>20</width>
-             <height>20</height>
-            </size>
-           </property>
-          </widget>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_14">
+           <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+            <widget class="QPushButton" name="nextPhoto">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Expanding">
+               <horstretch>1</horstretch>
+               <verstretch>1</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="minimumSize">
+              <size>
+               <width>20</width>
+               <height>100</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>16777215</width>
+               <height>100</height>
+              </size>
+             </property>
+             <property name="cursor">
+              <cursorShape>PointingHandCursor</cursorShape>
+             </property>
+             <property name="toolTip">
+              <string>下一张</string>
+             </property>
+             <property name="styleSheet">
+              <string notr="true">.QPushButton
+{
+background-color: rgb(255,255,255);border:none;padding: -1;
+}</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="image.qrc">
+               <normaloff>:/image/right.png</normaloff>:/image/right.png</iconset>
+             </property>
+             <property name="iconSize">
+              <size>
+               <width>20</width>
+               <height>20</height>
+              </size>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_3">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="maximumSize">
+              <size>
+               <width>0</width>
+               <height>40</height>
+              </size>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
@@ -551,7 +660,7 @@ background-repeat: no-repeat;</string>
           </widget>
          </item>
          <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-          <widget class="QLineEdit" name="lineEdit">
+          <widget class="QLineEdit" name="name">
            <property name="minimumSize">
             <size>
              <width>400</width>
@@ -593,7 +702,7 @@ background-repeat: no-repeat;</string>
           </widget>
          </item>
          <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-          <widget class="QLineEdit" name="lineEdit_2">
+          <widget class="QLineEdit" name="price">
            <property name="minimumSize">
             <size>
              <width>400</width>
@@ -635,7 +744,7 @@ background-repeat: no-repeat;</string>
           </widget>
          </item>
          <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-          <widget class="QLineEdit" name="lineEdit_3">
+          <widget class="QLineEdit" name="remain">
            <property name="minimumSize">
             <size>
              <width>400</width>
@@ -677,7 +786,7 @@ background-repeat: no-repeat;</string>
           </widget>
          </item>
          <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
-          <widget class="QComboBox" name="comboBox">
+          <widget class="QComboBox" name="type">
            <property name="minimumSize">
             <size>
              <width>399</width>
@@ -789,8 +898,8 @@ QComboBox QAbstractItemView::item {
            </property>
           </widget>
          </item>
-         <item alignment="Qt::AlignTop">
-          <widget class="QLineEdit" name="lineEdit_4">
+         <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+          <widget class="QLineEdit" name="description">
            <property name="minimumSize">
             <size>
              <width>400</width>
