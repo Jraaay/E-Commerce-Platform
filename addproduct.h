@@ -7,6 +7,9 @@
 #include <QMouseEvent>
 #include "sqlite.h"
 #include "productitem.h"
+#include "product.h"
+#include "promptbox.h"
+#include "promptbox.h"
 
 
 namespace Ui {
@@ -35,6 +38,7 @@ public:
     int mainPhoto;
     int curFirstPhoto;
     bool eventFilter(QObject *obj, QEvent *event);	// 添加时间过滤器声明
+    void *father = nullptr;
 
 private:
     Ui::addProduct *ui;

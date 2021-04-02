@@ -16,10 +16,11 @@ public:
     string description;
     double price;
     int remaining;
-    vector<QImage> photo;
+    vector<QString> photo;
     int mainPhoto;
     int type;
-    productItem(string name, string description, double price, int remaining, vector<QImage> photo, int mainPhoto, int type);
+    int id;
+    productItem(string name, string description, double price, int remaining, vector<QString> photo, int mainPhoto, int type, int id = -1);
     productItem();
     virtual double getPrice(vector<double> discount)
     {

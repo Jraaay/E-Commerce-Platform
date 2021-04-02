@@ -1,11 +1,12 @@
 #include <widget.h>
 #include "ui_widget.h"
 #include <QDebug>
+#include "loginandregister.h"
 
 void Widget::loginRegFun()
 {
-    string loginName = ui->userName->text().toUtf8().constData();
-    string loginPassword = QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toUtf8().constData();
+    string loginName = ui->userName->text().toStdString();
+    string loginPassword = QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString();
     vector<sellerClass> sellerList;
     vector<consumerClass> consumerList;
     if (curType == SELLERTYPE)
@@ -62,46 +63,21 @@ void Widget::loginRegFun()
                     flag = false;
                     if (sellerList[i].getPass() == loginPassword)
                     {
-                        qDebug() << "登录成功！";
-//                        msgBox = new QMessageBox("Login",
-//                                                 "登录成功！",
-//                                                 QMessageBox::Information,
-//                                                 QMessageBox::Ok | QMessageBox::Default,
-//                                                 QMessageBox::Cancel | QMessageBox::Escape,
-//                                                 0);
-//                        msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-//                        msgBox->show();
-//                        msgBox->setWindowIcon(QIcon(":/image/logo.png"));
                         logined = true;
                         curSeller = sellerList[i];
                     }
                     else
                     {
-                        qDebug() << "密码错误";
-                        msgBox = new QMessageBox("Login",
-                                                 "密码错误",
-                                                 QMessageBox::Critical,
-                                                 QMessageBox::Ok | QMessageBox::Default,
-                                                 QMessageBox::Cancel | QMessageBox::Escape,
-                                                 0);
-                        msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-                        msgBox->show();
-                        msgBox->setWindowIcon(QIcon(":/image/logo.png"));
+                        promptBox *prompt = new promptBox(nullptr, "密码错误");
+                        prompt->show();
                     }
                     break;
                 }
             }
             if (flag)
             {
-                qDebug() << "未找到用户";
-                msgBox = new QMessageBox("Login",
-                                         "未找到用户",
-                                         QMessageBox::Critical,
-                                         QMessageBox::Ok | QMessageBox::Default,
-                                         QMessageBox::Cancel | QMessageBox::Escape,
-                                         0);
-                msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-                msgBox->show();
+                promptBox *prompt = new promptBox(nullptr, "未找到用户");
+                prompt->show();
             }
         }
         else
@@ -113,47 +89,21 @@ void Widget::loginRegFun()
                     flag = false;
                     if (consumerList[i].getPass() == loginPassword)
                     {
-                        qDebug() << "登录成功！";
-//                        msgBox = new QMessageBox("Login",
-//                                                 "登录成功！",
-//                                                 QMessageBox::Information,
-//                                                 QMessageBox::Ok | QMessageBox::Default,
-//                                                 QMessageBox::Cancel | QMessageBox::Escape,
-//                                                 0);
-//                        msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-//                        msgBox->show();
-//                        msgBox->setWindowIcon(QIcon(":/image/logo.png"));
                         curConsumer = consumerList[i];
                         logined = true;
                     }
                     else
                     {
-                        qDebug() << "密码错误";
-                        msgBox = new QMessageBox("Login",
-                                                 "密码错误",
-                                                 QMessageBox::Critical,
-                                                 QMessageBox::Ok | QMessageBox::Default,
-                                                 QMessageBox::Cancel | QMessageBox::Escape,
-                                                 0);
-                        msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-                        msgBox->show();
-                        msgBox->setWindowIcon(QIcon(":/image/logo.png"));
+                        promptBox *prompt = new promptBox(nullptr, "密码错误");
+                        prompt->show();
                     }
                     break;
                 }
             }
             if (flag)
             {
-                qDebug() << "未找到用户";
-                msgBox = new QMessageBox("Login",
-                                         "未找到用户",
-                                         QMessageBox::Critical,
-                                         QMessageBox::Ok | QMessageBox::Default,
-                                         QMessageBox::Cancel | QMessageBox::Escape,
-                                         0);
-                msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-                msgBox->show();
-                msgBox->setWindowIcon(QIcon(":/image/logo.png"));
+                promptBox *prompt = new promptBox(nullptr, "未找到用户");
+                prompt->show();
             }
         }
         if (logined)
@@ -166,16 +116,8 @@ void Widget::loginRegFun()
         qDebug() << "reg now";
         if (ui->password->text() != ui->passwordAgain->text())
         {
-            qDebug() << "password not same";
-            msgBox = new QMessageBox("Register",
-                                     "两次输入的密码不一致",
-                                     QMessageBox::Critical,
-                                     QMessageBox::Ok | QMessageBox::Default,
-                                     QMessageBox::Cancel | QMessageBox::Escape,
-                                     0);
-            msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-            msgBox->show();
-            msgBox->setWindowIcon(QIcon(":/image/logo.png"));
+            promptBox *prompt = new promptBox(nullptr, "两次输入的密码不一致");
+            prompt->show();
             return;
         }
         if (curType == SELLERTYPE)
@@ -208,29 +150,13 @@ void Widget::loginRegFun()
                 outFile.open("sellerFile.json");
                 outFile << j.dump();
                 outFile.close();
-                qDebug() << "注册成功";
-                msgBox = new QMessageBox("Register",
-                                         "注册成功",
-                                         QMessageBox::Information,
-                                         QMessageBox::Ok | QMessageBox::Default,
-                                         QMessageBox::Cancel | QMessageBox::Escape,
-                                         0);
-                msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-                msgBox->show();
-                msgBox->setWindowIcon(QIcon(":/image/logo.png"));
+                promptBox *prompt = new promptBox(nullptr, "注册成功");
+                prompt->show();
             }
             else
             {
-                qDebug() << "user is exited";
-                msgBox = new QMessageBox("Register",
-                                         "用户已经存在",
-                                         QMessageBox::Critical,
-                                         QMessageBox::Ok | QMessageBox::Default,
-                                         QMessageBox::Cancel | QMessageBox::Escape,
-                                         0);
-                msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-                msgBox->show();
-                msgBox->setWindowIcon(QIcon(":/image/logo.png"));
+                promptBox *prompt = new promptBox(nullptr, "用户已经存在");
+                prompt->show();
             }
         }
         else
@@ -263,29 +189,13 @@ void Widget::loginRegFun()
                 outFile.open("consumerFile.json");
                 outFile << j.dump();
                 outFile.close();
-                qDebug() << "注册成功";
-                msgBox = new QMessageBox("Register",
-                                         "注册成功",
-                                         QMessageBox::Information,
-                                         QMessageBox::Ok | QMessageBox::Default,
-                                         QMessageBox::Cancel | QMessageBox::Escape,
-                                         0);
-                msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-                msgBox->show();
-                msgBox->setWindowIcon(QIcon(":/image/logo.png"));
+                promptBox *prompt = new promptBox(nullptr, "注册成功");
+                prompt->show();
             }
             else
             {
-                qDebug() << "user is exited";
-                msgBox = new QMessageBox("Register",
-                                         "用户已经存在",
-                                         QMessageBox::Critical,
-                                         QMessageBox::Ok | QMessageBox::Default,
-                                         QMessageBox::Cancel | QMessageBox::Escape,
-                                         0);
-                msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-                msgBox->show();
-                msgBox->setWindowIcon(QIcon(":/image/logo.png"));
+                promptBox *prompt = new promptBox(nullptr, "用户已经存在");
+                prompt->show();
             }
         }
     }

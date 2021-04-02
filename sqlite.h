@@ -5,6 +5,9 @@
 #include <QSqlQuery>
 #include <QSqlError>
 #include "productitem.h"
+#include <QFile>
+#include <QFileInfo>
+#include <QDir>
 
 class sqlite
 {
@@ -17,7 +20,7 @@ public:
     // 判断数据表是否存在
     bool isTableExist(QString& tableName);
     // 查询全部数据
-    vector<productItem> queryTable();
+    vector<productItem> queryTable(string LIKE = "", string SORT = "");
     // 插入单条数据
     void singleInsertData(productItem item);
     // 修改数据

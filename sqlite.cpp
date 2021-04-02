@@ -26,6 +26,11 @@ bool sqlite::openDb()
     }
     else
     {
+        QString tableName = "productItem";
+        if (!isTableExist(tableName))
+        {
+            createTable();
+        }
         // do something
     }
     return true;
@@ -75,33 +80,59 @@ void sqlite::createTable()
 void sqlite::singleInsertData(productItem item) // 插入单条数据
 {
     QSqlQuery sqlQuery;
-    QString insertItem;
-    QTextStream(&insertItem) << "INSERT INTO `productItem` (`name`,`description`,`price`,`remaining`,`mainPhoto`,`type`) VALUES (";
-    QTextStream(&insertItem) << "'" << item.name.c_str() << "',";
-    QTextStream(&insertItem) << "'" << item.description.c_str() << "',";
-    QTextStream(&insertItem) << "'" << item.price << "',";
-    QTextStream(&insertItem) << "'" << item.remaining << "',";
-    QTextStream(&insertItem) << "'" << item.mainPhoto << "',";
-    QTextStream(&insertItem) << "'" << item.type << "');";
-    qDebug() << insertItem;
-    sqlQuery.prepare(insertItem);
+    sqlQuery.prepare("INSERT INTO `productItem` (`name`,`description`,`price`,`remaining`,`mainPhoto`,`type`) VALUES (:name, :description, :price, :remaining, :mainPhoto, :type)");
+    sqlQuery.bindValue(":name", item.name.c_str());
+    sqlQuery.bindValue(":description", item.description.c_str());
+    sqlQuery.bindValue(":price", item.price);
+    sqlQuery.bindValue(":remaining", item.remaining);
+    sqlQuery.bindValue(":mainPhoto", item.mainPhoto);
+    sqlQuery.bindValue(":type", item.type);
+
     // 执行sql语句
     if(!sqlQuery.exec())
     {
-        qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
+        qDebug() << "Error: Fail to insert. " << sqlQuery.lastError();
     }
     else
     {
-        qDebug() << "Table created!";
+        qDebug() << "Insert successed!" << sqlQuery.lastInsertId().toInt();
     }
+    int productId = sqlQuery.lastInsertId().toInt();
+    string destFolder = "./source/" + to_string(productId);
+    QDir dir;
+    dir.mkpath(destFolder.c_str());
+    for (int i = 0; i < int(item.photo.size()); i++)
+    {
+        string dest = destFolder + "/" + to_string(i) + "." + QFileInfo(item.photo[i]).suffix().toStdString();
+        QFile::copy(item.photo[i], dest.c_str());
+        sqlQuery.prepare("INSERT INTO `productPhoto` (`productId`,`photo`) VALUES (:productId, :photo)");
+        sqlQuery.bindValue(":productId", productId);
+        sqlQuery.bindValue(":photo", dest.c_str());
+        if(!sqlQuery.exec())
+        {
+            qDebug() << "Error: Fail to insert. " << sqlQuery.lastError();
+        }
+        else
+        {
+            qDebug() << "Insert successed!" << sqlQuery.lastInsertId().toInt();
+        }
+    }
+
 }
 
 // 查询全部数据
-vector<productItem> sqlite::queryTable()
+vector<productItem> sqlite::queryTable(string LIKE, string SORT)
 {
     vector<productItem> productList;
     QSqlQuery sqlQuery;
-    sqlQuery.exec("SELECT * FROM `productItem`");
+    string sqlCommand = "SELECT * FROM `productItem`";
+    if (LIKE != "")
+    {
+        sqlCommand += " WHERE `name` LIKE '%" + LIKE + "%' OR `description` LIKE '%" + LIKE + "%'";
+    }
+    sqlCommand += SORT;
+    qDebug() << sqlCommand.c_str();
+    sqlQuery.exec(sqlCommand.c_str());
     if(!sqlQuery.exec())
     {
         qDebug() << "Error: Fail to query table. " << sqlQuery.lastError();
@@ -111,15 +142,23 @@ vector<productItem> sqlite::queryTable()
         while(sqlQuery.next())
         {
             productItem tmp;
+            tmp.id = sqlQuery.value(0).toInt();
             tmp.name = sqlQuery.value(1).toString().toStdString();
             tmp.description = sqlQuery.value(2).toString().toStdString();
             tmp.price = sqlQuery.value(3).toDouble();
             tmp.remaining = sqlQuery.value(4).toInt();
             tmp.mainPhoto = sqlQuery.value(5).toInt();
             tmp.type = sqlQuery.value(6).toInt();
+            QSqlQuery sqlQueryPhoto;
+            sqlQueryPhoto.exec("SELECT * FROM `productPhoto` WHERE `productId` LIKE " + sqlQuery.value(0).toString());
+            while(sqlQueryPhoto.next())
+            {
+                tmp.photo.push_back(sqlQueryPhoto.value(2).toString());
+            }
             productList.push_back(tmp);
         }
     }
+    return productList;
 }
 
 //关闭数据库

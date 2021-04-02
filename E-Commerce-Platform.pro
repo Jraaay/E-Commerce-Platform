@@ -1,6 +1,7 @@
 QT       += core gui
 QT       += sql
 QT       += quickwidgets
+QT       += winextras
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -24,15 +25,18 @@ SOURCES += \
     product.cpp \
     productitem.cpp \
     productlistui.cpp \
+    promptbox.cpp \
     sqlite.cpp \
     user.cpp \
     widget.cpp
 
 HEADERS += \
     addproduct.h \
+    loginandregister.h \
     product.h \
     productitem.h \
     productlistui.h \
+    promptbox.h \
     sqlite.h \
     user.h \
     widget.h
@@ -41,6 +45,7 @@ FORMS += \
     addproduct.ui \
     product.ui \
     productlistui.ui \
+    promptbox.ui \
     widget.ui
 
 # Default rules for deployment.

@@ -1,6 +1,6 @@
 #include "productitem.h"
 
-productItem::productItem(string name1, string description1, double price1, int remaining1, vector<QImage> photo1, int mainPhoto1, int type1)
+productItem::productItem(string name1, string description1, double price1, int remaining1, vector<QString> photo1, int mainPhoto1, int type1, int id1)
 {
     name = name1;
     description = description1;
@@ -9,6 +9,7 @@ productItem::productItem(string name1, string description1, double price1, int r
     photo = photo1;
     mainPhoto = mainPhoto1;
     type = type1;
+    id = id1;
 }
 
 productItem::productItem()

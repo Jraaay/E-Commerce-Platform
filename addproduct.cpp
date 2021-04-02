@@ -51,7 +51,7 @@ void addProduct::selectPhotoFun()
             QPixmap pixmap = QPixmap::fromImage(img);
             int width = 80;
             int height = 100;
-            pixmap = pixmap.scaled(width*4, height*4, Qt::KeepAspectRatio, Qt::FastTransformation);  // 按比例缩放
+            pixmap = pixmap.scaled(width*2, height*2, Qt::KeepAspectRatio, Qt::FastTransformation);  // 按比例缩放
             pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);  // 按比例缩放
             photosImageList.push_back(pixmap);
             photoShow();
@@ -103,7 +103,7 @@ void addProduct::photoShow()
         QPixmap pixmap = QPixmap::fromImage(img);
         int width = 155;
         int height = 200;
-        pixmap = pixmap.scaled(width*4, height*4, Qt::KeepAspectRatio, Qt::FastTransformation);  // 按比例缩放
+        pixmap = pixmap.scaled(width*2, height*2, Qt::KeepAspectRatio, Qt::FastTransformation);  // 按比例缩放
         pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);  // 按比例缩放
         ui->addPhoto->setIconSize(QSize(155, 195));
         ui->addPhoto->setIcon(pixmap);
@@ -114,12 +114,31 @@ void addProduct::photoShow()
     }
 }
 
+void addProduct::prePhoto()
+{
+    if (curFirstPhoto > 0)
+    {
+        curFirstPhoto--;
+        photoShow();
+    }
+    else
+    {
+        promptBox *prompt = new promptBox(nullptr, "已经是第一张图片了");
+        prompt->show();
+    }
+}
+
 void addProduct::nextPhoto()
 {
     if (curFirstPhoto < int(photosList.size()) - 4)
     {
         curFirstPhoto++;
         photoShow();
+    }
+    else
+    {
+        promptBox *prompt = new promptBox(nullptr, "已经是最后一张图片了");
+        prompt->show();
     }
 }
 
@@ -156,14 +175,10 @@ void addProduct::delPhoto()
         }
         photoShow();
     }
-}
-
-void addProduct::prePhoto()
-{
-    if (curFirstPhoto > 0)
+    else
     {
-        curFirstPhoto--;
-        photoShow();
+        promptBox *prompt = new promptBox(nullptr, "这里没有图片，不能删除哦");
+        prompt->show();
     }
 }
 
@@ -173,6 +188,11 @@ void addProduct::setMainPhoto(int mainPhotoNo)
     if (mainPhotoNo + curFirstPhoto < int(photosList.size()))
     {
         mainPhoto = mainPhotoNo + curFirstPhoto;
+    }
+    else
+    {
+        promptBox *prompt = new promptBox(nullptr, "这里没有图片，不能设置为主图片哦");
+        prompt->show();
     }
     photoShow();
 }
@@ -241,18 +261,46 @@ bool addProduct::eventFilter(QObject *obj, QEvent *event)
 
 void addProduct::saveProduct()
 {
-    productItem product;
-    product.name = ui->name->text().toStdString();
-    product.price = ui->price->text().toDouble();
-    product.remaining = ui->remain->text().toInt();
-    product.description = ui->description->text().toStdString();
-    product.mainPhoto = mainPhoto;
-    product.type = ui->type->currentIndex();
-    product.photo = photosList;
+    productItem productToSave;
+    if (ui->name->text().toStdString() == "")
+    {
+        promptBox *prompt = new promptBox(nullptr, "没有填写产品名字呢");
+        prompt->show();
+        return;
+    }
+    productToSave.name = ui->name->text().toStdString();
+    if (ui->price->text().toStdString() == "")
+    {
+        promptBox *prompt = new promptBox(nullptr, "没有填写产品价格呢");
+        prompt->show();
+        return;
+    }
+    productToSave.price = ui->price->text().toDouble();
+    if (ui->remain->text().toStdString() == "")
+    {
+        promptBox *prompt = new promptBox(nullptr, "没有填写产品余量呢");
+        prompt->show();
+        return;
+    }
+    productToSave.remaining = ui->remain->text().toInt();
+    productToSave.description = ui->description->text().toStdString();
+    productToSave.mainPhoto = mainPhoto;
+    if (ui->type->currentIndex() == -1)
+    {
+        promptBox *prompt = new promptBox(nullptr, "没有选择产品类型呢");
+        prompt->show();
+        return;
+    }
+    productToSave.type = ui->type->currentIndex();
+    productToSave.photo = photosList;
     sqlite db;
     db.openDb();
-    db.singleInsertData(product);
+    db.singleInsertData(productToSave);
     db.closeDb();
+    if (father != nullptr)
+    {
+        ((product *)father)->showProduct();
+    }
     this->close();
 }
 

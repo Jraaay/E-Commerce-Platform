@@ -8,6 +8,8 @@
 #include <QScrollBar>
 #include "productlistui.h"
 #include "sqlite.h"
+#include "addproduct.h"
+#include <QListWidgetItem>
 
 namespace Ui {
 class product;
@@ -25,6 +27,21 @@ public:
     void logoutFun();
     void init();
     void test();
+    void onListMailItemClicked(QListWidgetItem* item);
+    int curFirstPhoto;
+    int mainPhoto;
+    int curProduct;
+    void showPhoto();
+    void prePhoto();
+    void nextPhoto();
+    QString geteElidedText(QFont font, QString str, int MaxWidth);
+    bool eventFilter(QObject *obj, QEvent *event);
+    void setMainPhoto(int mainPhotoNo);
+    void search();
+    void showBigPhoto();
+    void defaultSort();
+    void priceDescendSort();
+    void priceAscendSort();
     int curPage;
     vector<productItem> productList;
     void showProduct();
