@@ -10,6 +10,7 @@
 #include "sqlite.h"
 #include "addproduct.h"
 #include <QListWidgetItem>
+#include "usercenter.h"
 
 namespace Ui {
 class product;
@@ -37,6 +38,7 @@ public:
     QString geteElidedText(QFont font, QString str, int MaxWidth);
     bool eventFilter(QObject *obj, QEvent *event);
     void setMainPhoto(int mainPhotoNo);
+    void openUserCenter();
     void search();
     void showBigPhoto();
     void defaultSort();
@@ -44,7 +46,7 @@ public:
     void priceAscendSort();
     int curPage;
     vector<productItem> productList;
-    void showProduct();
+    void showProduct(bool getFromDB = false);
     sqlite *db;
 
 private:

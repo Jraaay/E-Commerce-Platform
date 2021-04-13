@@ -28,6 +28,7 @@ SOURCES += \
     promptbox.cpp \
     sqlite.cpp \
     user.cpp \
+    usercenter.cpp \
     widget.cpp
 
 HEADERS += \
@@ -39,6 +40,7 @@ HEADERS += \
     promptbox.h \
     sqlite.h \
     user.h \
+    usercenter.h \
     widget.h
 
 FORMS += \
@@ -46,6 +48,7 @@ FORMS += \
     product.ui \
     productlistui.ui \
     promptbox.ui \
+    usercenter.ui \
     widget.ui
 
 # Default rules for deployment.

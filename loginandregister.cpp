@@ -9,6 +9,13 @@ void Widget::loginRegFun()
     string loginPassword = QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString();
     vector<sellerClass> sellerList;
     vector<consumerClass> consumerList;
+    ifstream infile;
+    infile.open("uidMaxFile.json");
+    string uidMaxJson;
+    infile >> uidMaxJson;
+    infile.close();
+    json j = json::parse(uidMaxJson);
+    int uidMax = j["uid"];
     if (curType == SELLERTYPE)
     {
         ifstream infile;
@@ -22,6 +29,7 @@ void Widget::loginRegFun()
         {
             json jTmp = json::parse(userListJson[i]);
             sellerClass tmp;
+            tmp.uid = jTmp["uid"];
             tmp.name = jTmp["name"];
             tmp.type = jTmp["type"];
             tmp.balance = jTmp["balance"];
@@ -42,6 +50,7 @@ void Widget::loginRegFun()
         {
             json jTmp = json::parse(userListJson[i]);
             consumerClass tmp;
+            tmp.uid = jTmp["uid"];
             tmp.name = jTmp["name"];
             tmp.type = jTmp["type"];
             tmp.balance = jTmp["balance"];
@@ -134,6 +143,8 @@ void Widget::loginRegFun()
             if (only)
             {
                 sellerClass tmp;
+                tmp.uid = uidMax + 1;
+                uidMax++;
                 tmp.name = loginName;
                 tmp.setPass(loginPassword);
                 tmp.type = SELLERTYPE;
@@ -152,6 +163,12 @@ void Widget::loginRegFun()
                 outFile.close();
                 promptBox *prompt = new promptBox(nullptr, "注册成功");
                 prompt->show();
+                json uidJson;
+                uidJson["uid"] = uidMax;
+                ofstream uidOutFile;
+                uidOutFile.open("uidMaxFile.json");
+                uidOutFile << uidJson.dump();
+                uidOutFile.close();
             }
             else
             {
@@ -173,6 +190,8 @@ void Widget::loginRegFun()
             if (only)
             {
                 consumerClass tmp;
+                tmp.uid = uidMax + 1;
+                uidMax++;
                 tmp.name = loginName;
                 tmp.setPass(loginPassword);
                 tmp.type = CONSUMERTYPE;
@@ -191,6 +210,12 @@ void Widget::loginRegFun()
                 outFile.close();
                 promptBox *prompt = new promptBox(nullptr, "注册成功");
                 prompt->show();
+                json uidJson;
+                uidJson["uid"] = uidMax;
+                ofstream uidOutFile;
+                uidOutFile.open("uidMaxFile.json");
+                uidOutFile << uidJson.dump();
+                uidOutFile.close();
             }
             else
             {

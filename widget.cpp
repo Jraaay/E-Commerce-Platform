@@ -90,5 +90,19 @@ void Widget::init()
         outFile << j.dump();
         outFile.close();
     }
+    infile.open("uidMaxFile.json");
+    string uidMaxJson;
+    infile >> uidMaxJson;
+    infile.close();
+    if (uidMaxJson == "")
+    {
+        int tmp = 0;
+        json j;
+        j["uid"] = tmp;
+        ofstream outFile;
+        outFile.open("uidMaxFile.json");
+        outFile << j.dump();
+        outFile.close();
+    }
     ui->userName->setFocus();
 }

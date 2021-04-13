@@ -27,6 +27,7 @@ void product::init()
     connect(ui->defaultSort, &QPushButton::clicked, this, &product::defaultSort);
     connect(ui->priceAscend, &QPushButton::clicked, this, &product::priceAscendSort);
     connect(ui->priceDescend, &QPushButton::clicked, this, &product::priceDescendSort);
+    connect(ui->userCenter, &QPushButton::clicked, this, &product::openUserCenter);
     void(product:: *slotFun)(QListWidgetItem*) = &product::onListMailItemClicked;
     void(QListWidget:: *signal)(QListWidgetItem*) = &QListWidget::itemClicked;
     connect(ui->listWidget, signal,this, slotFun);
@@ -132,6 +133,13 @@ void product::logoutFun()
     this->close();
 }
 
+void product::openUserCenter()
+{
+    userCenter *w;
+    w = new userCenter(curUser);
+    w->show();
+}
+
 void product::test()
 {
 //    for (int i = 0; i < 10; i++)
@@ -157,8 +165,14 @@ void product::test()
     ap->show();
 }
 
-void product::showProduct()
+void product::showProduct(bool getFromDB)
 {
+    if (getFromDB)
+    {
+        db->openDb();
+        productList = db->queryTable();
+        db->closeDb();
+    }
     ui->scrollArea->hide();
     ui->place->show();
     ui->listWidget->clear();
@@ -384,7 +398,7 @@ void product::setMainPhoto(int mainPhotoNo)
     }
     else
     {
-        promptBox *prompt = new promptBox(nullptr, "这里没有图片，不能设置为主图片哦");
+        promptBox *prompt = new promptBox(nullptr, "这里没有图片，不能查看哦");
         prompt->show();
     }
     showPhoto();

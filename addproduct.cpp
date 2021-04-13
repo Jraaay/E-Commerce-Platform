@@ -299,7 +299,7 @@ void addProduct::saveProduct()
     db.closeDb();
     if (father != nullptr)
     {
-        ((product *)father)->showProduct();
+        ((product *)father)->showProduct(true);
     }
     this->close();
 }

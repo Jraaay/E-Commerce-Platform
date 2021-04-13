@@ -16,6 +16,7 @@ public:
     string name;
     double balance;
     int type;
+    int uid;
     virtual int getUserType()=0;
     string getPass()
     {

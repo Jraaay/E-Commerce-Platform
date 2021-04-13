@@ -183,7 +183,7 @@
           <cursorShape>PointingHandCursor</cursorShape>
          </property>
          <property name="toolTip">
-          <string>我的信息</string>
+          <string>用户中心</string>
          </property>
          <property name="styleSheet">
           <string notr="true">background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray;</string>
