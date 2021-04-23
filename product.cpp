@@ -807,5 +807,6 @@ product::~product()
     {
         delete productList[i];
     }
+    delete db;
     delete ui;
 }

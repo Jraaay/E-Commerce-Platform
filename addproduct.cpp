@@ -100,6 +100,7 @@ void addProduct::selectPhotoFun()
             photoShow();
         }
     }
+    delete selectFile;
 }
 
 void addProduct::photoShow()
