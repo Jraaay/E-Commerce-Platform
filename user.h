@@ -17,7 +17,7 @@ public:
     double balance;
     int type;
     int uid;
-    virtual int getUserType()=0;
+    virtual int getUserType() = 0;
     string getPass()
     {
         return password;
@@ -31,6 +31,7 @@ public:
         balance += money;
     }
     string getJson();
+
 private:
     string password;
 };
@@ -52,6 +53,5 @@ public:
         return type;
     };
 };
-
 
 #endif // USER_H

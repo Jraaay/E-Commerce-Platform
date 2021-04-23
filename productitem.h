@@ -10,7 +10,7 @@
 #include <vector>
 #include <QDebug>
 
-using namespace  std;
+using namespace std;
 
 class productItem
 {
@@ -33,7 +33,6 @@ public:
     };
     virtual ~productItem()
     {
-
     }
 };
 
@@ -55,7 +54,6 @@ public:
     }
     virtual ~foodItem()
     {
-
     }
 };
 
@@ -77,7 +75,6 @@ public:
     }
     virtual ~clothesItem()
     {
-
     }
 };
 
@@ -99,7 +96,6 @@ public:
     }
     virtual ~bookItem()
     {
-
     }
 };
 

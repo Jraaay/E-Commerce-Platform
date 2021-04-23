@@ -15,5 +15,4 @@ productItem::productItem(string name1, string description1, double price1, int r
 
 productItem::productItem()
 {
-    
 }

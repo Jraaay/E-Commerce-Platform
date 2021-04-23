@@ -3,8 +3,9 @@
 
 #include <QWidget>
 
-namespace Ui {
-class productListUi;
+namespace Ui
+{
+    class productListUi;
 }
 
 class productListUi : public QWidget

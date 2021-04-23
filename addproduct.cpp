@@ -2,22 +2,20 @@
 #include "ui_addproduct.h"
 #include <QDebug>
 
-addProduct::addProduct(int seller, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::addProduct)
+addProduct::addProduct(int seller, QWidget *parent) : QWidget(parent),
+                                                      ui(new Ui::addProduct)
 {
     ui->setupUi(this);
-//    ui->comboBox->setStyleSheet("QComboBox::drop-down {subcontrol-origin: padding;subcontrol-position: top right;width: 20px;border-left-width: 1px;border-left-color: darkgray;border-left-style: solid;border-top-right-radius: 3px;border-bottom-right-radius: 3px;}");
+    //    ui->comboBox->setStyleSheet("QComboBox::drop-down {subcontrol-origin: padding;subcontrol-position: top right;width: 20px;border-left-width: 1px;border-left-color: darkgray;border-left-style: solid;border-top-right-radius: 3px;border-bottom-right-radius: 3px;}");
     sellerId = seller;
     init();
 }
 
-addProduct::addProduct(productItem productToModify, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::addProduct)
+addProduct::addProduct(productItem productToModify, QWidget *parent) : QWidget(parent),
+                                                                       ui(new Ui::addProduct)
 {
     ui->setupUi(this);
-//    ui->comboBox->setStyleSheet("QComboBox::drop-down {subcontrol-origin: padding;subcontrol-position: top right;width: 20px;border-left-width: 1px;border-left-color: darkgray;border-left-style: solid;border-top-right-radius: 3px;border-bottom-right-radius: 3px;}");
+    //    ui->comboBox->setStyleSheet("QComboBox::drop-down {subcontrol-origin: padding;subcontrol-position: top right;width: 20px;border-left-width: 1px;border-left-color: darkgray;border-left-style: solid;border-top-right-radius: 3px;border-bottom-right-radius: 3px;}");
     modifyId = productToModify.id;
     init(productToModify);
 }
@@ -27,12 +25,12 @@ void addProduct::init(productItem productToModify)
     ui->name->setTextMargins(5, 0, 0, 0);
     ui->price->setTextMargins(5, 0, 0, 0);
     QRegExp regx1("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$");
-    QValidator *validator1 = new QRegExpValidator(regx1, ui->price );
-    ui->price->setValidator( validator1 );
+    QValidator *validator1 = new QRegExpValidator(regx1, ui->price);
+    ui->price->setValidator(validator1);
     ui->remain->setTextMargins(5, 0, 0, 0);
     QRegExp regx2("^\\d+$");
-    QValidator *validator2 = new QRegExpValidator(regx2, ui->remain );
-    ui->remain->setValidator( validator2 );
+    QValidator *validator2 = new QRegExpValidator(regx2, ui->remain);
+    ui->remain->setValidator(validator2);
     ui->description->setTextMargins(5, 5, 0, 0);
     connect(ui->cancel, &QPushButton::clicked, this, &QWidget::close);
     connect(ui->addPhoto, &QPushButton::clicked, this, &addProduct::selectPhotoFun);
@@ -56,7 +54,7 @@ void addProduct::init(productItem productToModify)
         ui->name->setText(productToModify.name.c_str());
         ui->price->setText(QString::number(productToModify.price));
         ui->remain->setText(QString::number(productToModify.remaining));
-        ui->type->setCurrentIndex(productToModify.type-1);
+        ui->type->setCurrentIndex(productToModify.type - 1);
         ui->description->setText(productToModify.description.c_str());
         mainPhoto = productToModify.mainPhoto;
         photosList = productToModify.photo;
@@ -67,8 +65,8 @@ void addProduct::init(productItem productToModify)
             QPixmap pixmap = QPixmap::fromImage(img);
             int width = 80;
             int height = 100;
-            pixmap = pixmap.scaled(width*2, height*2, Qt::KeepAspectRatio, Qt::FastTransformation);  // 按比例缩放
-            pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);  // 按比例缩放
+            pixmap = pixmap.scaled(width * 2, height * 2, Qt::KeepAspectRatio, Qt::FastTransformation); // 按比例缩放
+            pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);       // 按比例缩放
             photosImageList.push_back(pixmap);
         }
         photoShow();
@@ -84,7 +82,7 @@ void addProduct::selectPhotoFun()
 {
     selectFile = new QFileDialog;
     selectFile->setOption(selectFile->DontUseNativeDialog, false);
-    QStringList photosNameTmp = selectFile->getOpenFileNames(0, "添加图片", "‪C:\\Users\\Jray\\Pictures\\123456\\","Images (*.jpg *.jpeg *.png *.gif);; All Files (*.*)", 0, 0);
+    QStringList photosNameTmp = selectFile->getOpenFileNames(0, "添加图片", "‪C:\\Users\\Jray\\Pictures\\123456\\", "Images (*.jpg *.jpeg *.png *.gif);; All Files (*.*)", 0, 0);
     for (int i = 0; i < photosNameTmp.size(); i++)
     {
         QString photoNameTmp = photosNameTmp[i];
@@ -96,8 +94,8 @@ void addProduct::selectPhotoFun()
             QPixmap pixmap = QPixmap::fromImage(img);
             int width = 80;
             int height = 100;
-            pixmap = pixmap.scaled(width*2, height*2, Qt::KeepAspectRatio, Qt::FastTransformation);  // 按比例缩放
-            pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);  // 按比例缩放
+            pixmap = pixmap.scaled(width * 2, height * 2, Qt::KeepAspectRatio, Qt::FastTransformation); // 按比例缩放
+            pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);       // 按比例缩放
             photosImageList.push_back(pixmap);
             photoShow();
         }
@@ -148,8 +146,8 @@ void addProduct::photoShow()
         QPixmap pixmap = QPixmap::fromImage(img);
         int width = 155;
         int height = 200;
-        pixmap = pixmap.scaled(width*2, height*2, Qt::KeepAspectRatio, Qt::FastTransformation);  // 按比例缩放
-        pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);  // 按比例缩放
+        pixmap = pixmap.scaled(width * 2, height * 2, Qt::KeepAspectRatio, Qt::FastTransformation); // 按比例缩放
+        pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);       // 按比例缩放
         ui->addPhoto->setIconSize(QSize(155, 195));
         ui->addPhoto->setIcon(pixmap);
     }
@@ -190,15 +188,15 @@ void addProduct::nextPhoto()
 void addProduct::delPhoto()
 {
     int delPhotoNo = 0;
-    if(sender() == ui->delImage_2)
+    if (sender() == ui->delImage_2)
     {
         delPhotoNo = 1;
     }
-    else if(sender() == ui->delImage_3)
+    else if (sender() == ui->delImage_3)
     {
         delPhotoNo = 2;
     }
-    else if(sender() == ui->delImage_4)
+    else if (sender() == ui->delImage_4)
     {
         delPhotoNo = 3;
     }
@@ -227,7 +225,6 @@ void addProduct::delPhoto()
     }
 }
 
-
 void addProduct::setMainPhoto(int mainPhotoNo)
 {
     if (mainPhotoNo + curFirstPhoto < int(photosList.size()))
@@ -244,12 +241,12 @@ void addProduct::setMainPhoto(int mainPhotoNo)
 
 bool addProduct::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == ui->image_1)//指定某个QLabel
+    if (obj == ui->image_1) //指定某个QLabel
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event); // 事件转换
-            if(mouseEvent->button() == Qt::LeftButton)
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(0);
                 return true;
@@ -257,12 +254,12 @@ bool addProduct::eventFilter(QObject *obj, QEvent *event)
             return false;
         }
     }
-    else if (obj == ui->image_2)//指定某个QLabel
+    else if (obj == ui->image_2) //指定某个QLabel
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event); // 事件转换
-            if(mouseEvent->button() == Qt::LeftButton)
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(1);
                 return true;
@@ -270,12 +267,12 @@ bool addProduct::eventFilter(QObject *obj, QEvent *event)
             return false;
         }
     }
-    else if (obj == ui->image_3)//指定某个QLabel
+    else if (obj == ui->image_3) //指定某个QLabel
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event); // 事件转换
-            if(mouseEvent->button() == Qt::LeftButton)
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(2);
                 return true;
@@ -283,12 +280,12 @@ bool addProduct::eventFilter(QObject *obj, QEvent *event)
             return false;
         }
     }
-    else if (obj == ui->image_4)//指定某个QLabel
+    else if (obj == ui->image_4) //指定某个QLabel
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event); // 事件转换
-            if(mouseEvent->button() == Qt::LeftButton)
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(3);
                 return true;
@@ -358,7 +355,6 @@ void addProduct::saveProduct()
     }
     this->close();
 }
-
 
 void addProduct::delProduct()
 {

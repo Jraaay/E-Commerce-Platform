@@ -1,6 +1,5 @@
 #include "user.h"
 
-
 string userClass::getJson()
 {
     json j;

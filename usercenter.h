@@ -10,8 +10,9 @@
 #include "rechargepage.h"
 #include "sqlite.h"
 
-namespace Ui {
-class userCenter;
+namespace Ui
+{
+    class userCenter;
 }
 
 class userCenter : public QWidget

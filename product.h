@@ -16,8 +16,9 @@
 #define PRICE_DESCEND_SORT 1
 #define PRICE_ASCEND_SORT 2
 
-namespace Ui {
-class product;
+namespace Ui
+{
+    class product;
 }
 
 class product : public QWidget
@@ -32,7 +33,7 @@ public:
     void logoutFun();
     void init();
     void test();
-    void onListMailItemClicked(QListWidgetItem* item);
+    void onListMailItemClicked(QListWidgetItem *item);
     int curFirstPhoto;
     int mainPhoto;
     int curProduct;

@@ -37,9 +37,9 @@ bool sqlite::openDb()
 }
 
 // 判断数据库中某个数据表是否存在
-bool sqlite::isTableExist(QString& tableName)
+bool sqlite::isTableExist(QString &tableName)
 {
-    if(db.tables().contains(tableName))
+    if (db.tables().contains(tableName))
     {
         return true;
     }
@@ -55,7 +55,7 @@ void sqlite::createTable()
     QString createSql = QString("CREATE TABLE `productItem` (`id` INTEGER  PRIMARY KEY,`name` TEXT NOT NULL,`description` TEXT,`price` DOUBLE(32,2) NOT NULL,`remaining` INTEGER  NOT NULL,`mainPhoto` INTEGER ,`type` INTEGER  NOT NULL, `deleted` BOOLEAN DEFAULT false, `seller` INTEGER  NOT NULL);");
     sqlQuery.prepare(createSql);
     // 执行sql语句
-    if(!sqlQuery.exec())
+    if (!sqlQuery.exec())
     {
         qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
     }
@@ -67,7 +67,7 @@ void sqlite::createTable()
     createSql = QString("CREATE TABLE `productPhoto` (`id` INTEGER PRIMARY KEY, `productId` INTEGER NOT NULL, `photo` TEXT NOT NULL);");
     sqlQuery.prepare(createSql);
     // 执行sql语句
-    if(!sqlQuery.exec())
+    if (!sqlQuery.exec())
     {
         qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
     }
@@ -78,7 +78,7 @@ void sqlite::createTable()
     createSql = QString("CREATE TABLE `discount` (`fooddiscount` DOUBLE(32,2) NOT NULL,`clothesdiscount` DOUBLE(32,2) NOT NULL,`bookdiscount` DOUBLE(32,2) NOT NULL, `seller` INTEGER PRIMARY KEY NOT NULL);");
     sqlQuery.prepare(createSql);
     // 执行sql语句
-    if(!sqlQuery.exec())
+    if (!sqlQuery.exec())
     {
         qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
     }
@@ -101,7 +101,7 @@ void sqlite::singleInsertData(productItem item) // 插入单条数据
     sqlQuery.bindValue(":seller", item.seller);
 
     // 执行sql语句
-    if(!sqlQuery.exec())
+    if (!sqlQuery.exec())
     {
         qDebug() << "Error: Fail to insert. " << sqlQuery.lastError();
     }
@@ -120,7 +120,7 @@ void sqlite::singleInsertData(productItem item) // 插入单条数据
         sqlQuery.prepare("INSERT INTO `productPhoto` (`productId`,`photo`) VALUES (:productId, :photo)");
         sqlQuery.bindValue(":productId", productId);
         sqlQuery.bindValue(":photo", dest.c_str());
-        if(!sqlQuery.exec())
+        if (!sqlQuery.exec())
         {
             qDebug() << "Error: Fail to insert. " << sqlQuery.lastError();
         }
@@ -129,7 +129,6 @@ void sqlite::singleInsertData(productItem item) // 插入单条数据
             qDebug() << "Insert successed!" << sqlQuery.lastInsertId().toInt();
         }
     }
-
 }
 
 // 查询全部数据
@@ -145,13 +144,13 @@ vector<productItem *> sqlite::queryTable(string LIKE, string SORT)
     sqlCommand += SORT;
     qDebug() << sqlCommand.c_str();
     sqlQuery.exec(sqlCommand.c_str());
-    if(!sqlQuery.exec())
+    if (!sqlQuery.exec())
     {
         qDebug() << "Error: Fail to query table. " << sqlQuery.lastError();
     }
     else
     {
-        while(sqlQuery.next())
+        while (sqlQuery.next())
         {
             productItem *tmp;
             switch (sqlQuery.value(6).toInt())
@@ -178,7 +177,7 @@ vector<productItem *> sqlite::queryTable(string LIKE, string SORT)
             tmp->seller = sqlQuery.value(8).toInt();
             QSqlQuery sqlQueryPhoto;
             sqlQueryPhoto.exec("SELECT * FROM `productPhoto` WHERE `productId` LIKE " + sqlQuery.value(0).toString());
-            while(sqlQueryPhoto.next())
+            while (sqlQueryPhoto.next())
             {
                 tmp->photo.push_back(sqlQueryPhoto.value(2).toString());
             }
@@ -208,7 +207,7 @@ void sqlite::modifyData(productItem item) // 更新单条数据
     sqlQuery.bindValue(":id", item.id);
 
     // 执行sql语句
-    if(!sqlQuery.exec())
+    if (!sqlQuery.exec())
     {
         qDebug() << "Error: Fail to update. " << sqlQuery.lastError();
     }
@@ -220,7 +219,7 @@ void sqlite::modifyData(productItem item) // 更新单条数据
     sqlQuery.prepare("DELETE FROM `productPhoto` "
                      "WHERE `productId`=:productId;");
     sqlQuery.bindValue(":productId", productId);
-    if(!sqlQuery.exec())
+    if (!sqlQuery.exec())
     {
         qDebug() << "Error: Fail to delete old photos. " << sqlQuery.lastError();
     }
@@ -232,7 +231,8 @@ void sqlite::modifyData(productItem item) // 更新单条数据
     QDir dir;
     dir.setPath(destFolder.c_str());
     bool oldFolderExist = dir.exists();
-    if (oldFolderExist){
+    if (oldFolderExist)
+    {
         destFolder = "./source/" + to_string(productId) + "_tmp";
     }
     dir.setPath(".");
@@ -244,7 +244,7 @@ void sqlite::modifyData(productItem item) // 更新单条数据
         sqlQuery.prepare("INSERT INTO `productPhoto` (`productId`,`photo`) VALUES (:productId, :photo)");
         sqlQuery.bindValue(":productId", productId);
         sqlQuery.bindValue(":photo", ("./source/" + to_string(productId) + "/" + to_string(i) + "." + QFileInfo(item.photo[i]).suffix().toStdString()).c_str());
-        if(!sqlQuery.exec())
+        if (!sqlQuery.exec())
         {
             qDebug() << "Error: Fail to update photos. " << sqlQuery.lastError();
         }
@@ -253,11 +253,13 @@ void sqlite::modifyData(productItem item) // 更新单条数据
             qDebug() << "Photos update successed!";
         }
     }
-    if (oldFolderExist){
+    if (oldFolderExist)
+    {
         dir.setPath(("./source/" + to_string(productId)).c_str());
         dir.removeRecursively();
         dir.setPath(".");
-        qDebug() << destFolder.c_str() <<endl << ("./source/" + to_string(productId)).c_str();
+        qDebug() << destFolder.c_str() << endl
+                 << ("./source/" + to_string(productId)).c_str();
         qDebug() << dir.rename((destFolder).c_str(), ("./source/" + to_string(productId)).c_str());
     }
 }
@@ -270,7 +272,7 @@ void sqlite::deleteData(int id) // 删除单条数据
                      "`deleted`=true "
                      "WHERE `id`=:id;");
     sqlQuery.bindValue(":id", id);
-    if(!sqlQuery.exec())
+    if (!sqlQuery.exec())
     {
         qDebug() << "Error: Fail to delete. " << sqlQuery.lastError();
     }
@@ -280,14 +282,13 @@ void sqlite::deleteData(int id) // 删除单条数据
     }
 }
 
-
 void sqlite::newDiscount(int id)
 {
     QSqlQuery sqlQuery;
     QString createSql = QString("INSERT INTO `discount` (`fooddiscount`,`clothesdiscount`, `bookdiscount`, `seller`) VALUES (1, 1, 1, :seller)");
     sqlQuery.prepare(createSql);
     sqlQuery.bindValue(":seller", id);
-    if(!sqlQuery.exec())
+    if (!sqlQuery.exec())
     {
         qDebug() << "Error: Fail to insert discount. " << sqlQuery.lastError();
     }
@@ -303,13 +304,13 @@ vector<vector<double>> sqlite::getDiscount()
     QSqlQuery sqlQuery;
     QString sqlCommand = "SELECT * FROM `discount`;";
     sqlQuery.prepare(sqlCommand);
-    if(!sqlQuery.exec())
+    if (!sqlQuery.exec())
     {
         qDebug() << "Error: Fail to query table. " << sqlQuery.lastError();
     }
     else
     {
-        while(sqlQuery.next())
+        while (sqlQuery.next())
         {
             vector<double> tmp;
             tmp.push_back(sqlQuery.value(0).toDouble());
@@ -333,7 +334,7 @@ void sqlite::setDiscount(vector<vector<double>> discount)
         sqlQuery.bindValue(":fooddiscount", discount[i][0]);
         sqlQuery.bindValue(":clothesdiscount", discount[i][1]);
         sqlQuery.bindValue(":bookdiscount", discount[i][2]);
-        if(!sqlQuery.exec())
+        if (!sqlQuery.exec())
         {
             qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
         }

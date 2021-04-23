@@ -11,12 +11,12 @@
 #include "promptbox.h"
 #include "promptbox.h"
 
-
-namespace Ui {
-class addProduct;
+namespace Ui
+{
+    class addProduct;
 }
 
-using namespace  std;
+using namespace std;
 
 class addProduct : public QWidget
 {
@@ -40,7 +40,7 @@ public:
     vector<QPixmap> photosImageList;
     int mainPhoto;
     int curFirstPhoto;
-    bool eventFilter(QObject *obj, QEvent *event);	// 添加时间过滤器声明
+    bool eventFilter(QObject *obj, QEvent *event); // 添加时间过滤器声明
     void *father = nullptr;
     int modifyId = -1;
     int sellerId = -1;

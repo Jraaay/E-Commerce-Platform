@@ -1,9 +1,8 @@
 #include "rechargepage.h"
 #include "ui_rechargepage.h"
 
-rechargePage::rechargePage(QWidget *parent, QObject *uc) :
-    QWidget(parent),
-    ui(new Ui::rechargePage)
+rechargePage::rechargePage(QWidget *parent, QObject *uc) : QWidget(parent),
+                                                           ui(new Ui::rechargePage)
 {
     parentuserCenter = (userCenter *)uc;
     ui->setupUi(this);
@@ -26,8 +25,8 @@ void rechargePage::init()
     connect(ui->otherMoney, &QLineEdit::textEdited, this, &rechargePage::buyOther);
     connect(ui->confirm, &QPushButton::clicked, this, &rechargePage::rechargeConfirm);
     QRegExp regx1("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$");
-    QValidator *validator1 = new QRegExpValidator(regx1, ui->otherMoney );
-    ui->otherMoney->setValidator( validator1 );
+    QValidator *validator1 = new QRegExpValidator(regx1, ui->otherMoney);
+    ui->otherMoney->setValidator(validator1);
 }
 
 void rechargePage::buy6()

@@ -6,10 +6,8 @@
 #include "ui_productlistui.h"
 #include <stdio.h>
 
-
-product::product(userClass *curUserFromWidget, QWidget *parent) :
-    QWidget(parent),
-    ui(new Ui::product)
+product::product(userClass *curUserFromWidget, QWidget *parent) : QWidget(parent),
+                                                                  ui(new Ui::product)
 {
     curUser = curUserFromWidget;
     init();
@@ -32,9 +30,9 @@ void product::init()
     connect(ui->purchase, &QPushButton::clicked, this, &product::purchase);
     connect(ui->manage, &QPushButton::clicked, this, &product::manage);
     connect(ui->refresh, &QPushButton::clicked, this, &product::refresh);
-    void(product:: *slotFun)(QListWidgetItem*) = &product::onListMailItemClicked;
-    void(QListWidget:: *signal)(QListWidgetItem*) = &QListWidget::itemClicked;
-    connect(ui->listWidget, signal,this, slotFun);
+    void (product::*slotFun)(QListWidgetItem *) = &product::onListMailItemClicked;
+    void (QListWidget::*signal)(QListWidgetItem *) = &QListWidget::itemClicked;
+    connect(ui->listWidget, signal, this, slotFun);
     ui->image_1->installEventFilter(this);
     ui->image_2->installEventFilter(this);
     ui->image_3->installEventFilter(this);
@@ -90,8 +88,7 @@ void product::init()
                                                        "{"
                                                        "background:rgba(0,0,0,10%);"
                                                        "border-radius:4px;"
-                                                       "}"
-                                                       );
+                                                       "}");
     ui->place->setFixedWidth(626);
     if (curUser->getUserType() == CONSUMERTYPE)
     {
@@ -125,10 +122,10 @@ void product::init()
     }
     ui->userCenter->setText(curUser->name.c_str());
     db = new sqlite;
-//    db->openDb();
-//    productList = db->queryTable();
-//    db->closeDb();
-//    qDebug() << 1 << endl;
+    //    db->openDb();
+    //    productList = db->queryTable();
+    //    db->closeDb();
+    //    qDebug() << 1 << endl;
     db->openDb();
     productList = db->queryTable();
     discount = db->getDiscount();
@@ -153,23 +150,23 @@ void product::openUserCenter()
 
 void product::test()
 {
-//    for (int i = 0; i < 10; i++)
-//    {
-//        vector<QImage> tmpImage;
-//        productItem tmp(to_string(i), to_string(i), i, i, tmpImage, -1, i);
-//        productList.push_back(tmp);
-//    }
-//    db->openDb();
-//    QString tableName = "productItem";
-//    if (!db->isTableExist(tableName))
-//    {
-//        db->createTable();
-//    }
-//    vector<QImage> tmpImage;
-//    productItem tmp(to_string(1), to_string(1), 1, 1, tmpImage, -1, 1);
-//    db->singleInsertData(tmp);
-//    db->closeDb();
-//    showProduct();
+    //    for (int i = 0; i < 10; i++)
+    //    {
+    //        vector<QImage> tmpImage;
+    //        productItem tmp(to_string(i), to_string(i), i, i, tmpImage, -1, i);
+    //        productList.push_back(tmp);
+    //    }
+    //    db->openDb();
+    //    QString tableName = "productItem";
+    //    if (!db->isTableExist(tableName))
+    //    {
+    //        db->createTable();
+    //    }
+    //    vector<QImage> tmpImage;
+    //    productItem tmp(to_string(1), to_string(1), 1, 1, tmpImage, -1, 1);
+    //    db->singleInsertData(tmp);
+    //    db->closeDb();
+    //    showProduct();
     addProduct *ap;
     ap = new addProduct(curUser->uid);
     ap->father = this;
@@ -219,7 +216,7 @@ void product::showProduct(bool getFromDB)
     {
         QListWidgetItem *tmp = new QListWidgetItem();
         ui->listWidget->addItem(tmp);
-        tmp->setSizeHint(QSize(626,160));
+        tmp->setSizeHint(QSize(626, 160));
         productListUi *w = new productListUi(ui->listWidget);
         w->ui->name->setText(geteElidedText(w->ui->name->font(), productList[i]->name.c_str(), w->ui->name->width()));
         char priceText[] = "";
@@ -227,8 +224,8 @@ void product::showProduct(bool getFromDB)
         w->ui->price->setText(priceText);
         string remainText = "剩余：" + to_string(productList[i]->remaining);
         w->ui->remain->setText(remainText.c_str());
-//        productItem tmpProduct = *productList[i];
-//        qDebug() << to_string(productList[i]->type).c_str();
+        //        productItem tmpProduct = *productList[i];
+        //        qDebug() << to_string(productList[i]->type).c_str();
         string typeText = "类型：" + typeList[productList[i]->type];
         w->ui->type->setText(typeText.c_str());
 
@@ -243,18 +240,16 @@ void product::showProduct(bool getFromDB)
             w->ui->priceRaw->setText("");
         }
 
-
         int numToShow;
         for (int j = 0; j < (int)sellerList.size(); j++)
         {
             if (sellerList[j].uid == productList[i]->seller)
             {
-                numToShow = j   ;
+                numToShow = j;
             }
         }
         string sellerText = "商家：" + sellerList[numToShow].name;
         w->ui->seller->setText(sellerText.c_str());
-
 
         QImage img;
         if (productList[i]->photo.size() > 0)
@@ -268,25 +263,25 @@ void product::showProduct(bool getFromDB)
         QPixmap pixmap = QPixmap::fromImage(img);
         int width = 110;
         int height = 130;
-        pixmap = pixmap.scaled(width*2, height*2, Qt::KeepAspectRatio, Qt::FastTransformation);  // 按比例缩放
-        pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);  // 按比例缩放
+        pixmap = pixmap.scaled(width * 2, height * 2, Qt::KeepAspectRatio, Qt::FastTransformation); // 按比例缩放
+        pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);       // 按比例缩放
         w->ui->mainPhoto->setPixmap(pixmap);
-        ui->listWidget->setItemWidget(tmp,w);
+        ui->listWidget->setItemWidget(tmp, w);
     }
 }
 
 QString product::geteElidedText(QFont font, QString str, int MaxWidth)
 {
     QFontMetrics fontWidth(font);
-    int width = fontWidth.horizontalAdvance(str);  //计算字符串宽度
-    if(width>=MaxWidth)  //当字符串宽度大于最大宽度时进行转换
+    int width = fontWidth.horizontalAdvance(str); //计算字符串宽度
+    if (width >= MaxWidth)                        //当字符串宽度大于最大宽度时进行转换
     {
-        str = fontWidth.elidedText(str,Qt::ElideRight,MaxWidth);  //右部显示省略号
+        str = fontWidth.elidedText(str, Qt::ElideRight, MaxWidth); //右部显示省略号
     }
-    return str;   //返回处理后的字符串
+    return str; //返回处理后的字符串
 }
 
-void product::onListMailItemClicked(QListWidgetItem* item)
+void product::onListMailItemClicked(QListWidgetItem *item)
 {
     ui->place->hide();
     ui->scrollArea->show();
@@ -343,8 +338,8 @@ void product::showPhoto()
     QPixmap pixmap = QPixmap::fromImage(img);
     int width = 155;
     int height = 195;
-    pixmap = pixmap.scaled(width*2, height*2, Qt::KeepAspectRatio, Qt::FastTransformation);  // 按比例缩放
-    pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);  // 按比例缩放
+    pixmap = pixmap.scaled(width * 2, height * 2, Qt::KeepAspectRatio, Qt::FastTransformation); // 按比例缩放
+    pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);       // 按比例缩放
     ui->mainPhoto->setIconSize(QSize(155, 195));
     ui->mainPhoto->setIcon(pixmap);
     QLabel *photoLabelList[5] = {ui->image_1, ui->image_2, ui->image_3, ui->image_4, ui->image_5};
@@ -363,8 +358,8 @@ void product::showPhoto()
         }
         int width = 60;
         int height = 75;
-        photo = photo.scaled(width*2, height*2, Qt::KeepAspectRatio, Qt::FastTransformation);  // 按比例缩放
-        photo = photo.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);  // 按比例缩放
+        photo = photo.scaled(width * 2, height * 2, Qt::KeepAspectRatio, Qt::FastTransformation); // 按比例缩放
+        photo = photo.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);       // 按比例缩放
         photoLabelList[i]->setPixmap(photo);
         if (i + curFirstPhoto == mainPhoto)
         {
@@ -396,12 +391,12 @@ void product::showPhoto()
 
 bool product::eventFilter(QObject *obj, QEvent *event)
 {
-    if (obj == ui->image_1)//指定某个QLabel
+    if (obj == ui->image_1) //指定某个QLabel
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event); // 事件转换
-            if(mouseEvent->button() == Qt::LeftButton)
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(0);
                 return true;
@@ -409,12 +404,12 @@ bool product::eventFilter(QObject *obj, QEvent *event)
             return false;
         }
     }
-    else if (obj == ui->image_2)//指定某个QLabel
+    else if (obj == ui->image_2) //指定某个QLabel
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event); // 事件转换
-            if(mouseEvent->button() == Qt::LeftButton)
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(1);
                 return true;
@@ -422,12 +417,12 @@ bool product::eventFilter(QObject *obj, QEvent *event)
             return false;
         }
     }
-    else if (obj == ui->image_3)//指定某个QLabel
+    else if (obj == ui->image_3) //指定某个QLabel
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event); // 事件转换
-            if(mouseEvent->button() == Qt::LeftButton)
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(2);
                 return true;
@@ -435,12 +430,12 @@ bool product::eventFilter(QObject *obj, QEvent *event)
             return false;
         }
     }
-    else if (obj == ui->image_4)//指定某个QLabel
+    else if (obj == ui->image_4) //指定某个QLabel
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event); // 事件转换
-            if(mouseEvent->button() == Qt::LeftButton)
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(3);
                 return true;
@@ -448,12 +443,12 @@ bool product::eventFilter(QObject *obj, QEvent *event)
             return false;
         }
     }
-    else if (obj == ui->image_5)//指定某个QLabel
+    else if (obj == ui->image_5) //指定某个QLabel
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event); // 事件转换
-            if(mouseEvent->button() == Qt::LeftButton)
+            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(4);
                 return true;
@@ -482,7 +477,6 @@ void product::setMainPhoto(int mainPhotoNo)
     }
     showPhoto();
 }
-
 
 void product::prePhoto()
 {
@@ -737,7 +731,7 @@ void product::purchase()
         promptBox *prompt = new promptBox(nullptr, "商品数量不足");
         prompt->show();
     }
-    else if(curUser->balance < purchaseProductList[productToPurchase]->getPrice(discount))
+    else if (curUser->balance < purchaseProductList[productToPurchase]->getPrice(discount))
     {
         promptBox *prompt = new promptBox(nullptr, "余额不足");
         prompt->show();
@@ -798,7 +792,6 @@ void product::refresh()
     db->closeDb();
     showProduct();
 }
-
 
 void product::manage()
 {

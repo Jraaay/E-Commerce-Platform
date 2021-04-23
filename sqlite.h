@@ -18,7 +18,7 @@ public:
     // 创建数据表
     void createTable(void);
     // 判断数据表是否存在
-    bool isTableExist(QString& tableName);
+    bool isTableExist(QString &tableName);
     // 查询全部数据
     vector<productItem *> queryTable(string LIKE = "", string SORT = "");
     // 插入单条数据

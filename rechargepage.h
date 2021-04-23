@@ -6,8 +6,9 @@
 #include "promptbox.h"
 #include "usercenter.h"
 
-namespace Ui {
-class rechargePage;
+namespace Ui
+{
+    class rechargePage;
 }
 
 class rechargePage : public QWidget

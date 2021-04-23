@@ -4,8 +4,9 @@
 #include <QWidget>
 #include <QtWinExtras>
 
-namespace Ui {
-class promptBox;
+namespace Ui
+{
+    class promptBox;
 }
 using namespace std;
 

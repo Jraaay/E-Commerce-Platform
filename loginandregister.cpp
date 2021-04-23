@@ -248,7 +248,6 @@ void Widget::loginRegSwitchFun()
     }
 }
 
-
 void Widget::guestLogin()
 {
     curType = GUESTTYPE;
@@ -257,13 +256,13 @@ void Widget::guestLogin()
     guest->name = "游客";
     guest->balance = 0;
     curConsumer = *guest;
-//    msgBox = new QMessageBox("Login",
-//                             "使用游客身份登录成功",
-//                             QMessageBox::Information,
-//                             QMessageBox::Ok | QMessageBox::Default,
-//                             QMessageBox::Cancel | QMessageBox::Escape,
-//                             0);
-//    msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-//    msgBox->show();
+    //    msgBox = new QMessageBox("Login",
+    //                             "使用游客身份登录成功",
+    //                             QMessageBox::Information,
+    //                             QMessageBox::Ok | QMessageBox::Default,
+    //                             QMessageBox::Cancel | QMessageBox::Escape,
+    //                             0);
+    //    msgBox->setWindowIcon(QIcon(":/image/logo.png"));
+    //    msgBox->show();
     showProduct();
 }

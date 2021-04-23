@@ -12,7 +12,10 @@ using namespace std;
 using json = nlohmann::json;
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class Widget; }
+namespace Ui
+{
+    class Widget;
+}
 QT_END_NAMESPACE
 
 class Widget : public QWidget
@@ -34,7 +37,7 @@ private:
     QMessageBox *msgBox;
     void init();
     void loginRegSwitchFun();
-    void saveUserList(list<string> );
+    void saveUserList(list<string>);
     list<string> getUserList();
     void setTypeSeller();
     void setTypeConsumer();
