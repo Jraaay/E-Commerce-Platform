@@ -2,15 +2,31 @@
 #include "ui_addproduct.h"
 #include <QDebug>
 
-addProduct::addProduct(QWidget *parent) :
+addProduct::addProduct(int seller, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::addProduct)
 {
     ui->setupUi(this);
 //    ui->comboBox->setStyleSheet("QComboBox::drop-down {subcontrol-origin: padding;subcontrol-position: top right;width: 20px;border-left-width: 1px;border-left-color: darkgray;border-left-style: solid;border-top-right-radius: 3px;border-bottom-right-radius: 3px;}");
+    sellerId = seller;
+    init();
+}
+
+addProduct::addProduct(productItem productToModify, QWidget *parent) :
+    QWidget(parent),
+    ui(new Ui::addProduct)
+{
+    ui->setupUi(this);
+//    ui->comboBox->setStyleSheet("QComboBox::drop-down {subcontrol-origin: padding;subcontrol-position: top right;width: 20px;border-left-width: 1px;border-left-color: darkgray;border-left-style: solid;border-top-right-radius: 3px;border-bottom-right-radius: 3px;}");
+    modifyId = productToModify.id;
+    init(productToModify);
+}
+
+void addProduct::init(productItem productToModify)
+{
     ui->name->setTextMargins(5, 0, 0, 0);
     ui->price->setTextMargins(5, 0, 0, 0);
-    QRegExp regx1("^(([0-9]+\\.[0-9]*[1-9][0-9]*)|([0-9]*[1-9][0-9]*\\.[0-9]+)|([0-9]*[1-9][0-9]*))$");
+    QRegExp regx1("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$");
     QValidator *validator1 = new QRegExpValidator(regx1, ui->price );
     ui->price->setValidator( validator1 );
     ui->remain->setTextMargins(5, 0, 0, 0);
@@ -27,12 +43,41 @@ addProduct::addProduct(QWidget *parent) :
     connect(ui->delImage_3, &QPushButton::clicked, this, &addProduct::delPhoto);
     connect(ui->delImage_4, &QPushButton::clicked, this, &addProduct::delPhoto);
     connect(ui->add, &QPushButton::clicked, this, &addProduct::saveProduct);
+    connect(ui->deleteButton, &QPushButton::clicked, this, &addProduct::delProduct);
     ui->image_1->installEventFilter(this);
     ui->image_2->installEventFilter(this);
     ui->image_3->installEventFilter(this);
     ui->image_4->installEventFilter(this);
     curFirstPhoto = 0;
     mainPhoto = 0;
+    if (modifyId != -1)
+    {
+        ui->add->setText("保存");
+        ui->name->setText(productToModify.name.c_str());
+        ui->price->setText(QString::number(productToModify.price));
+        ui->remain->setText(QString::number(productToModify.remaining));
+        ui->type->setCurrentIndex(productToModify.type-1);
+        ui->description->setText(productToModify.description.c_str());
+        mainPhoto = productToModify.mainPhoto;
+        photosList = productToModify.photo;
+        for (int i = 0; i < (int)photosList.size(); i++)
+        {
+            QImage img;
+            img.load(photosList[i]);
+            QPixmap pixmap = QPixmap::fromImage(img);
+            int width = 80;
+            int height = 100;
+            pixmap = pixmap.scaled(width*2, height*2, Qt::KeepAspectRatio, Qt::FastTransformation);  // 按比例缩放
+            pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);  // 按比例缩放
+            photosImageList.push_back(pixmap);
+        }
+        photoShow();
+    }
+    else
+    {
+        ui->deleteButton->hide();
+        ui->deleteButton->setEnabled(false);
+    }
 }
 
 void addProduct::selectPhotoFun()
@@ -291,11 +336,35 @@ void addProduct::saveProduct()
         prompt->show();
         return;
     }
-    productToSave.type = ui->type->currentIndex();
+    productToSave.type = ui->type->currentIndex() + 1;
     productToSave.photo = photosList;
+    productToSave.id = modifyId;
+    productToSave.seller = sellerId;
     sqlite db;
     db.openDb();
-    db.singleInsertData(productToSave);
+    if (modifyId != -1)
+    {
+
+        db.modifyData(productToSave);
+    }
+    else
+    {
+        db.singleInsertData(productToSave);
+    }
+    db.closeDb();
+    if (father != nullptr)
+    {
+        ((product *)father)->showProduct(true);
+    }
+    this->close();
+}
+
+
+void addProduct::delProduct()
+{
+    sqlite db;
+    db.openDb();
+    db.deleteData(modifyId);
     db.closeDb();
     if (father != nullptr)
     {

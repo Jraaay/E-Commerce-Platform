@@ -1,8 +1,15 @@
 <RCC>
   <qresource prefix="/">
+    <file>image/percent.png</file>
     <file>image/left_blue.png</file>
     <file>image/right_blue.png</file>
     <file>image/left.png</file>
+    <file>image/6.png</file>
+    <file>image/30.png</file>
+    <file>image/98.png</file>
+    <file>image/198.png</file>
+    <file>image/328.png</file>
+    <file>image/648.png</file>
     <file>image/right.png</file>
     <file>image/comboBox.png</file>
     <file>image/consumer.png</file>

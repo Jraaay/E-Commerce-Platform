@@ -2,7 +2,7 @@
 #define LOGINANDREGISTER_H
 
 #include "promptbox.h"
-
+#include "sqlite.h"
 
 class loginAndRegister
 {

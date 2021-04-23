@@ -17,6 +17,7 @@ product::product(userClass *curUserFromWidget, QWidget *parent) :
 
 void product::init()
 {
+    sortMethod = 0;
     ui->setupUi(this);
     connect(ui->logout, &QPushButton::clicked, this, &product::logoutFun);
     connect(ui->addProduct, &QPushButton::clicked, this, &product::test);
@@ -28,6 +29,9 @@ void product::init()
     connect(ui->priceAscend, &QPushButton::clicked, this, &product::priceAscendSort);
     connect(ui->priceDescend, &QPushButton::clicked, this, &product::priceDescendSort);
     connect(ui->userCenter, &QPushButton::clicked, this, &product::openUserCenter);
+    connect(ui->purchase, &QPushButton::clicked, this, &product::purchase);
+    connect(ui->manage, &QPushButton::clicked, this, &product::manage);
+    connect(ui->refresh, &QPushButton::clicked, this, &product::refresh);
     void(product:: *slotFun)(QListWidgetItem*) = &product::onListMailItemClicked;
     void(QListWidget:: *signal)(QListWidgetItem*) = &QListWidget::itemClicked;
     connect(ui->listWidget, signal,this, slotFun);
@@ -96,6 +100,9 @@ void product::init()
         ui->userTypeLabal->setPixmap(QPixmap::fromImage(img));
         ui->addProduct->setText("");
         ui->addProduct->setEnabled(false);
+        ui->manage->setText("");
+        ui->manage->setEnabled(false);
+        ui->manage->hide();
     }
     else if (curUser->getUserType() == GUESTTYPE)
     {
@@ -104,6 +111,9 @@ void product::init()
         ui->userTypeLabal->setPixmap(QPixmap::fromImage(img));
         ui->addProduct->setText("");
         ui->addProduct->setEnabled(false);
+        ui->manage->setText("");
+        ui->manage->setEnabled(false);
+        ui->manage->hide();
     }
     else
     {
@@ -121,6 +131,7 @@ void product::init()
 //    qDebug() << 1 << endl;
     db->openDb();
     productList = db->queryTable();
+    discount = db->getDiscount();
     db->closeDb();
     showProduct();
 }
@@ -160,7 +171,7 @@ void product::test()
 //    db->closeDb();
 //    showProduct();
     addProduct *ap;
-    ap = new addProduct();
+    ap = new addProduct(curUser->uid);
     ap->father = this;
     ap->show();
 }
@@ -170,29 +181,85 @@ void product::showProduct(bool getFromDB)
     if (getFromDB)
     {
         db->openDb();
+        for (int i = 0; i < (int)productList.size(); i++)
+        {
+            delete productList[i];
+        }
         productList = db->queryTable();
+        discount = db->getDiscount();
         db->closeDb();
     }
     ui->scrollArea->hide();
     ui->place->show();
     ui->listWidget->clear();
     ui->listWidget->verticalScrollBar()->setSingleStep(16);
+    string typeList[4] = {"", "食物", "衣服", "书籍"};
+
+    ifstream infile;
+    infile.open("sellerFile.json");
+    string sellerJson;
+    infile >> sellerJson;
+    infile.close();
+    json j = json::parse(sellerJson);
+    vector<string> userListJson = j["data"];
+    vector<sellerClass> sellerList;
+    for (int i = 0; i < (int)userListJson.size(); i++)
+    {
+        json jTmp = json::parse(userListJson[i]);
+        sellerClass tmp;
+        tmp.uid = jTmp["uid"];
+        tmp.name = jTmp["name"];
+        tmp.type = jTmp["type"];
+        tmp.balance = jTmp["balance"];
+        tmp.setPass(jTmp["password"]);
+        sellerList.push_back(tmp);
+    }
+
     for (int i = 0; i < (int)productList.size(); i++)
     {
         QListWidgetItem *tmp = new QListWidgetItem();
         ui->listWidget->addItem(tmp);
         tmp->setSizeHint(QSize(626,160));
         productListUi *w = new productListUi(ui->listWidget);
-        w->ui->name->setText(geteElidedText(w->ui->name->font(), productList[i].name.c_str(), w->ui->name->width()));
+        w->ui->name->setText(geteElidedText(w->ui->name->font(), productList[i]->name.c_str(), w->ui->name->width()));
         char priceText[] = "";
-        sprintf(priceText, "%.2lf", productList[i].price);
+        sprintf(priceText, "%.2lf", productList[i]->getPrice(discount));
         w->ui->price->setText(priceText);
-        string remainText = "剩余：" + to_string(productList[i].remaining);
+        string remainText = "剩余：" + to_string(productList[i]->remaining);
         w->ui->remain->setText(remainText.c_str());
-        QImage img;
-        if (productList[i].photo.size() > 0)
+//        productItem tmpProduct = *productList[i];
+//        qDebug() << to_string(productList[i]->type).c_str();
+        string typeText = "类型：" + typeList[productList[i]->type];
+        w->ui->type->setText(typeText.c_str());
+
+        if (productList[i]->getPrice(discount) != productList[i]->price)
         {
-            img.load(productList[i].photo[productList[i].mainPhoto]);
+            char priceRawText[] = "";
+            sprintf(priceRawText, "￥%.2lf", productList[i]->price);
+            w->ui->priceRaw->setText(priceRawText);
+        }
+        else
+        {
+            w->ui->priceRaw->setText("");
+        }
+
+
+        int numToShow;
+        for (int j = 0; j < (int)sellerList.size(); j++)
+        {
+            if (sellerList[j].uid == productList[i]->seller)
+            {
+                numToShow = j   ;
+            }
+        }
+        string sellerText = "商家：" + sellerList[numToShow].name;
+        w->ui->seller->setText(sellerText.c_str());
+
+
+        QImage img;
+        if (productList[i]->photo.size() > 0)
+        {
+            img.load(productList[i]->photo[productList[i]->mainPhoto]);
         }
         else
         {
@@ -235,15 +302,27 @@ void product::onListMailItemClicked(QListWidgetItem* item)
             curItem++;
         }
     }
-    ui->name->setText(productList[curItem].name.c_str());
+    if (productList[curItem]->seller == curUser->uid && curUser->getUserType() == SELLERTYPE)
+    {
+        ui->manage->setText("管理");
+        ui->manage->setEnabled(true);
+        ui->manage->show();
+    }
+    else
+    {
+        ui->manage->setText("");
+        ui->manage->setEnabled(false);
+        ui->manage->hide();
+    }
+    ui->name->setText(productList[curItem]->name.c_str());
     char priceText[] = "";
-    sprintf(priceText, "%.2lf", productList[curItem].price);
+    sprintf(priceText, "%.2lf", productList[curItem]->getPrice(discount));
     ui->price->setText(priceText);
-    string remainText = "剩余：" + to_string(productList[curItem].remaining);
+    string remainText = "剩余：" + to_string(productList[curItem]->remaining);
     ui->remain->setText(remainText.c_str());
-    ui->description->setText(productList[curItem].description.c_str());
+    ui->description->setText(productList[curItem]->description.c_str());
     curFirstPhoto = 0;
-    mainPhoto = productList[curItem].mainPhoto;
+    mainPhoto = productList[curItem]->mainPhoto;
     curProduct = curItem;
     showPhoto();
 }
@@ -251,7 +330,7 @@ void product::onListMailItemClicked(QListWidgetItem* item)
 void product::showPhoto()
 {
 
-    productItem itemToShow = productList[curProduct];
+    productItem itemToShow = *productList[curProduct];
     QImage img;
     if (itemToShow.photo.size() > 0)
     {
@@ -392,7 +471,7 @@ bool product::eventFilter(QObject *obj, QEvent *event)
 
 void product::setMainPhoto(int mainPhotoNo)
 {
-    if (mainPhotoNo + curFirstPhoto < int(productList[curProduct].photo.size()))
+    if (mainPhotoNo + curFirstPhoto < int(productList[curProduct]->photo.size()))
     {
         mainPhoto = mainPhotoNo + curFirstPhoto;
     }
@@ -421,7 +500,7 @@ void product::prePhoto()
 
 void product::nextPhoto()
 {
-    if (curFirstPhoto < int(productList[curProduct].photo.size()) - 5)
+    if (curFirstPhoto < int(productList[curProduct]->photo.size()) - 5)
     {
         curFirstPhoto++;
         showPhoto();
@@ -440,7 +519,7 @@ void product::showBigPhoto()
     a->setWindowTitle("查看图片");
     a->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint);
     QPixmap pixmap;
-    QImage img(productList[curProduct].photo[mainPhoto]);
+    QImage img(productList[curProduct]->photo[mainPhoto]);
     pixmap.fromImage(img);
     int width = img.width();
     int height = img.height();
@@ -456,7 +535,7 @@ void product::showBigPhoto()
     }
     a->setMinimumSize(width, height);
     a->setMaximumSize(width, height);
-    string stylesheet = "background-image:url(" + productList[curProduct].photo[mainPhoto].toStdString() + ");background-position: center;background-repeat: no-repeat;";
+    string stylesheet = "background-image:url(" + productList[curProduct]->photo[mainPhoto].toStdString() + ");background-position: center;background-repeat: no-repeat;";
     a->setStyleSheet(stylesheet.c_str());
     a->show();
 }
@@ -464,17 +543,41 @@ void product::showBigPhoto()
 void product::search()
 {
     db->openDb();
+    for (int i = 0; i < (int)productList.size(); i++)
+    {
+        delete productList[i];
+    }
     productList.clear();
-    productList = db->queryTable(ui->search->text().toStdString());
+    if (sortMethod == DEFAULT_SORT)
+    {
+        productList = db->queryTable(ui->search->text().toStdString());
+        discount = db->getDiscount();
+    }
+    else if (sortMethod == PRICE_DESCEND_SORT)
+    {
+        productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
+        discount = db->getDiscount();
+    }
+    else
+    {
+        productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
+        discount = db->getDiscount();
+    }
     db->closeDb();
     showProduct();
 }
 
 void product::defaultSort()
 {
+    sortMethod = DEFAULT_SORT;
     db->openDb();
+    for (int i = 0; i < (int)productList.size(); i++)
+    {
+        delete productList[i];
+    }
     productList.clear();
     productList = db->queryTable(ui->search->text().toStdString());
+    discount = db->getDiscount();
     db->closeDb();
     showProduct();
     ui->defaultSort->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;color:rgb(28, 135, 255)");
@@ -484,9 +587,15 @@ void product::defaultSort()
 
 void product::priceDescendSort()
 {
+    sortMethod = PRICE_DESCEND_SORT;
     db->openDb();
+    for (int i = 0; i < (int)productList.size(); i++)
+    {
+        delete productList[i];
+    }
     productList.clear();
     productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
+    discount = db->getDiscount();
     db->closeDb();
     showProduct();
     ui->priceDescend->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;color:rgb(28, 135, 255)");
@@ -496,9 +605,15 @@ void product::priceDescendSort()
 
 void product::priceAscendSort()
 {
+    sortMethod = PRICE_ASCEND_SORT;
     db->openDb();
+    for (int i = 0; i < (int)productList.size(); i++)
+    {
+        delete productList[i];
+    }
     productList.clear();
     productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
+    discount = db->getDiscount();
     db->closeDb();
     showProduct();
     ui->priceAscend->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;color:rgb(28, 135, 255)");
@@ -506,7 +621,198 @@ void product::priceAscendSort()
     ui->defaultSort->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;");
 }
 
+void product::purchase()
+{
+    db->openDb();
+    vector<productItem *> purchaseProductList = db->queryTable();
+    discount = db->getDiscount();
+    db->closeDb();
+    int productToPurchase = 0;
+    for (int i = 0; i < (int)purchaseProductList.size(); i++)
+    {
+        if (purchaseProductList[i]->id == productList[curProduct]->id)
+        {
+            productToPurchase = i;
+            break;
+        }
+    }
+    if (purchaseProductList[productToPurchase]->remaining > 0 && curUser->balance >= purchaseProductList[productToPurchase]->getPrice(discount))
+    {
+        purchaseProductList[productToPurchase]->remaining--;
+        curUser->balance -= purchaseProductList[productToPurchase]->getPrice(discount);
+        db->openDb();
+        db->modifyData(*purchaseProductList[productToPurchase]);
+        db->closeDb();
+        if (curUser->getUserType() == SELLERTYPE)
+        {
+            ifstream infile;
+            infile.open("sellerFile.json");
+            string sellerJson;
+            infile >> sellerJson;
+            infile.close();
+            json j = json::parse(sellerJson);
+            vector<string> userListJson = j["data"];
+            vector<sellerClass> sellerList;
+            for (int i = 0; i < (int)userListJson.size(); i++)
+            {
+                json jTmp = json::parse(userListJson[i]);
+                sellerClass tmp;
+                tmp.uid = jTmp["uid"];
+                tmp.name = jTmp["name"];
+                tmp.type = jTmp["type"];
+                tmp.balance = jTmp["balance"];
+                tmp.setPass(jTmp["password"]);
+                sellerList.push_back(tmp);
+            }
+            int numToChange;
+            for (int i = 0; i < (int)sellerList.size(); i++)
+            {
+                if (sellerList[i].uid == curUser->uid)
+                {
+                    numToChange = i;
+                }
+            }
+            sellerList[numToChange].balance = curUser->balance;
+            vector<string> sellerJsonList;
+            for (int i = 0; i < (int)sellerList.size(); i++)
+            {
+                sellerJsonList.push_back(sellerList[i].getJson());
+            }
+            json jTmp;
+            jTmp["data"] = sellerJsonList;
+            ofstream outFile;
+            outFile.open("sellerFile.json");
+            outFile << jTmp.dump();
+            outFile.close();
+            promptBox *prompt = new promptBox(nullptr, "购买成功");
+            prompt->show();
+        }
+        else
+        {
+            ifstream infile;
+            infile.open("consumerFile.json");
+            string consumerJson;
+            infile >> consumerJson;
+            infile.close();
+            json j = json::parse(consumerJson);
+            vector<string> userListJson = j["data"];
+            vector<consumerClass> consumerList;
+            for (int i = 0; i < (int)userListJson.size(); i++)
+            {
+                json jTmp = json::parse(userListJson[i]);
+                consumerClass tmp;
+                tmp.uid = jTmp["uid"];
+                tmp.name = jTmp["name"];
+                tmp.type = jTmp["type"];
+                tmp.balance = jTmp["balance"];
+                tmp.setPass(jTmp["password"]);
+                consumerList.push_back(tmp);
+            }
+            int numToChange;
+            for (int i = 0; i < (int)consumerList.size(); i++)
+            {
+                if (consumerList[i].uid == curUser->uid)
+                {
+                    numToChange = i;
+                }
+            }
+            consumerList[numToChange].balance = curUser->balance;
+            vector<string> consumerJsonList;
+            for (int i = 0; i < (int)consumerList.size(); i++)
+            {
+                consumerJsonList.push_back(consumerList[i].getJson());
+            }
+            json jTmp;
+            jTmp["data"] = consumerJsonList;
+            ofstream outFile;
+            outFile.open("consumerFile.json");
+            outFile << jTmp.dump();
+            outFile.close();
+            promptBox *prompt = new promptBox(nullptr, "购买成功");
+            prompt->show();
+        }
+    }
+    else if (purchaseProductList[productToPurchase]->remaining <= 0)
+    {
+        promptBox *prompt = new promptBox(nullptr, "商品数量不足");
+        prompt->show();
+    }
+    else if(curUser->balance < purchaseProductList[productToPurchase]->getPrice(discount))
+    {
+        promptBox *prompt = new promptBox(nullptr, "余额不足");
+        prompt->show();
+    }
+    db->openDb();
+    for (int i = 0; i < (int)productList.size(); i++)
+    {
+        delete productList[i];
+    }
+    productList.clear();
+    if (sortMethod == DEFAULT_SORT)
+    {
+        productList = db->queryTable(ui->search->text().toStdString());
+        discount = db->getDiscount();
+    }
+    else if (sortMethod == PRICE_DESCEND_SORT)
+    {
+        productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
+        discount = db->getDiscount();
+    }
+    else
+    {
+        productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
+        discount = db->getDiscount();
+    }
+    db->closeDb();
+    showProduct();
+
+    for (int i = 0; i < (int)purchaseProductList.size(); i++)
+    {
+        delete purchaseProductList[i];
+    }
+}
+
+void product::refresh()
+{
+    db->openDb();
+    for (int i = 0; i < (int)productList.size(); i++)
+    {
+        delete productList[i];
+    }
+    productList.clear();
+    if (sortMethod == DEFAULT_SORT)
+    {
+        productList = db->queryTable(ui->search->text().toStdString());
+        discount = db->getDiscount();
+    }
+    else if (sortMethod == PRICE_DESCEND_SORT)
+    {
+        productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
+        discount = db->getDiscount();
+    }
+    else
+    {
+        productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
+        discount = db->getDiscount();
+    }
+    db->closeDb();
+    showProduct();
+}
+
+
+void product::manage()
+{
+    addProduct *ap;
+    ap = new addProduct(*productList[curProduct]);
+    ap->father = this;
+    ap->show();
+}
+
 product::~product()
 {
+    for (int i = 0; i < (int)productList.size(); i++)
+    {
+        delete productList[i];
+    }
     delete ui;
 }

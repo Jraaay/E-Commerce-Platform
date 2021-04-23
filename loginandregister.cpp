@@ -169,6 +169,10 @@ void Widget::loginRegFun()
                 uidOutFile.open("uidMaxFile.json");
                 uidOutFile << uidJson.dump();
                 uidOutFile.close();
+                sqlite db;
+                db.openDb();
+                db.newDiscount(tmp.uid);
+                db.closeDb();
             }
             else
             {

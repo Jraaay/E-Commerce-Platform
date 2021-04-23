@@ -582,6 +582,31 @@ background-color: rgb(255,255,255);border:none;padding: -1;
           </widget>
          </item>
          <item alignment="Qt::AlignHCenter">
+          <widget class="QPushButton" name="deleteButton">
+           <property name="minimumSize">
+            <size>
+             <width>90</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>微软雅黑</family>
+             <pointsize>12</pointsize>
+            </font>
+           </property>
+           <property name="cursor">
+            <cursorShape>PointingHandCursor</cursorShape>
+           </property>
+           <property name="styleSheet">
+            <string notr="true">background-color: rgb(255,255,255);border:none;border-radius:20px;padding: -1;color:gray</string>
+           </property>
+           <property name="text">
+            <string>删除</string>
+           </property>
+          </widget>
+         </item>
+         <item alignment="Qt::AlignHCenter">
           <widget class="QPushButton" name="cancel">
            <property name="minimumSize">
             <size>
@@ -682,6 +707,9 @@ background-color: rgb(255,255,255);border:none;padding: -1;
            <property name="styleSheet">
             <string notr="true">border:1px groove gray;border-radius:5px;padding: -1;</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
         </layout>
@@ -724,6 +752,9 @@ background-color: rgb(255,255,255);border:none;padding: -1;
            <property name="styleSheet">
             <string notr="true">border:1px groove gray;border-radius:5px;padding: -1;</string>
            </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
           </widget>
          </item>
         </layout>
@@ -765,6 +796,9 @@ background-color: rgb(255,255,255);border:none;padding: -1;
            </property>
            <property name="styleSheet">
             <string notr="true">border:1px groove gray;border-radius:5px;padding: -1;</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
            </property>
           </widget>
          </item>
@@ -818,13 +852,13 @@ background-color: rgb(255,255,255);border:none;padding: -1;
             <enum>Qt::NoFocus</enum>
            </property>
            <property name="styleSheet">
-            <string notr="true">QComboBox {
+            <string notr="true">.QComboBox {
     border: 1px solid gray;
     border-radius: 5px;
     padding: 1px;
 	min-width: 395px;
 }
-QComboBox::drop-down {
+.QComboBox::drop-down {
     subcontrol-origin: padding;
     border-left-width: 1px;
     width: 25px;
@@ -832,17 +866,17 @@ QComboBox::drop-down {
     border-left-style: solid;
 }
  
-QComboBox::down-arrow {
+.QComboBox::down-arrow {
     border-image: url(:/image/comboBox.png);
 }
 
-QComboBox QAbstractItemView{
+.QComboBox QAbstractItemView{
     border: 1px solid gray;
     selection-background-color: rgb(28,135,255);
     border-radius: 5px;
     color:black;
 }
-QComboBox QAbstractItemView::item {
+.QComboBox QAbstractItemView::item {
 	min-height: 50px;
 }
 </string>
@@ -851,16 +885,21 @@ QComboBox QAbstractItemView::item {
             <bool>false</bool>
            </property>
            <property name="currentIndex">
-            <number>-1</number>
+            <number>0</number>
            </property>
            <item>
             <property name="text">
-             <string>test1</string>
+             <string>食物</string>
             </property>
            </item>
            <item>
             <property name="text">
-             <string>test2</string>
+             <string>衣服</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>书籍</string>
             </property>
            </item>
           </widget>
@@ -898,7 +937,7 @@ QComboBox QAbstractItemView::item {
            </property>
           </widget>
          </item>
-         <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+         <item alignment="Qt::AlignHCenter|Qt::AlignTop">
           <widget class="QLineEdit" name="description">
            <property name="minimumSize">
             <size>

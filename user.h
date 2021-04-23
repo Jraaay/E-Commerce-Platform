@@ -26,6 +26,10 @@ public:
     {
         password = pass;
     };
+    void recharge(double money)
+    {
+        balance += money;
+    }
     string getJson();
 private:
     string password;

@@ -12,6 +12,10 @@
 #include <QListWidgetItem>
 #include "usercenter.h"
 
+#define DEFAULT_SORT 0
+#define PRICE_DESCEND_SORT 1
+#define PRICE_ASCEND_SORT 2
+
 namespace Ui {
 class product;
 }
@@ -44,10 +48,15 @@ public:
     void defaultSort();
     void priceDescendSort();
     void priceAscendSort();
+    void purchase();
+    void refresh();
     int curPage;
-    vector<productItem> productList;
+    int sortMethod;
+    void manage();
+    vector<productItem *> productList;
     void showProduct(bool getFromDB = false);
     sqlite *db;
+    vector<vector<double>> discount;
 
 private:
     Ui::product *ui;

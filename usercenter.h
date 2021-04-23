@@ -6,12 +6,12 @@
 #include "promptbox.h"
 #include <fstream>
 #include "ui_usercenter.h"
-#include "ui_usercenterbalance.h"
 #include <QTabBar>
+#include "rechargepage.h"
+#include "sqlite.h"
 
 namespace Ui {
 class userCenter;
-class userCenterBalance;
 }
 
 class userCenter : public QWidget
@@ -27,11 +27,16 @@ public:
     void toBalancePage();
     void toAccount();
     void toDiscuss();
+    void recharge();
+    void rechargeConfirm(double moneyToCharge);
+    void resetDiscount();
+    void saveDiscount();
     userClass *curUser;
+    vector<vector<double>> discount;
+    int discountPlace = -1;
 
 private:
     Ui::userCenter *ui;
-    Ui::userCenterBalance *uiBalance;
 };
 
 #endif // USERCENTER_H

@@ -26,6 +26,7 @@ SOURCES += \
     productitem.cpp \
     productlistui.cpp \
     promptbox.cpp \
+    rechargepage.cpp \
     sqlite.cpp \
     user.cpp \
     usercenter.cpp \
@@ -38,6 +39,7 @@ HEADERS += \
     productitem.h \
     productlistui.h \
     promptbox.h \
+    rechargepage.h \
     sqlite.h \
     user.h \
     usercenter.h \
@@ -48,6 +50,7 @@ FORMS += \
     product.ui \
     productlistui.ui \
     promptbox.ui \
+    rechargepage.ui \
     usercenter.ui \
     widget.ui
 

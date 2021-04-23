@@ -23,14 +23,17 @@ class addProduct : public QWidget
     Q_OBJECT
 
 public:
-    explicit addProduct(QWidget *parent = nullptr);
+    explicit addProduct(int seller, QWidget *parent = nullptr);
+    explicit addProduct(productItem productToModify, QWidget *parent = nullptr);
     ~addProduct();
+    void init(productItem productToModify = productItem());
     void selectPhotoFun();
     void photoShow();
     void nextPhoto();
     void prePhoto();
     void delPhoto();
     void saveProduct();
+    void delProduct();
     void setMainPhoto(int mainPhotoNo);
     QFileDialog *selectFile;
     vector<QString> photosList;
@@ -39,6 +42,8 @@ public:
     int curFirstPhoto;
     bool eventFilter(QObject *obj, QEvent *event);	// 添加时间过滤器声明
     void *father = nullptr;
+    int modifyId = -1;
+    int sellerId = -1;
 
 private:
     Ui::addProduct *ui;

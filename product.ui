@@ -61,7 +61,38 @@
       </spacer>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0,0,0,0,0,0,0">
+      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0,0,0,0,0,0,0,0">
+       <item>
+        <widget class="QPushButton" name="refresh">
+         <property name="minimumSize">
+          <size>
+           <width>150</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="maximumSize">
+          <size>
+           <width>150</width>
+           <height>60</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>微软雅黑</family>
+           <pointsize>16</pointsize>
+          </font>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray</string>
+         </property>
+         <property name="text">
+          <string>刷新</string>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QPushButton" name="addProduct">
          <property name="enabled">
@@ -106,7 +137,7 @@
          </property>
          <property name="sizeHint" stdset="0">
           <size>
-           <width>170</width>
+           <width>14</width>
            <height>20</height>
           </size>
          </property>
@@ -475,7 +506,7 @@ padding: -1;</string>
             <x>0</x>
             <y>0</y>
             <width>606</width>
-            <height>1293</height>
+            <height>1295</height>
            </rect>
           </property>
           <property name="minimumSize">
@@ -1103,13 +1134,89 @@ background-color: rgb(255,255,255);border:none;padding: -1;
                 </widget>
                </item>
                <item>
-                <spacer name="horizontalSpacer_8">
+                <spacer name="horizontalSpacer_10">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
                    <width>40</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="purchase">
+                 <property name="minimumSize">
+                  <size>
+                   <width>100</width>
+                   <height>30</height>
+                  </size>
+                 </property>
+                 <property name="font">
+                  <font>
+                   <family>微软雅黑</family>
+                   <pointsize>12</pointsize>
+                  </font>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">background-color: rgb(28,135,255);border:none;border-radius:15px;padding: -1;color:white;</string>
+                 </property>
+                 <property name="text">
+                  <string>立即购买</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_11">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Fixed</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>50</width>
+                   <height>20</height>
+                  </size>
+                 </property>
+                </spacer>
+               </item>
+               <item>
+                <widget class="QPushButton" name="manage">
+                 <property name="font">
+                  <font>
+                   <family>微软雅黑</family>
+                   <pointsize>12</pointsize>
+                  </font>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">background-color: rgb(255,255,255);border:none;border-radius:15px;padding: -1;color:gray;</string>
+                 </property>
+                 <property name="text">
+                  <string>管理</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <spacer name="horizontalSpacer_8">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                 <property name="sizeType">
+                  <enum>QSizePolicy::Fixed</enum>
+                 </property>
+                 <property name="sizeHint" stdset="0">
+                  <size>
+                   <width>50</width>
                    <height>20</height>
                   </size>
                  </property>
@@ -1128,7 +1235,7 @@ background-color: rgb(255,255,255);border:none;padding: -1;
                <property name="sizeHint" stdset="0">
                 <size>
                  <width>20</width>
-                 <height>13</height>
+                 <height>15</height>
                 </size>
                </property>
               </spacer>
