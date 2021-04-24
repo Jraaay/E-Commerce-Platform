@@ -31,7 +31,7 @@
    <string>电商交易平台</string>
   </property>
   <property name="windowIcon">
-   <iconset theme=":/image/logo.png" resource="image.qrc">
+   <iconset theme=":/image/logo.png" resource="resource.qrc">
     <normaloff>:/image/logo.png</normaloff>
     <normalon>:/image/logo.png</normalon>:/image/logo.png</iconset>
   </property>
@@ -445,6 +445,43 @@
         </widget>
        </item>
        <item>
+        <spacer name="verticalSpacer_7">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item alignment="Qt::AlignRight|Qt::AlignBottom">
+        <widget class="QPushButton" name="language">
+         <property name="minimumSize">
+          <size>
+           <width>120</width>
+           <height>20</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>微软雅黑</family>
+          </font>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray</string>
+         </property>
+         <property name="text">
+          <string>Change Language</string>
+         </property>
+        </widget>
+       </item>
+       <item>
         <spacer name="verticalSpacer_5">
          <property name="orientation">
           <enum>Qt::Vertical</enum>
@@ -474,7 +511,7 @@
   <tabstop>guestLogin</tabstop>
  </tabstops>
  <resources>
-  <include location="image.qrc"/>
+  <include location="resource.qrc"/>
  </resources>
  <connections/>
 </ui>

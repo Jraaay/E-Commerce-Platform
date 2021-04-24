@@ -60,6 +60,13 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 RESOURCES += \
-    image.qrc
+    resource.qrc
 
-DISTFILES +=
+DISTFILES += \
+    en_us.qm \
+    zh_cn.qm
+
+TRANSLATIONS = zh_cn.ts \
+               en_us.ts \
+               en_us.qm \
+               zh_cn.qm

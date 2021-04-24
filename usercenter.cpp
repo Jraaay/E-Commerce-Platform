@@ -39,7 +39,7 @@ void userCenter::init()
 
     ui->tabWidget->setCurrentIndex(0);
     ui->tabWidget->tabBar()->hide();
-    ui->title->setText((curUser->name + "的用户中心").c_str());
+    ui->title->setText(ui->title->text().replace("XXX", curUser->name.c_str()));
     ui->usernameEdit->hide();
     ui->password->hide();
     ui->passwordAgain->hide();
@@ -82,6 +82,13 @@ void userCenter::changeUserName()
         ui->usernameEdit->setText(ui->username->text());
         ui->usernameEdit->show();
         ui->changeUsername->setText("保存");
+    }
+    else if (ui->changeUsername->text() == "Change")
+    {
+        ui->username->hide();
+        ui->usernameEdit->setText(ui->username->text());
+        ui->usernameEdit->show();
+        ui->changeUsername->setText("Save");
     }
     else
     {
@@ -134,16 +141,23 @@ void userCenter::changeUserName()
                 outFile.open("sellerFile.json");
                 outFile << j.dump();
                 outFile.close();
-                promptBox *prompt = new promptBox(nullptr, "修改成功");
+                promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
                 prompt->show();
                 ui->usernameEdit->hide();
                 ui->username->setText(ui->usernameEdit->text());
                 ui->username->show();
-                ui->changeUsername->setText("修改");
+                if (ui->changeUsername->text() == "保存")
+                {
+                    ui->changeUsername->setText("修改");
+                }
+                else
+                {
+                    ui->changeUsername->setText("Change");
+                }
             }
             else
             {
-                promptBox *prompt = new promptBox(nullptr, "用户名已经存在");
+                promptBox *prompt = new promptBox(nullptr, "用户名已经存在\nUsername already exist");
                 prompt->show();
                 ui->usernameEdit->setText(ui->username->text());
             }
@@ -197,16 +211,23 @@ void userCenter::changeUserName()
                 outFile.open("consumerFile.json");
                 outFile << j.dump();
                 outFile.close();
-                promptBox *prompt = new promptBox(nullptr, "修改成功");
+                promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
                 prompt->show();
                 ui->usernameEdit->hide();
                 ui->username->setText(ui->usernameEdit->text());
                 ui->username->show();
-                ui->changeUsername->setText("修改");
+                if (ui->changeUsername->text() == "保存")
+                {
+                    ui->changeUsername->setText("修改");
+                }
+                else
+                {
+                    ui->changeUsername->setText("Change");
+                }
             }
             else
             {
-                promptBox *prompt = new promptBox(nullptr, "用户名已经存在");
+                promptBox *prompt = new promptBox(nullptr, "用户名已经存在\nUsername already exist");
                 prompt->show();
                 ui->usernameEdit->setText(ui->username->text());
             }
@@ -223,6 +244,14 @@ void userCenter::changePassword()
         ui->password->show();
         ui->passwordAgain->show();
         ui->changePassword->setText("保存");
+    }
+    else if (ui->changePassword->text() == "Change Password")
+    {
+        ui->password->setText("");
+        ui->passwordAgain->setText("");
+        ui->password->show();
+        ui->passwordAgain->show();
+        ui->changePassword->setText("Save");
     }
     else
     {
@@ -258,7 +287,7 @@ void userCenter::changePassword()
             }
             if (ui->password->text() != ui->passwordAgain->text())
             {
-                promptBox *prompt = new promptBox(nullptr, "两次密码不一致，修改失败");
+                promptBox *prompt = new promptBox(nullptr, "两次密码不一致，修改失败\nTwo passwords are not the same");
                 prompt->show();
             }
             else
@@ -275,12 +304,19 @@ void userCenter::changePassword()
                 outFile.open("sellerFile.json");
                 outFile << jWrite.dump();
                 outFile.close();
-                promptBox *prompt = new promptBox(nullptr, "修改成功");
+                promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
                 prompt->show();
             }
             ui->password->hide();
             ui->passwordAgain->hide();
-            ui->changeUsername->setText("修改密码");
+            if (ui->changePassword->text() == "保存")
+            {
+                ui->changePassword->setText("修改密码");
+            }
+            else
+            {
+                ui->changePassword->setText("Change Password");
+            }
         }
         else
         {
@@ -314,7 +350,7 @@ void userCenter::changePassword()
             }
             if (ui->password->text() != ui->passwordAgain->text())
             {
-                promptBox *prompt = new promptBox(nullptr, "两次密码不一致，修改失败");
+                promptBox *prompt = new promptBox(nullptr, "两次密码不一致，修改失败\nTwo passwords are not the same");
                 prompt->show();
             }
             else
@@ -331,12 +367,19 @@ void userCenter::changePassword()
                 outFile.open("consumerFile.json");
                 outFile << j.dump();
                 outFile.close();
-                promptBox *prompt = new promptBox(nullptr, "修改成功");
+                promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
                 prompt->show();
             }
             ui->password->hide();
             ui->passwordAgain->hide();
-            ui->changeUsername->setText("修改密码");
+            if (ui->changePassword->text() == "保存")
+            {
+                ui->changePassword->setText("修改密码");
+            }
+            else
+            {
+                ui->changePassword->setText("Change Password");
+            }
         }
     }
 }
@@ -416,7 +459,7 @@ void userCenter::rechargeConfirm(double moneyToCharge)
         outFile.open("sellerFile.json");
         outFile << jWrite.dump();
         outFile.close();
-        promptBox *prompt = new promptBox(nullptr, "充值成功");
+        promptBox *prompt = new promptBox(nullptr, "充值成功\nRecharge successfully");
         prompt->show();
     }
     else
@@ -461,7 +504,7 @@ void userCenter::rechargeConfirm(double moneyToCharge)
         outFile.open("consumerFile.json");
         outFile << jWrite.dump();
         outFile.close();
-        promptBox *prompt = new promptBox(nullptr, "充值成功");
+        promptBox *prompt = new promptBox(nullptr, "充值成功\nRecharge successfully");
         prompt->show();
     }
     char priceText[] = "";
@@ -487,6 +530,6 @@ void userCenter::saveDiscount()
     db->setDiscount(discount);
     db->closeDb();
     delete db;
-    promptBox *prompt = new promptBox(nullptr, "保存成功");
+    promptBox *prompt = new promptBox(nullptr, "保存成功\nSave successfully");
     prompt->show();
 }

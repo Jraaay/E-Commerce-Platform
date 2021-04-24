@@ -505,8 +505,8 @@ padding: -1;</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>606</width>
-            <height>1295</height>
+            <width>604</width>
+            <height>1258</height>
            </rect>
           </property>
           <property name="minimumSize">
@@ -570,7 +570,7 @@ padding: -1;</string>
                 </font>
                </property>
                <property name="text">
-                <string>TextLabel</string>
+                <string>商品名</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignCenter</set>

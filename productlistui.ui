@@ -14,7 +14,7 @@
    <cursorShape>PointingHandCursor</cursorShape>
   </property>
   <property name="windowTitle">
-   <string>Form</string>
+   <string>商品</string>
   </property>
   <property name="styleSheet">
    <string notr="true"/>

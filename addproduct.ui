@@ -154,7 +154,7 @@ background-color: rgb(255,255,255);border:none;;padding: -1;
               </size>
              </property>
              <property name="text">
-              <string>TextLabel</string>
+              <string/>
              </property>
             </widget>
            </item>
@@ -577,7 +577,7 @@ background-color: rgb(255,255,255);border:none;padding: -1;
             <string notr="true">background-color: rgb(28,135,255);border:none;border-radius:20px;padding: -1;color:white;</string>
            </property>
            <property name="text">
-            <string>添加</string>
+            <string>保存</string>
            </property>
           </widget>
          </item>
@@ -680,7 +680,7 @@ background-color: rgb(255,255,255);border:none;padding: -1;
             </font>
            </property>
            <property name="text">
-            <string>产品名称：</string>
+            <string>商品名称：</string>
            </property>
           </widget>
          </item>
@@ -725,7 +725,7 @@ background-color: rgb(255,255,255);border:none;padding: -1;
             </font>
            </property>
            <property name="text">
-            <string>产品价格：</string>
+            <string>商品价格：</string>
            </property>
           </widget>
          </item>
@@ -770,7 +770,7 @@ background-color: rgb(255,255,255);border:none;padding: -1;
             </font>
            </property>
            <property name="text">
-            <string>产品余量：</string>
+            <string>商品余量：</string>
            </property>
           </widget>
          </item>
@@ -815,7 +815,7 @@ background-color: rgb(255,255,255);border:none;padding: -1;
             </font>
            </property>
            <property name="text">
-            <string>产品类型：</string>
+            <string>商品类型：</string>
            </property>
           </widget>
          </item>
@@ -933,7 +933,7 @@ background-color: rgb(255,255,255);border:none;padding: -1;
             </font>
            </property>
            <property name="text">
-            <string>产品描述：</string>
+            <string>商品描述：</string>
            </property>
           </widget>
          </item>

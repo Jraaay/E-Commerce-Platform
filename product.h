@@ -11,6 +11,7 @@
 #include "addproduct.h"
 #include <QListWidgetItem>
 #include "usercenter.h"
+#include <QTranslator>
 
 #define DEFAULT_SORT 0
 #define PRICE_DESCEND_SORT 1
@@ -26,7 +27,7 @@ class product : public QWidget
     Q_OBJECT
 
 public:
-    product(userClass *curUserFromWidget, QWidget *parent = nullptr);
+    product(QTranslator *translator, userClass *curUserFromWidget, QWidget *parent = nullptr);
     ~product();
     int curType;
     userClass *curUser;
@@ -58,6 +59,7 @@ public:
     void showProduct(bool getFromDB = false);
     sqlite *db;
     vector<vector<double>> discount;
+    QTranslator *translatorPtr;
 
 private:
     Ui::product *ui;

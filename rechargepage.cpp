@@ -131,7 +131,7 @@ void rechargePage::rechargeConfirm()
         }
         else
         {
-            promptBox *prompt = new promptBox(nullptr, "没有选择充值金额！");
+            promptBox *prompt = new promptBox(nullptr, "没有选择充值金额！\nPlease select amount");
             prompt->show();
         }
     }

@@ -58,7 +58,7 @@ void Widget::loginRegFun()
             consumerList.push_back(tmp);
         }
     }
-    if (ui->login->text() == "登录")
+    if (ui->login->text() == "登录" || ui->login->text() == "Sign in")
     {
         bool logined = false;
         qDebug() << "login now";
@@ -77,7 +77,7 @@ void Widget::loginRegFun()
                     }
                     else
                     {
-                        promptBox *prompt = new promptBox(nullptr, "密码错误");
+                        promptBox *prompt = new promptBox(nullptr, "密码错误\nPassword wrong");
                         prompt->show();
                     }
                     break;
@@ -85,7 +85,7 @@ void Widget::loginRegFun()
             }
             if (flag)
             {
-                promptBox *prompt = new promptBox(nullptr, "未找到用户");
+                promptBox *prompt = new promptBox(nullptr, "未找到用户\nUser doesn't exist");
                 prompt->show();
             }
         }
@@ -103,7 +103,7 @@ void Widget::loginRegFun()
                     }
                     else
                     {
-                        promptBox *prompt = new promptBox(nullptr, "密码错误");
+                        promptBox *prompt = new promptBox(nullptr, "密码错误\nPassword wrong");
                         prompt->show();
                     }
                     break;
@@ -111,7 +111,7 @@ void Widget::loginRegFun()
             }
             if (flag)
             {
-                promptBox *prompt = new promptBox(nullptr, "未找到用户");
+                promptBox *prompt = new promptBox(nullptr, "未找到用户\nUser doesn't exist");
                 prompt->show();
             }
         }
@@ -125,7 +125,7 @@ void Widget::loginRegFun()
         qDebug() << "reg now";
         if (ui->password->text() != ui->passwordAgain->text())
         {
-            promptBox *prompt = new promptBox(nullptr, "两次输入的密码不一致");
+            promptBox *prompt = new promptBox(nullptr, "两次输入的密码不一致\nTwo passwords are not the same");
             prompt->show();
             return;
         }
@@ -161,7 +161,7 @@ void Widget::loginRegFun()
                 outFile.open("sellerFile.json");
                 outFile << j.dump();
                 outFile.close();
-                promptBox *prompt = new promptBox(nullptr, "注册成功");
+                promptBox *prompt = new promptBox(nullptr, "注册成功\nRegister successfully");
                 prompt->show();
                 json uidJson;
                 uidJson["uid"] = uidMax;
@@ -176,7 +176,7 @@ void Widget::loginRegFun()
             }
             else
             {
-                promptBox *prompt = new promptBox(nullptr, "用户已经存在");
+                promptBox *prompt = new promptBox(nullptr, "用户已经存在\nUser exists");
                 prompt->show();
             }
         }
@@ -212,7 +212,7 @@ void Widget::loginRegFun()
                 outFile.open("consumerFile.json");
                 outFile << j.dump();
                 outFile.close();
-                promptBox *prompt = new promptBox(nullptr, "注册成功");
+                promptBox *prompt = new promptBox(nullptr, "注册成功\nRegister successfully");
                 prompt->show();
                 json uidJson;
                 uidJson["uid"] = uidMax;
@@ -223,7 +223,7 @@ void Widget::loginRegFun()
             }
             else
             {
-                promptBox *prompt = new promptBox(nullptr, "用户已经存在");
+                promptBox *prompt = new promptBox(nullptr, "用户已经存在\nUser exists");
                 prompt->show();
             }
         }
@@ -239,12 +239,26 @@ void Widget::loginRegSwitchFun()
         ui->guestLogin->setHidden(true);
         ui->reg->setText("返回登录");
     }
-    else
+    else if (ui->reg->text() == "Register")
+    {
+        ui->passwordAgain->setHidden(false);
+        ui->login->setText("Register");
+        ui->guestLogin->setHidden(true);
+        ui->reg->setText("Back to login");
+    }
+    else if (ui->reg->text() == "返回登录")
     {
         ui->passwordAgain->setHidden(true);
         ui->login->setText("登录");
         ui->guestLogin->setHidden(false);
         ui->reg->setText("注册");
+    }
+    else
+    {
+        ui->passwordAgain->setHidden(true);
+        ui->login->setText("Sign in");
+        ui->guestLogin->setHidden(false);
+        ui->reg->setText("Register");
     }
 }
 
@@ -253,7 +267,7 @@ void Widget::guestLogin()
     curType = GUESTTYPE;
     consumerClass *guest = new consumerClass;
     guest->type = GUESTTYPE;
-    guest->name = "游客";
+    guest->name = "Guest";
     guest->balance = 0;
     curConsumer = *guest;
     //    msgBox = new QMessageBox("Login",

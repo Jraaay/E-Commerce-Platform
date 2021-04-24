@@ -3,10 +3,11 @@
 #include <QtDebug>
 #include "product.h"
 
-Widget::Widget(QWidget *parent)
+Widget::Widget(QTranslator *translator, QWidget *parent)
     : QWidget(parent), ui(new Ui::Widget)
 {
     ui->setupUi(this);
+    translatorPtr = translator;
     ui->passwordAgain->setHidden(true);
     init();
     connect(ui->login, &QPushButton::clicked, this, &Widget::loginRegFun);
@@ -16,6 +17,7 @@ Widget::Widget(QWidget *parent)
     connect(ui->password, &QLineEdit::returnPressed, ui->login, &QPushButton::click);
     connect(ui->passwordAgain, &QLineEdit::returnPressed, ui->login, &QPushButton::click);
     connect(ui->guestLogin, &QPushButton::clicked, this, &Widget::guestLogin);
+    connect(ui->language, &QPushButton::clicked, this, &Widget::changeLang);
 }
 
 Widget::~Widget()
@@ -28,14 +30,14 @@ void Widget::showProduct()
     product *pro;
     if (curType == SELLERTYPE)
     {
-        pro = new product(&curSeller);
+        pro = new product(translatorPtr, &curSeller);
         pro->curType = curType;
         pro->show();
         this->close();
     }
     else
     {
-        pro = new product(&curConsumer);
+        pro = new product(translatorPtr, &curConsumer);
         pro->curType = curType;
         pro->show();
         this->close();
@@ -105,4 +107,19 @@ void Widget::init()
         outFile.close();
     }
     ui->userName->setFocus();
+}
+
+void Widget::changeLang()
+{
+    if (ui->language->text() == "切换为中文")
+    {
+        translatorPtr->load(":/zh_cn.qm");
+        qApp->installTranslator(translatorPtr);
+    }
+    else
+    {
+        translatorPtr->load(":/en_us.qm");
+        qApp->installTranslator(translatorPtr);
+    }
+    ui->retranslateUi(this);
 }

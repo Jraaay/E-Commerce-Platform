@@ -7,6 +7,7 @@
 #include <fstream>
 #include "nlohmann/json.hpp"
 #include "user.h"
+#include <QTranslator>
 
 using namespace std;
 using json = nlohmann::json;
@@ -23,7 +24,7 @@ class Widget : public QWidget
     Q_OBJECT
 
 public:
-    Widget(QWidget *parent = nullptr);
+    Widget(QTranslator *translator, QWidget *parent = nullptr);
     ~Widget();
     int curType;
     consumerClass curConsumer;
@@ -31,6 +32,8 @@ public:
     void loginRegFun();
     void guestLogin();
     void showProduct();
+    void changeLang();
+    QTranslator *translatorPtr;
 
 private:
     Ui::Widget *ui;

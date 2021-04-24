@@ -50,7 +50,6 @@ void addProduct::init(productItem productToModify)
     mainPhoto = 0;
     if (modifyId != -1)
     {
-        ui->add->setText("保存");
         ui->name->setText(productToModify.name.c_str());
         ui->price->setText(QString::number(productToModify.price));
         ui->remain->setText(QString::number(productToModify.remaining));
@@ -82,7 +81,7 @@ void addProduct::selectPhotoFun()
 {
     selectFile = new QFileDialog;
     selectFile->setOption(selectFile->DontUseNativeDialog, false);
-    QStringList photosNameTmp = selectFile->getOpenFileNames(0, "添加图片", "‪C:\\Users\\Jray\\Pictures\\123456\\", "Images (*.jpg *.jpeg *.png *.gif);; All Files (*.*)", 0, 0);
+    QStringList photosNameTmp = selectFile->getOpenFileNames(0, "添加图片 Add photos", "‪C:\\Users\\Jray\\Pictures\\123456\\", "Images (*.jpg *.jpeg *.png *.gif);; All Files (*.*)", 0, 0);
     for (int i = 0; i < photosNameTmp.size(); i++)
     {
         QString photoNameTmp = photosNameTmp[i];
@@ -167,7 +166,7 @@ void addProduct::prePhoto()
     }
     else
     {
-        promptBox *prompt = new promptBox(nullptr, "已经是第一张图片了");
+        promptBox *prompt = new promptBox(nullptr, "已经是第一张图片了\nAlready first photo");
         prompt->show();
     }
 }
@@ -181,7 +180,7 @@ void addProduct::nextPhoto()
     }
     else
     {
-        promptBox *prompt = new promptBox(nullptr, "已经是最后一张图片了");
+        promptBox *prompt = new promptBox(nullptr, "已经是最后一张图片了\nAlready last photo");
         prompt->show();
     }
 }
@@ -221,7 +220,7 @@ void addProduct::delPhoto()
     }
     else
     {
-        promptBox *prompt = new promptBox(nullptr, "这里没有图片，不能删除哦");
+        promptBox *prompt = new promptBox(nullptr, "这里没有图片，不能删除哦\nHere is not a photo");
         prompt->show();
     }
 }
@@ -234,7 +233,7 @@ void addProduct::setMainPhoto(int mainPhotoNo)
     }
     else
     {
-        promptBox *prompt = new promptBox(nullptr, "这里没有图片，不能设置为主图片哦");
+        promptBox *prompt = new promptBox(nullptr, "这里没有图片，不能设置为主图片哦\nHere is not a photo");
         prompt->show();
     }
     photoShow();
@@ -307,21 +306,21 @@ void addProduct::saveProduct()
     productItem productToSave;
     if (ui->name->text().toStdString() == "")
     {
-        promptBox *prompt = new promptBox(nullptr, "没有填写产品名字呢");
+        promptBox *prompt = new promptBox(nullptr, "没有填写产品名字呢\nPlease input name");
         prompt->show();
         return;
     }
     productToSave.name = ui->name->text().toStdString();
     if (ui->price->text().toStdString() == "")
     {
-        promptBox *prompt = new promptBox(nullptr, "没有填写产品价格呢");
+        promptBox *prompt = new promptBox(nullptr, "没有填写产品价格呢\nPlease input price");
         prompt->show();
         return;
     }
     productToSave.price = ui->price->text().toDouble();
     if (ui->remain->text().toStdString() == "")
     {
-        promptBox *prompt = new promptBox(nullptr, "没有填写产品余量呢");
+        promptBox *prompt = new promptBox(nullptr, "没有填写产品余量呢\nPlease input stock");
         prompt->show();
         return;
     }
@@ -330,7 +329,7 @@ void addProduct::saveProduct()
     productToSave.mainPhoto = mainPhoto;
     if (ui->type->currentIndex() == -1)
     {
-        promptBox *prompt = new promptBox(nullptr, "没有选择产品类型呢");
+        promptBox *prompt = new promptBox(nullptr, "没有选择产品类型呢\nPlease select type");
         prompt->show();
         return;
     }

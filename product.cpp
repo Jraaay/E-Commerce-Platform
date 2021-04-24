@@ -6,9 +6,10 @@
 #include "ui_productlistui.h"
 #include <stdio.h>
 
-product::product(userClass *curUserFromWidget, QWidget *parent) : QWidget(parent),
-                                                                  ui(new Ui::product)
+product::product(QTranslator *translator, userClass *curUserFromWidget, QWidget *parent) : QWidget(parent),
+                                                                                           ui(new Ui::product)
 {
+    translatorPtr = translator;
     curUser = curUserFromWidget;
     init();
 }
@@ -136,7 +137,7 @@ void product::init()
 void product::logoutFun()
 {
     Widget *w;
-    w = new Widget;
+    w = new Widget(translatorPtr);
     w->show();
     this->close();
 }
@@ -222,11 +223,11 @@ void product::showProduct(bool getFromDB)
         char priceText[] = "";
         sprintf(priceText, "%.2lf", productList[i]->getPrice(discount));
         w->ui->price->setText(priceText);
-        string remainText = "剩余：" + to_string(productList[i]->remaining);
+        string remainText = w->ui->remain->text().toStdString() + to_string(productList[i]->remaining);
         w->ui->remain->setText(remainText.c_str());
         //        productItem tmpProduct = *productList[i];
         //        qDebug() << to_string(productList[i]->type).c_str();
-        string typeText = "类型：" + typeList[productList[i]->type];
+        string typeText = w->ui->type->text().toStdString() + typeList[productList[i]->type];
         w->ui->type->setText(typeText.c_str());
 
         if (productList[i]->getPrice(discount) != productList[i]->price)
@@ -248,7 +249,7 @@ void product::showProduct(bool getFromDB)
                 numToShow = j;
             }
         }
-        string sellerText = "商家：" + sellerList[numToShow].name;
+        string sellerText = w->ui->seller->text().toStdString() + sellerList[numToShow].name;
         w->ui->seller->setText(sellerText.c_str());
 
         QImage img;
@@ -299,13 +300,11 @@ void product::onListMailItemClicked(QListWidgetItem *item)
     }
     if (productList[curItem]->seller == curUser->uid && curUser->getUserType() == SELLERTYPE)
     {
-        ui->manage->setText("管理");
         ui->manage->setEnabled(true);
         ui->manage->show();
     }
     else
     {
-        ui->manage->setText("");
         ui->manage->setEnabled(false);
         ui->manage->hide();
     }
@@ -313,7 +312,7 @@ void product::onListMailItemClicked(QListWidgetItem *item)
     char priceText[] = "";
     sprintf(priceText, "%.2lf", productList[curItem]->getPrice(discount));
     ui->price->setText(priceText);
-    string remainText = "剩余：" + to_string(productList[curItem]->remaining);
+    string remainText = ui->remain->text().toStdString() + to_string(productList[curItem]->remaining);
     ui->remain->setText(remainText.c_str());
     ui->description->setText(productList[curItem]->description.c_str());
     curFirstPhoto = 0;
@@ -510,7 +509,7 @@ void product::showBigPhoto()
 {
     QDialog *a = new QDialog;
     a->setWindowIcon(QIcon(":/image/logo.png"));
-    a->setWindowTitle("查看图片");
+    a->setWindowTitle("查看图片 Review image");
     a->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint);
     QPixmap pixmap;
     QImage img(productList[curProduct]->photo[mainPhoto]);
@@ -678,7 +677,7 @@ void product::purchase()
             outFile.open("sellerFile.json");
             outFile << jTmp.dump();
             outFile.close();
-            promptBox *prompt = new promptBox(nullptr, "购买成功");
+            promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
             prompt->show();
         }
         else
@@ -722,18 +721,18 @@ void product::purchase()
             outFile.open("consumerFile.json");
             outFile << jTmp.dump();
             outFile.close();
-            promptBox *prompt = new promptBox(nullptr, "购买成功");
+            promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
             prompt->show();
         }
     }
     else if (purchaseProductList[productToPurchase]->remaining <= 0)
     {
-        promptBox *prompt = new promptBox(nullptr, "商品数量不足");
+        promptBox *prompt = new promptBox(nullptr, "商品数量不足\nOut of stock");
         prompt->show();
     }
     else if (curUser->balance < purchaseProductList[productToPurchase]->getPrice(discount))
     {
-        promptBox *prompt = new promptBox(nullptr, "余额不足");
+        promptBox *prompt = new promptBox(nullptr, "余额不足\nLack of balance");
         prompt->show();
     }
     db->openDb();
