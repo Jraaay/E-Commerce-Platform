@@ -67,6 +67,11 @@ DISTFILES += \
     zh_cn.qm
 
 TRANSLATIONS = zh_cn.ts \
-               en_us.ts \
-               en_us.qm \
-               zh_cn.qm
+               en_us.ts
+
+VERSION = 0.1.0
+
+QMAKE_TARGET_PRODUCT = E Commerce Platform
+QMAKE_TARGET_COPYRIGHT = Jray
+RC_LANG = 0x0004
+RC_ICONS = ./image/logo.ico

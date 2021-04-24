@@ -24,5 +24,6 @@
         <file>image/add.png</file>
         <file>en_us.qm</file>
         <file>zh_cn.qm</file>
+        <file>image/logo.ico</file>
     </qresource>
 </RCC>
