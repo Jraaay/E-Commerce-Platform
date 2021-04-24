@@ -50,7 +50,7 @@
         <translation>仅浏览</translation>
     </message>
     <message>
-        <location filename="widget.ui" line="467"/>
+        <location filename="widget.ui" line="480"/>
         <source>Change Language</source>
         <translation>Change Language</translation>
     </message>
@@ -202,8 +202,9 @@
     </message>
     <message>
         <location filename="product.ui" line="617"/>
-        <source>添加图片</source>
-        <translation>添加图片</translation>
+        <source>查看大图</source>
+        <oldsource>添加图片</oldsource>
+        <translation>查看大图</translation>
     </message>
     <message>
         <location filename="product.ui" line="688"/>
@@ -357,102 +358,102 @@
         <translation>XXX的用户中心</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="135"/>
+        <location filename="usercenter.ui" line="141"/>
         <source>账户中心</source>
         <translation>账户中心</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="154"/>
+        <location filename="usercenter.ui" line="166"/>
         <source>余额管理</source>
         <translation>余额管理</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="173"/>
+        <location filename="usercenter.ui" line="191"/>
         <source>折扣管理</source>
         <translation>折扣管理</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="251"/>
+        <location filename="usercenter.ui" line="269"/>
         <source>Account</source>
         <translation>账户中心</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="323"/>
+        <location filename="usercenter.ui" line="341"/>
         <source>用户名：</source>
         <translation>用户名：</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="396"/>
+        <location filename="usercenter.ui" line="420"/>
         <source>修改</source>
         <translation>修改</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="442"/>
+        <location filename="usercenter.ui" line="466"/>
         <source>UID：</source>
         <translation>UID：</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="504"/>
+        <location filename="usercenter.ui" line="528"/>
         <source>请输入密码</source>
         <translation>请输入密码</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="538"/>
+        <location filename="usercenter.ui" line="562"/>
         <source>请再次输入密码</source>
         <translation>请再次输入密码</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="557"/>
+        <location filename="usercenter.ui" line="587"/>
         <source>修改密码</source>
         <translation>修改密码</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="580"/>
+        <location filename="usercenter.ui" line="610"/>
         <source>Balance</source>
         <translation>余额管理</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="652"/>
+        <location filename="usercenter.ui" line="682"/>
         <source>余额：</source>
         <translation>余额：</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="674"/>
+        <location filename="usercenter.ui" line="704"/>
         <source>TextLabel</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="722"/>
+        <location filename="usercenter.ui" line="752"/>
         <source>充值</source>
         <translation>充值</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="745"/>
+        <location filename="usercenter.ui" line="775"/>
         <source>Discount</source>
         <translation>折扣管理</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="801"/>
+        <location filename="usercenter.ui" line="831"/>
         <source>食物类商品折扣：</source>
         <translation>食物类商品折扣：</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="849"/>
+        <location filename="usercenter.ui" line="879"/>
         <source>衣服类商品折扣：</source>
         <translation>衣服类商品折扣：</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="897"/>
+        <location filename="usercenter.ui" line="927"/>
         <source>书籍类商品折扣：</source>
         <translation>书籍类商品折扣：</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="965"/>
+        <location filename="usercenter.ui" line="995"/>
         <source>保存</source>
         <translation>保存</translation>
     </message>
     <message>
-        <location filename="usercenter.ui" line="990"/>
+        <location filename="usercenter.ui" line="1020"/>
         <source>重置</source>
         <translation>重置</translation>
     </message>

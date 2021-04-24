@@ -1,9 +1,10 @@
 #include "usercenter.h"
 #include "ui_usercenter.h"
 
-userCenter::userCenter(userClass *curUserFromWidget, QWidget *parent) : QWidget(parent),
+userCenter::userCenter(userClass *curUserFromWidget, product *father, QWidget *parent) : QWidget(parent),
                                                                         ui(new Ui::userCenter)
 {
+    fatherPtr = father;
     ui->setupUi(this);
     curUser = curUserFromWidget;
     init();
@@ -129,6 +130,7 @@ void userCenter::changeUserName()
             }
             if (only)
             {
+                curUser->name = ui->usernameEdit->text().toStdString();
                 sellerList[numToChange].name = ui->usernameEdit->text().toStdString();
                 vector<string> sellerJsonList;
                 for (int i = 0; i < (int)sellerList.size(); i++)
@@ -142,6 +144,7 @@ void userCenter::changeUserName()
                 outFile << j.dump();
                 outFile.close();
                 promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
+                fatherPtr->refreshUser();
                 prompt->show();
                 ui->usernameEdit->hide();
                 ui->username->setText(ui->usernameEdit->text());
@@ -199,6 +202,7 @@ void userCenter::changeUserName()
             }
             if (only)
             {
+                curUser->name = ui->usernameEdit->text().toStdString();
                 consumerList[numToChange].name = ui->usernameEdit->text().toStdString();
                 vector<string> consumerJsonList;
                 for (int i = 0; i < (int)consumerList.size(); i++)
@@ -212,6 +216,7 @@ void userCenter::changeUserName()
                 outFile << j.dump();
                 outFile.close();
                 promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
+                fatherPtr->refreshUser();
                 prompt->show();
                 ui->usernameEdit->hide();
                 ui->username->setText(ui->usernameEdit->text());

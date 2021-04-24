@@ -5,6 +5,7 @@
 #include <QCheckBox>
 #include "ui_productlistui.h"
 #include <stdio.h>
+#include "usercenter.h"
 
 product::product(QTranslator *translator, userClass *curUserFromWidget, QWidget *parent) : QWidget(parent),
                                                                                            ui(new Ui::product)
@@ -145,7 +146,7 @@ void product::logoutFun()
 void product::openUserCenter()
 {
     userCenter *w;
-    w = new userCenter(curUser);
+    w = new userCenter(curUser, this);
     w->show();
 }
 
@@ -192,6 +193,7 @@ void product::showProduct(bool getFromDB)
     ui->listWidget->clear();
     ui->listWidget->verticalScrollBar()->setSingleStep(16);
     string typeList[4] = {"", "食物", "衣服", "书籍"};
+    string typeListEn[4] = {"", "Food", "Clothes", "Book"};
 
     ifstream infile;
     infile.open("sellerFile.json");
@@ -227,7 +229,15 @@ void product::showProduct(bool getFromDB)
         w->ui->remain->setText(remainText.c_str());
         //        productItem tmpProduct = *productList[i];
         //        qDebug() << to_string(productList[i]->type).c_str();
-        string typeText = w->ui->type->text().toStdString() + typeList[productList[i]->type];
+        string typeText;
+        if (w->ui->type->text() == "类型：")
+        {
+            typeText = w->ui->type->text().toStdString() + typeList[productList[i]->type];
+        }
+        else
+        {
+            typeText = w->ui->type->text().toStdString() + typeListEn[productList[i]->type];
+        }
         w->ui->type->setText(typeText.c_str());
 
         if (productList[i]->getPrice(discount) != productList[i]->price)
@@ -362,11 +372,11 @@ void product::showPhoto()
         photoLabelList[i]->setPixmap(photo);
         if (i + curFirstPhoto == mainPhoto)
         {
-            photoLabelList[i]->setStyleSheet("border:2px dashed #1c87ff;");
+            photoLabelList[i]->setStyleSheet(".QLabel\n{\n	border:2px dashed #1c87ff;\n}");
         }
         else
         {
-            photoLabelList[i]->setStyleSheet("border:2px dashed #D3D3D3;");
+            photoLabelList[i]->setStyleSheet(".QLabel\n{\n	border:2px dashed #D3D3D3;\n}");
         }
     }
     if (mainPhoto < curFirstPhoto)
@@ -507,30 +517,33 @@ void product::nextPhoto()
 
 void product::showBigPhoto()
 {
-    QDialog *a = new QDialog;
-    a->setWindowIcon(QIcon(":/image/logo.png"));
-    a->setWindowTitle("查看图片 Review image");
-    a->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint);
-    QPixmap pixmap;
-    QImage img(productList[curProduct]->photo[mainPhoto]);
-    pixmap.fromImage(img);
-    int width = img.width();
-    int height = img.height();
-    if (width > 1920)
+    if(productList[curProduct]->photo.size() > 0)
     {
-        height = (double)height / (double)width * 1920;
-        width = 1920;
+        QDialog *a = new QDialog;
+        a->setWindowIcon(QIcon(":/image/logo.png"));
+        a->setWindowTitle("查看图片 Review image");
+        a->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint);
+        QPixmap pixmap;
+        QImage img(productList[curProduct]->photo[mainPhoto]);
+        pixmap.fromImage(img);
+        int width = img.width();
+        int height = img.height();
+        if (width > 1920)
+        {
+            height = (double)height / (double)width * 1920;
+            width = 1920;
+        }
+        if (height > 1080)
+        {
+            width = (double)width / (double)height * 1920;
+            height = 1920;
+        }
+        a->setMinimumSize(width, height);
+        a->setMaximumSize(width, height);
+        string stylesheet = "background-image:url(" + productList[curProduct]->photo[mainPhoto].toStdString() + ");background-position: center;background-repeat: no-repeat;";
+        a->setStyleSheet(stylesheet.c_str());
+        a->show();
     }
-    if (height > 1080)
-    {
-        width = (double)width / (double)height * 1920;
-        height = 1920;
-    }
-    a->setMinimumSize(width, height);
-    a->setMaximumSize(width, height);
-    string stylesheet = "background-image:url(" + productList[curProduct]->photo[mainPhoto].toStdString() + ");background-position: center;background-repeat: no-repeat;";
-    a->setStyleSheet(stylesheet.c_str());
-    a->show();
 }
 
 void product::search()
@@ -808,4 +821,10 @@ product::~product()
     }
     delete db;
     delete ui;
+    delete curUser;
+}
+
+void product::refreshUser()
+{
+    ui->userCenter->setText(curUser->name.c_str());
 }

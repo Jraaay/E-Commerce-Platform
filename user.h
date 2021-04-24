@@ -31,6 +31,9 @@ public:
         balance += money;
     }
     string getJson();
+    virtual ~userClass()
+    {
+    }
 
 private:
     string password;
@@ -43,6 +46,9 @@ public:
     {
         return type;
     };
+    virtual ~consumerClass()
+    {
+    }
 };
 
 class sellerClass : public userClass
@@ -52,6 +58,9 @@ public:
     {
         return type;
     };
+    virtual ~sellerClass()
+    {
+    }
 };
 
 #endif // USER_H

@@ -2,6 +2,7 @@
 #define USERCENTER_H
 
 #include <QWidget>
+#include "product.h"
 #include "user.h"
 #include "promptbox.h"
 #include <fstream>
@@ -20,7 +21,7 @@ class userCenter : public QWidget
     Q_OBJECT
 
 public:
-    explicit userCenter(userClass *curUserFromWidget, QWidget *parent = nullptr);
+    explicit userCenter(userClass *curUserFromWidget, product *father, QWidget *parent = nullptr);
     ~userCenter();
     void init();
     void changeUserName();
@@ -35,6 +36,7 @@ public:
     userClass *curUser;
     vector<vector<double>> discount;
     int discountPlace = -1;
+    product *fatherPtr;
 
 private:
     Ui::userCenter *ui;

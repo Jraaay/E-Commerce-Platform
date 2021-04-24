@@ -26,7 +26,7 @@
    <string>用户中心</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="image.qrc">
+   <iconset resource="resource.qrc">
     <normaloff>:/image/logo.png</normaloff>:/image/logo.png</iconset>
   </property>
   <property name="styleSheet">
@@ -119,6 +119,12 @@
        </property>
        <item>
         <widget class="QPushButton" name="account">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
          <property name="font">
           <font>
            <family>微软雅黑</family>
@@ -138,6 +144,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="balance">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
          <property name="font">
           <font>
            <family>微软雅黑</family>
@@ -157,6 +169,12 @@
        </item>
        <item>
         <widget class="QPushButton" name="discount">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>25</height>
+          </size>
+         </property>
          <property name="font">
           <font>
            <family>微软雅黑</family>
@@ -380,6 +398,12 @@
              </item>
              <item alignment="Qt::AlignLeft">
               <widget class="QPushButton" name="changeUsername">
+               <property name="minimumSize">
+                <size>
+                 <width>0</width>
+                 <height>25</height>
+                </size>
+               </property>
                <property name="font">
                 <font>
                  <family>微软雅黑</family>
@@ -541,6 +565,12 @@
            </item>
            <item alignment="Qt::AlignHCenter">
             <widget class="QPushButton" name="changePassword">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>25</height>
+              </size>
+             </property>
              <property name="font">
               <font>
                <family>微软雅黑</family>
@@ -1018,7 +1048,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="image.qrc"/>
+  <include location="resource.qrc"/>
  </resources>
  <connections/>
 </ui>

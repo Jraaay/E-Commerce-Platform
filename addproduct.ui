@@ -26,7 +26,7 @@
    <string>添加商品</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="image.qrc">
+   <iconset resource="resource.qrc">
     <normaloff>:/image/logo.png</normaloff>:/image/logo.png</iconset>
   </property>
   <property name="styleSheet">
@@ -128,7 +128,7 @@ background-color: rgb(255,255,255);border:none;;padding: -1;
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="image.qrc">
+              <iconset resource="resource.qrc">
                <normaloff>:/image/left.png</normaloff>:/image/left.png</iconset>
              </property>
              <property name="iconSize">
@@ -192,7 +192,7 @@ background-color: rgb(255,255,255);border:none;;padding: -1;
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="image.qrc">:/image/noImage.png</pixmap>
+              <pixmap resource="resource.qrc">:/image/noImage.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>false</bool>
@@ -270,7 +270,7 @@ border:none;background-color: rgb(255,255,255);padding: -1;color:gray
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="image.qrc">:/image/noImage.png</pixmap>
+              <pixmap resource="resource.qrc">:/image/noImage.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>false</bool>
@@ -344,7 +344,7 @@ border:none;background-color: rgb(255,255,255);padding: -1;color:gray
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="image.qrc">:/image/noImage.png</pixmap>
+              <pixmap resource="resource.qrc">:/image/noImage.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>false</bool>
@@ -424,7 +424,7 @@ border:none;background-color: rgb(255,255,255);padding: -1;color:gray
               <string/>
              </property>
              <property name="pixmap">
-              <pixmap resource="image.qrc">:/image/noImage.png</pixmap>
+              <pixmap resource="resource.qrc">:/image/noImage.png</pixmap>
              </property>
              <property name="scaledContents">
               <bool>false</bool>
@@ -504,7 +504,7 @@ background-color: rgb(255,255,255);border:none;padding: -1;
               <string/>
              </property>
              <property name="icon">
-              <iconset resource="image.qrc">
+              <iconset resource="resource.qrc">
                <normaloff>:/image/right.png</normaloff>:/image/right.png</iconset>
              </property>
              <property name="iconSize">
@@ -990,6 +990,7 @@ background-color: rgb(255,255,255);border:none;padding: -1;
   </layout>
  </widget>
  <resources>
+  <include location="resource.qrc"/>
   <include location="image.qrc"/>
  </resources>
  <connections/>

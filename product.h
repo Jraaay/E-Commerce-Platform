@@ -10,7 +10,6 @@
 #include "sqlite.h"
 #include "addproduct.h"
 #include <QListWidgetItem>
-#include "usercenter.h"
 #include <QTranslator>
 
 #define DEFAULT_SORT 0
@@ -55,6 +54,7 @@ public:
     int curPage;
     int sortMethod;
     void manage();
+    void refreshUser();
     vector<productItem *> productList;
     void showProduct(bool getFromDB = false);
     sqlite *db;
