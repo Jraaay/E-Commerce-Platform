@@ -163,6 +163,7 @@ vector<productItem *> sqlite::queryTable(string LIKE, string SORT)
                 break;
             case BOOKTYPE:
                 tmp = new bookItem;
+                break;
             default:
                 tmp = new productItem;
             }

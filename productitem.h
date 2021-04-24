@@ -44,7 +44,7 @@ public:
         double discountThis = 1;
         for (int i = 0; i < (int)discount.size(); i++)
         {
-            if (discount[i][3] == seller)
+            if ((int)discount[i][3] == seller)
             {
                 discountThis = discount[i][FOODTYPE - 1];
                 break;
@@ -65,7 +65,7 @@ public:
         double discountThis = 1;
         for (int i = 0; i < (int)discount.size(); i++)
         {
-            if (discount[i][3] == seller)
+            if ((int)discount[i][3] == seller)
             {
                 discountThis = discount[i][CLOTHESTYPE - 1];
                 break;
@@ -86,7 +86,7 @@ public:
         double discountThis = 1;
         for (int i = 0; i < (int)discount.size(); i++)
         {
-            if (discount[i][3] == seller)
+            if ((int)discount[i][3] == seller)
             {
                 discountThis = discount[i][BOOKTYPE - 1];
                 break;

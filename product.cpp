@@ -322,7 +322,15 @@ void product::onListMailItemClicked(QListWidgetItem *item)
     char priceText[] = "";
     sprintf(priceText, "%.2lf", productList[curItem]->getPrice(discount));
     ui->price->setText(priceText);
-    string remainText = ui->remain->text().toStdString() + to_string(productList[curItem]->remaining);
+    string remainText;
+    if (ui->purchase->text() == "Buy now")
+    {
+        remainText = "Stock: " + to_string(productList[curItem]->remaining);
+    }
+    else
+    {
+        remainText = "剩余: " + to_string(productList[curItem]->remaining);
+    }
     ui->remain->setText(remainText.c_str());
     ui->description->setText(productList[curItem]->description.c_str());
     curFirstPhoto = 0;
