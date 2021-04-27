@@ -10,52 +10,96 @@ void Widget::loginRegFun()
     vector<sellerClass> sellerList;
     vector<consumerClass> consumerList;
     ifstream infile;
-    infile.open("uidMaxFile.json");
-    string uidMaxJson;
-    infile >> uidMaxJson;
-    infile.close();
-    json j = json::parse(uidMaxJson);
-    int uidMax = j["uid"];
+    string uidMaxJson = "";
+    int uidMax;
+    try
+    {
+        infile.open("uidMaxFile.json");
+        infile >> uidMaxJson;
+        infile.close();
+        json j = json::parse(uidMaxJson);
+        uidMax = j["uid"];
+    }
+    catch (exception &e)
+    {
+        uidMaxJson = "";
+        qDebug() << e.what() << endl;
+        int tmp = 0;
+        json j;
+        j["uid"] = tmp;
+        ofstream outFile;
+        outFile.open("uidMaxFile.json");
+        outFile << j.dump();
+        outFile.close();
+    }
+
+
     if (curType == SELLERTYPE)
     {
         ifstream infile;
-        infile.open("sellerFile.json");
-        string sellerJson;
-        infile >> sellerJson;
-        infile.close();
-        json j = json::parse(sellerJson);
-        vector<string> userListJson = j["data"];
-        for (int i = 0; i < (int)userListJson.size(); i++)
+        string sellerJson = "";
+        try{
+            infile.open("sellerFile.json");
+            infile >> sellerJson;
+            infile.close();
+            json j = json::parse(sellerJson);
+            vector<string> userListJson = j["data"];
+            for (int i = 0; i < (int)userListJson.size(); i++)
+            {
+                json jTmp = json::parse(userListJson[i]);
+                sellerClass tmp;
+                tmp.uid = jTmp["uid"];
+                tmp.name = jTmp["name"];
+                tmp.type = jTmp["type"];
+                tmp.balance = jTmp["balance"];
+                tmp.setPass(jTmp["password"]);
+                sellerList.push_back(tmp);
+            }
+        }
+        catch (exception& e)
         {
-            json jTmp = json::parse(userListJson[i]);
-            sellerClass tmp;
-            tmp.uid = jTmp["uid"];
-            tmp.name = jTmp["name"];
-            tmp.type = jTmp["type"];
-            tmp.balance = jTmp["balance"];
-            tmp.setPass(jTmp["password"]);
-            sellerList.push_back(tmp);
+            qDebug() << e.what() << endl;
+            vector<string> tmp;
+            json j;
+            j["data"] = tmp;
+            ofstream outFile;
+            outFile.open("sellerFile.json");
+            outFile << j.dump();
+            outFile.close();
         }
     }
     if (curType == CONSUMERTYPE)
     {
         ifstream infile;
-        infile.open("consumerFile.json");
-        string consumerJson;
-        infile >> consumerJson;
-        infile.close();
-        json j = json::parse(consumerJson);
-        vector<string> userListJson = j["data"];
-        for (int i = 0; i < (int)userListJson.size(); i++)
+        string consumerJson = "";
+        try{
+            infile.open("consumerFile.json");
+            infile >> consumerJson;
+            infile.close();
+            json j = json::parse(consumerJson);
+            vector<string> userListJson = j["data"];
+            for (int i = 0; i < (int)userListJson.size(); i++)
+            {
+                json jTmp = json::parse(userListJson[i]);
+                consumerClass tmp;
+                tmp.uid = jTmp["uid"];
+                tmp.name = jTmp["name"];
+                tmp.type = jTmp["type"];
+                tmp.balance = jTmp["balance"];
+                tmp.setPass(jTmp["password"]);
+                consumerList.push_back(tmp);
+            }
+        }
+        catch (exception& e)
         {
-            json jTmp = json::parse(userListJson[i]);
-            consumerClass tmp;
-            tmp.uid = jTmp["uid"];
-            tmp.name = jTmp["name"];
-            tmp.type = jTmp["type"];
-            tmp.balance = jTmp["balance"];
-            tmp.setPass(jTmp["password"]);
-            consumerList.push_back(tmp);
+            qDebug() << e.what() << endl;
+            vector<string> tmp;
+            json j;
+            j["data"] = tmp;
+            ofstream outFile;
+            outFile.open("consumerFile.json");
+            outFile << j.dump();
+            outFile.close();
         }
     }
     if (ui->login->text() == "登录" || ui->login->text() == "Sign in")

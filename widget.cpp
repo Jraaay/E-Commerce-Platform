@@ -64,10 +64,17 @@ void Widget::init()
 {
     curType = CONSUMERTYPE;
     ifstream infile;
-    infile.open("sellerFile.json");
-    string sellerJson;
-    infile >> sellerJson;
-    infile.close();
+    string sellerJson = "";
+    try
+    {
+        infile.open("sellerFile.json");
+        infile >> sellerJson;
+        infile.close();
+    }
+    catch (exception& e)
+    {
+        qDebug() << e.what() << endl;
+    }
     if (sellerJson == "")
     {
         vector<string> tmp;
@@ -78,10 +85,17 @@ void Widget::init()
         outFile << j.dump();
         outFile.close();
     }
-    infile.open("consumerFile.json");
-    string consumerJson;
-    infile >> consumerJson;
-    infile.close();
+    string consumerJson = "";
+    try{
+        infile.open("consumerFile.json");
+        infile >> consumerJson;
+        infile.close();
+    }
+    catch (exception& e)
+    {
+        qDebug() << e.what() << endl;
+    }
+
     if (consumerJson == "")
     {
         vector<string> tmp;
@@ -92,10 +106,18 @@ void Widget::init()
         outFile << j.dump();
         outFile.close();
     }
-    infile.open("uidMaxFile.json");
-    string uidMaxJson;
-    infile >> uidMaxJson;
-    infile.close();
+    string uidMaxJson = "";
+    try
+    {
+        infile.open("uidMaxFile.json");
+        infile >> uidMaxJson;
+        infile.close();
+    }
+    catch (exception &e)
+    {
+        qDebug() << e.what() << endl;
+    }
+
     if (uidMaxJson == "")
     {
         int tmp = 0;
