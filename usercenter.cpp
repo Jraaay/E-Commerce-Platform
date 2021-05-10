@@ -23,20 +23,35 @@ void userCenter::init()
     db->closeDb();
     delete db;
 
-    for (int i = 0; i < (int)discount.size(); i++)
+    if (curUser->getUserType() == SELLERTYPE)
     {
-        if (discount[i][3] == curUser->uid)
+
+        for (int i = 0; i < (int)discount.size(); i++)
         {
-            discountPlace = i;
-            break;
+            if (discount[i][3] == curUser->uid)
+            {
+                discountPlace = i;
+                break;
+            }
         }
+        ui->food->setTextMargins(5, 0, 0, 0);
+        ui->clothes->setTextMargins(5, 0, 0, 0);
+        ui->book->setTextMargins(5, 0, 0, 0);
+        ui->food->setText(QString::number((1 - discount[discountPlace][0]) * 100));
+        ui->clothes->setText(QString::number((1 - discount[discountPlace][1]) * 100));
+        ui->book->setText(QString::number((1 - discount[discountPlace][2]) * 100));
+
+        QRegExp *regx1 = new QRegExp("^(100|(([1-9]){1}[0-9]?|0{1})((\\.)([0-9]){1,2})?)$");
+        QValidator *validator1 = new QRegExpValidator(*regx1, ui->food);
+        ui->food->setValidator(validator1);
+        validator1 = new QRegExpValidator(*regx1, ui->clothes);
+        QValidator *validator2 = new QRegExpValidator(*regx1, ui->food);
+        ui->clothes->setValidator(validator2);
+        validator1 = new QRegExpValidator(*regx1, ui->book);
+        QValidator *validator3 = new QRegExpValidator(*regx1, ui->food);
+        ui->book->setValidator(validator3);
+        delete regx1;
     }
-    ui->food->setTextMargins(5, 0, 0, 0);
-    ui->clothes->setTextMargins(5, 0, 0, 0);
-    ui->book->setTextMargins(5, 0, 0, 0);
-    ui->food->setText(QString::number((1 - discount[discountPlace][0]) * 100));
-    ui->clothes->setText(QString::number((1 - discount[discountPlace][1]) * 100));
-    ui->book->setText(QString::number((1 - discount[discountPlace][2]) * 100));
 
     ui->tabWidget->setCurrentIndex(0);
     ui->tabWidget->tabBar()->hide();
@@ -46,17 +61,6 @@ void userCenter::init()
     ui->passwordAgain->hide();
     ui->username->setText(curUser->name.c_str());
     ui->uid->setText(QString::number(curUser->uid));
-
-    QRegExp *regx1 = new QRegExp("^(100|(([1-9]){1}[0-9]?|0{1})((\\.)([0-9]){1,2})?)$");
-    QValidator *validator1 = new QRegExpValidator(*regx1, ui->food);
-    ui->food->setValidator(validator1);
-    validator1 = new QRegExpValidator(*regx1, ui->clothes);
-    QValidator *validator2 = new QRegExpValidator(*regx1, ui->food);
-    ui->clothes->setValidator(validator2);
-    validator1 = new QRegExpValidator(*regx1, ui->book);
-    QValidator *validator3 = new QRegExpValidator(*regx1, ui->food);
-    ui->book->setValidator(validator3);
-    delete regx1;
 
     char priceText[1000] = "";
     sprintf(priceText, "%.2lf", curUser->balance);
