@@ -578,11 +578,35 @@ void product::search()
     else if (sortMethod == PRICE_DESCEND_SORT)
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
+        for (int i = 0; i < (int)productList.size(); i++)
+        {
+            for (int j = 0; j < (int)productList.size() - i; j++)
+            {
+                if (productList[i]->getPrice(discount) > productList[j]->getPrice(discount))
+                {
+                    productItem *tmp = productList[i];
+                    productList[i] = productList[j];
+                    productList[j] = tmp;
+                }
+            }
+        }
         discount = db->getDiscount();
     }
     else
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
+        for (int i = 0; i < (int)productList.size(); i++)
+        {
+            for (int j = 0; j < (int)productList.size() - i; j++)
+            {
+                if (productList[i]->getPrice(discount) < productList[j]->getPrice(discount))
+                {
+                    productItem *tmp = productList[i];
+                    productList[i] = productList[j];
+                    productList[j] = tmp;
+                }
+            }
+        }
         discount = db->getDiscount();
     }
     db->closeDb();
@@ -618,6 +642,18 @@ void product::priceDescendSort()
     productList.clear();
     productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
     discount = db->getDiscount();
+    for (int i = 0; i < (int)productList.size(); i++)
+    {
+        for (int j = 0; j < (int)productList.size() - i; j++)
+        {
+            if (productList[i]->getPrice(discount) > productList[j]->getPrice(discount))
+            {
+                productItem *tmp = productList[i];
+                productList[i] = productList[j];
+                productList[j] = tmp;
+            }
+        }
+    }
     db->closeDb();
     showProduct();
     ui->priceDescend->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;color:rgb(28, 135, 255)");
@@ -636,6 +672,18 @@ void product::priceAscendSort()
     productList.clear();
     productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
     discount = db->getDiscount();
+    for (int i = 0; i < (int)productList.size(); i++)
+    {
+        for (int j = 0; j < (int)productList.size() - i; j++)
+        {
+            if (productList[i]->getPrice(discount) < productList[j]->getPrice(discount))
+            {
+                productItem *tmp = productList[i];
+                productList[i] = productList[j];
+                productList[j] = tmp;
+            }
+        }
+    }
     db->closeDb();
     showProduct();
     ui->priceAscend->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;color:rgb(28, 135, 255)");
@@ -645,6 +693,12 @@ void product::priceAscendSort()
 
 void product::purchase()
 {
+    if (curUser->getUserType() == GUESTTYPE)
+    {
+        promptBox *prompt = new promptBox(nullptr, "游客模式无法购买\nUnable to purchase in tourist mode");
+        prompt->show();
+        return;
+    }
     db->openDb();
     vector<productItem *> purchaseProductList = db->queryTable();
     discount = db->getDiscount();
@@ -797,11 +851,35 @@ void product::purchase()
     else if (sortMethod == PRICE_DESCEND_SORT)
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
+        for (int i = 0; i < (int)productList.size(); i++)
+        {
+            for (int j = 0; j < (int)productList.size() - i; j++)
+            {
+                if (productList[i]->getPrice(discount) > productList[j]->getPrice(discount))
+                {
+                    productItem *tmp = productList[i];
+                    productList[i] = productList[j];
+                    productList[j] = tmp;
+                }
+            }
+        }
         discount = db->getDiscount();
     }
     else
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
+        for (int i = 0; i < (int)productList.size(); i++)
+        {
+            for (int j = 0; j < (int)productList.size() - i; j++)
+            {
+                if (productList[i]->getPrice(discount) < productList[j]->getPrice(discount))
+                {
+                    productItem *tmp = productList[i];
+                    productList[i] = productList[j];
+                    productList[j] = tmp;
+                }
+            }
+        }
         discount = db->getDiscount();
     }
     db->closeDb();
@@ -830,11 +908,35 @@ void product::refresh()
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
         discount = db->getDiscount();
+        for (int i = 0; i < (int)productList.size(); i++)
+        {
+            for (int j = 0; j < (int)productList.size() - i; j++)
+            {
+                if (productList[i]->getPrice(discount) > productList[j]->getPrice(discount))
+                {
+                    productItem *tmp = productList[i];
+                    productList[i] = productList[j];
+                    productList[j] = tmp;
+                }
+            }
+        }
     }
     else
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
         discount = db->getDiscount();
+        for (int i = 0; i < (int)productList.size(); i++)
+        {
+            for (int j = 0; j < (int)productList.size() - i; j++)
+            {
+                if (productList[i]->getPrice(discount) < productList[j]->getPrice(discount))
+                {
+                    productItem *tmp = productList[i];
+                    productList[i] = productList[j];
+                    productList[j] = tmp;
+                }
+            }
+        }
     }
     db->closeDb();
     showProduct();

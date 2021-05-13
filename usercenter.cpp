@@ -69,6 +69,10 @@ void userCenter::init()
     {
         ui->discount->hide();
     }
+    if (curUser->getUserType() == GUESTTYPE)
+    {
+        ui->balance->hide();
+    }
     connect(ui->changeUsername, &QPushButton::clicked, this, &userCenter::changeUserName);
     connect(ui->changePassword, &QPushButton::clicked, this, &userCenter::changePassword);
     connect(ui->account, &QPushButton::clicked, this, &userCenter::toAccount);
