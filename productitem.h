@@ -50,7 +50,7 @@ public:
                 break;
             }
         }
-        return price * discountThis;
+        return (double)(int)(price * discountThis * 100) / 100;
     }
     virtual ~foodItem()
     {
@@ -71,7 +71,7 @@ public:
                 break;
             }
         }
-        return price * discountThis;
+        return (double)(int)(price * discountThis * 100) / 100;
     }
     virtual ~clothesItem()
     {
@@ -92,7 +92,7 @@ public:
                 break;
             }
         }
-        return price * discountThis;
+        return (double)(int)(price * discountThis * 100) / 100;
     }
     virtual ~bookItem()
     {
