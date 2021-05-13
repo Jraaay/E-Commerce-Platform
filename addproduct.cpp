@@ -6,7 +6,6 @@ addProduct::addProduct(int seller, QWidget *parent) : QWidget(parent),
                                                       ui(new Ui::addProduct)
 {
     ui->setupUi(this);
-    //    ui->comboBox->setStyleSheet("QComboBox::drop-down {subcontrol-origin: padding;subcontrol-position: top right;width: 20px;border-left-width: 1px;border-left-color: darkgray;border-left-style: solid;border-top-right-radius: 3px;border-bottom-right-radius: 3px;}");
     sellerId = seller;
     init();
 }
@@ -15,7 +14,6 @@ addProduct::addProduct(productItem productToModify, QWidget *parent) : QWidget(p
                                                                        ui(new Ui::addProduct)
 {
     ui->setupUi(this);
-    //    ui->comboBox->setStyleSheet("QComboBox::drop-down {subcontrol-origin: padding;subcontrol-position: top right;width: 20px;border-left-width: 1px;border-left-color: darkgray;border-left-style: solid;border-top-right-radius: 3px;border-bottom-right-radius: 3px;}");
     modifyId = productToModify.id;
     init(productToModify);
 }

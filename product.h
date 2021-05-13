@@ -60,6 +60,8 @@ public:
     sqlite *db;
     vector<vector<double>> discount;
     QTranslator *translatorPtr;
+    vector<QListWidgetItem *> itemList;
+    vector<productListUi *> uiList;
 
 private:
     Ui::product *ui;

@@ -177,6 +177,13 @@ void product::test()
 
 void product::showProduct(bool getFromDB)
 {
+    for (int i = 0; i < (int)itemList.size(); i++)
+    {
+        delete itemList[i];
+        delete uiList[i];
+    }
+    itemList.clear();
+    uiList.clear();
     if (getFromDB)
     {
         db->openDb();
@@ -199,7 +206,8 @@ void product::showProduct(bool getFromDB)
     string sellerJson = "";
     vector<sellerClass> sellerList;
 
-    try{
+    try
+    {
         infile.open("sellerFile.json");
         infile >> sellerJson;
         infile.close();
@@ -217,7 +225,7 @@ void product::showProduct(bool getFromDB)
             sellerList.push_back(tmp);
         }
     }
-    catch (exception& e)
+    catch (exception &e)
     {
         logoutFun();
         return;
@@ -226,9 +234,11 @@ void product::showProduct(bool getFromDB)
     for (int i = 0; i < (int)productList.size(); i++)
     {
         QListWidgetItem *tmp = new QListWidgetItem();
+        itemList.push_back(tmp);
         ui->listWidget->addItem(tmp);
         tmp->setSizeHint(QSize(626, 160));
         productListUi *w = new productListUi(ui->listWidget);
+        uiList.push_back(w);
         w->ui->name->setText(geteElidedText(w->ui->name->font(), productList[i]->name.c_str(), w->ui->name->width()));
         char priceText[1000] = "";
         sprintf(priceText, "%.2lf", productList[i]->getPrice(discount));
@@ -533,7 +543,7 @@ void product::nextPhoto()
 
 void product::showBigPhoto()
 {
-    if(productList[curProduct]->photo.size() > 0)
+    if (productList[curProduct]->photo.size() > 0)
     {
         QDialog *a = new QDialog;
         a->setWindowIcon(QIcon(":/image/logo.png"));
@@ -724,7 +734,8 @@ void product::purchase()
             ifstream infile;
             string sellerJson;
             vector<sellerClass> sellerList;
-            try{
+            try
+            {
                 infile.open("sellerFile.json");
                 infile >> sellerJson;
                 infile.close();
@@ -742,9 +753,9 @@ void product::purchase()
                     sellerList.push_back(tmp);
                 }
             }
-            catch (exception& e)
+            catch (exception &e)
             {
-                qDebug() << e.what() <<endl;
+                qDebug() << e.what() << endl;
                 logoutFun();
                 return;
             }
@@ -796,7 +807,7 @@ void product::purchase()
                     consumerList.push_back(tmp);
                 }
             }
-            catch(exception& e)
+            catch (exception &e)
             {
                 qDebug() << e.what() << endl;
                 logoutFun();
