@@ -17,6 +17,9 @@ userCenter::~userCenter()
 
 void userCenter::init()
 {
+    QRegExp regx1("^[a-zA-Z0-9_\\-]{0,16}$");
+    QValidator *validator1 = new QRegExpValidator(regx1, ui->usernameEdit);
+    ui->usernameEdit->setValidator(validator1);
     sqlite *db = new sqlite();
     db->openDb();
     discount = db->getDiscount();

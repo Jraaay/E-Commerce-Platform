@@ -18,6 +18,8 @@ Widget::Widget(QTranslator *translator, QWidget *parent)
     connect(ui->passwordAgain, &QLineEdit::returnPressed, ui->login, &QPushButton::click);
     connect(ui->guestLogin, &QPushButton::clicked, this, &Widget::guestLogin);
     connect(ui->language, &QPushButton::clicked, this, &Widget::changeLang);
+    connect(ui->userName, &QLineEdit::inputRejected, this, &Widget::invalidUsername);
+    connect(ui->userName, &QLineEdit::textEdited, this, &Widget::validUsername);
 }
 
 Widget::~Widget()
@@ -62,6 +64,10 @@ void Widget::setTypeConsumer()
 
 void Widget::init()
 {
+    ui->warning->hide();
+    QRegExp regx1("^[a-zA-Z0-9_\\-]{0,16}$");
+    QValidator *validator1 = new QRegExpValidator(regx1, ui->userName);
+    ui->userName->setValidator(validator1);
     curType = CONSUMERTYPE;
     ifstream infile;
     string sellerJson = "";
@@ -144,4 +150,14 @@ void Widget::changeLang()
         qApp->installTranslator(translatorPtr);
     }
     ui->retranslateUi(this);
+}
+
+void Widget::invalidUsername()
+{
+    ui->warning->show();
+}
+
+void Widget::validUsername()
+{
+    ui->warning->hide();
 }

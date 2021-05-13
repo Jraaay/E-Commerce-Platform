@@ -33,6 +33,8 @@ public:
     void guestLogin();
     void showProduct();
     void changeLang();
+    void invalidUsername();
+    void validUsername();
     QTranslator *translatorPtr;
 
 private:

@@ -20,37 +20,42 @@
         <translation>Merchant</translation>
     </message>
     <message>
-        <location filename="widget.ui" line="237"/>
+        <location filename="widget.ui" line="240"/>
         <source>用户名</source>
         <translation>Username</translation>
     </message>
     <message>
-        <location filename="widget.ui" line="271"/>
+        <location filename="widget.ui" line="265"/>
+        <source>请输入0-16位的字母、数字和-_</source>
+        <translation>Only letters、numbers and -_</translation>
+    </message>
+    <message>
+        <location filename="widget.ui" line="299"/>
         <source>密码</source>
         <translation>Password</translation>
     </message>
     <message>
-        <location filename="widget.ui" line="308"/>
+        <location filename="widget.ui" line="336"/>
         <source>请再次输入密码</source>
         <translation>Password again</translation>
     </message>
     <message>
-        <location filename="widget.ui" line="361"/>
+        <location filename="widget.ui" line="389"/>
         <source>登录</source>
         <translation>Sign in</translation>
     </message>
     <message>
-        <location filename="widget.ui" line="410"/>
+        <location filename="widget.ui" line="438"/>
         <source>注册</source>
         <translation>Register</translation>
     </message>
     <message>
-        <location filename="widget.ui" line="443"/>
+        <location filename="widget.ui" line="471"/>
         <source>仅浏览</source>
         <translation>Guest</translation>
     </message>
     <message>
-        <location filename="widget.ui" line="480"/>
+        <location filename="widget.ui" line="508"/>
         <source>Change Language</source>
         <translation>切换为中文</translation>
     </message>
@@ -238,27 +243,27 @@ Out</translation>
         <translation>1919.810</translation>
     </message>
     <message>
-        <location filename="product.ui" line="1132"/>
+        <location filename="product.ui" line="1138"/>
         <source>剩余：</source>
         <translation>Stock: </translation>
     </message>
     <message>
-        <location filename="product.ui" line="1170"/>
+        <location filename="product.ui" line="1176"/>
         <source>立即购买</source>
         <translation>Buy now</translation>
     </message>
     <message>
-        <location filename="product.ui" line="1205"/>
+        <location filename="product.ui" line="1217"/>
         <source>管理</source>
         <translation>Manage</translation>
     </message>
     <message>
-        <location filename="product.ui" line="1264"/>
+        <location filename="product.ui" line="1276"/>
         <source>描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述描述</source>
         <translation>DescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescriptionDescription</translation>
     </message>
     <message>
-        <location filename="product.ui" line="1305"/>
+        <location filename="product.ui" line="1317"/>
         <source>TextLabel</source>
         <translation></translation>
     </message>

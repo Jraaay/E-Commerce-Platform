@@ -207,6 +207,9 @@
      </item>
      <item>
       <layout class="QVBoxLayout" name="inputLayout">
+       <property name="spacing">
+        <number>12</number>
+       </property>
        <item alignment="Qt::AlignHCenter">
         <widget class="QLineEdit" name="userName">
          <property name="minimumSize">
@@ -235,6 +238,31 @@
          </property>
          <property name="placeholderText">
           <string>用户名</string>
+         </property>
+        </widget>
+       </item>
+       <item alignment="Qt::AlignHCenter|Qt::AlignVCenter">
+        <widget class="QLabel" name="warning">
+         <property name="enabled">
+          <bool>true</bool>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>微软雅黑</family>
+           <pointsize>10</pointsize>
+          </font>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">color:red</string>
+         </property>
+         <property name="text">
+          <string>请输入0-16位的字母、数字和-_</string>
          </property>
         </widget>
        </item>

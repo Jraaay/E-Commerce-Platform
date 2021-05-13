@@ -706,7 +706,7 @@ void product::purchase()
 {
     if (curUser->getUserType() == GUESTTYPE)
     {
-        promptBox *prompt = new promptBox(nullptr, "游客模式无法购买\nUnable to purchase in tourist mode");
+        promptBox *prompt = new promptBox(nullptr, "游客模式无法购买\nGuest can't purchase");
         prompt->show();
         return;
     }
