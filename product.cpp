@@ -113,6 +113,7 @@ void product::init()
         ui->manage->setText("");
         ui->manage->setEnabled(false);
         ui->manage->hide();
+        ui->userCenter->setEnabled(false);
     }
     else
     {
