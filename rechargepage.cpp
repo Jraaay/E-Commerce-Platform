@@ -24,8 +24,8 @@ void rechargePage::init()
     connect(ui->buy648, &QPushButton::clicked, this, &rechargePage::buy648);
     connect(ui->otherMoney, &QLineEdit::textEdited, this, &rechargePage::buyOther);
     connect(ui->confirm, &QPushButton::clicked, this, &rechargePage::rechargeConfirm);
-    QRegExp regx1("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$");
-    QValidator *validator1 = new QRegExpValidator(regx1, ui->otherMoney);
+    const QRegExp regx1("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$");
+    const QValidator *validator1 = new QRegExpValidator(regx1, ui->otherMoney);
     ui->otherMoney->setValidator(validator1);
 }
 

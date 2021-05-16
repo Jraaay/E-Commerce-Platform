@@ -188,7 +188,7 @@ vector<productItem *> sqlite::queryTable(string LIKE, string SORT)
     return productList;
 }
 
-void sqlite::modifyData(productItem item) // 更新单条数据
+void sqlite::modifyData(productItem item, int updateImage) // 更新单条数据
 {
     QSqlQuery sqlQuery;
     sqlQuery.prepare("UPDATE `productItem` SET "
@@ -216,52 +216,55 @@ void sqlite::modifyData(productItem item) // 更新单条数据
     {
         qDebug() << "Update successed!";
     }
-    int productId = item.id;
-    sqlQuery.prepare("DELETE FROM `productPhoto` "
-                     "WHERE `productId`=:productId;");
-    sqlQuery.bindValue(":productId", productId);
-    if (!sqlQuery.exec())
+    if (updateImage)
     {
-        qDebug() << "Error: Fail to delete old photos. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Old photos deleting successed!";
-    }
-    string destFolder = "./source/" + to_string(productId);
-    QDir dir;
-    dir.setPath(destFolder.c_str());
-    bool oldFolderExist = dir.exists();
-    if (oldFolderExist)
-    {
-        destFolder = "./source/" + to_string(productId) + "_tmp";
-    }
-    dir.setPath(".");
-    dir.mkpath((destFolder).c_str());
-    for (int i = 0; i < int(item.photo.size()); i++)
-    {
-        string dest = destFolder + "/" + to_string(i) + "." + QFileInfo(item.photo[i]).suffix().toStdString();
-        QFile::copy(item.photo[i], dest.c_str());
-        sqlQuery.prepare("INSERT INTO `productPhoto` (`productId`,`photo`) VALUES (:productId, :photo)");
+        const int productId = item.id;
+        sqlQuery.prepare("DELETE FROM `productPhoto` "
+                         "WHERE `productId`=:productId;");
         sqlQuery.bindValue(":productId", productId);
-        sqlQuery.bindValue(":photo", ("./source/" + to_string(productId) + "/" + to_string(i) + "." + QFileInfo(item.photo[i]).suffix().toStdString()).c_str());
         if (!sqlQuery.exec())
         {
-            qDebug() << "Error: Fail to update photos. " << sqlQuery.lastError();
+            qDebug() << "Error: Fail to delete old photos. " << sqlQuery.lastError();
         }
         else
         {
-            qDebug() << "Photos update successed!";
+            qDebug() << "Old photos deleting successed!";
         }
-    }
-    if (oldFolderExist)
-    {
-        dir.setPath(("./source/" + to_string(productId)).c_str());
-        dir.removeRecursively();
+        string destFolder = "./source/" + to_string(productId);
+        QDir dir;
+        dir.setPath(destFolder.c_str());
+        bool oldFolderExist = dir.exists();
+        if (oldFolderExist)
+        {
+            destFolder = "./source/" + to_string(productId) + "_tmp";
+        }
         dir.setPath(".");
-        qDebug() << destFolder.c_str() << endl
-                 << ("./source/" + to_string(productId)).c_str();
-        qDebug() << dir.rename((destFolder).c_str(), ("./source/" + to_string(productId)).c_str());
+        dir.mkpath((destFolder).c_str());
+        for (int i = 0; i < int(item.photo.size()); i++)
+        {
+            string dest = destFolder + "/" + to_string(i) + "." + QFileInfo(item.photo[i]).suffix().toStdString();
+            QFile::copy(item.photo[i], dest.c_str());
+            sqlQuery.prepare("INSERT INTO `productPhoto` (`productId`,`photo`) VALUES (:productId, :photo)");
+            sqlQuery.bindValue(":productId", productId);
+            sqlQuery.bindValue(":photo", ("./source/" + to_string(productId) + "/" + to_string(i) + "." + QFileInfo(item.photo[i]).suffix().toStdString()).c_str());
+            if (!sqlQuery.exec())
+            {
+                qDebug() << "Error: Fail to update photos. " << sqlQuery.lastError();
+            }
+            else
+            {
+                qDebug() << "Photos update successed!";
+            }
+        }
+        if (oldFolderExist)
+        {
+            dir.setPath(("./source/" + to_string(productId)).c_str());
+            dir.removeRecursively();
+            dir.setPath(".");
+            qDebug() << destFolder.c_str() << endl
+                     << ("./source/" + to_string(productId)).c_str();
+            qDebug() << dir.rename((destFolder).c_str(), ("./source/" + to_string(productId)).c_str());
+        }
     }
 }
 

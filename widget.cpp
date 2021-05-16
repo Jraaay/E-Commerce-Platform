@@ -65,8 +65,8 @@ void Widget::setTypeConsumer()
 void Widget::init()
 {
     ui->warning->hide();
-    QRegExp regx1("^[a-zA-Z0-9_\\-]{0,16}$");
-    QValidator *validator1 = new QRegExpValidator(regx1, ui->userName);
+    const QRegExp regx1("^[a-zA-Z0-9_\\-]{0,16}$");
+    const QValidator *validator1 = new QRegExpValidator(regx1, ui->userName);
     ui->userName->setValidator(validator1);
     curType = CONSUMERTYPE;
     ifstream infile;

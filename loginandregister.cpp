@@ -5,8 +5,8 @@
 
 void Widget::loginRegFun()
 {
-    string loginName = ui->userName->text().toStdString();
-    string loginPassword = QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString();
+    const string loginName = ui->userName->text().toStdString();
+    const string loginPassword = QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString();
     vector<sellerClass> sellerList;
     vector<consumerClass> consumerList;
     ifstream infile;
@@ -17,14 +17,14 @@ void Widget::loginRegFun()
         infile.open("uidMaxFile.json");
         infile >> uidMaxJson;
         infile.close();
-        json j = json::parse(uidMaxJson);
+        const json j = json::parse(uidMaxJson);
         uidMax = j["uid"];
     }
     catch (exception &e)
     {
         uidMaxJson = "";
         qDebug() << e.what() << endl;
-        int tmp = 0;
+        const int tmp = 0;
         json j;
         j["uid"] = tmp;
         ofstream outFile;
@@ -42,11 +42,11 @@ void Widget::loginRegFun()
             infile.open("sellerFile.json");
             infile >> sellerJson;
             infile.close();
-            json j = json::parse(sellerJson);
-            vector<string> userListJson = j["data"];
+            const json j = json::parse(sellerJson);
+            const vector<string> userListJson = j["data"];
             for (int i = 0; i < (int)userListJson.size(); i++)
             {
-                json jTmp = json::parse(userListJson[i]);
+                const json jTmp = json::parse(userListJson[i]);
                 sellerClass tmp;
                 tmp.uid = jTmp["uid"];
                 tmp.name = jTmp["name"];
@@ -76,11 +76,11 @@ void Widget::loginRegFun()
             infile.open("consumerFile.json");
             infile >> consumerJson;
             infile.close();
-            json j = json::parse(consumerJson);
-            vector<string> userListJson = j["data"];
+            const json j = json::parse(consumerJson);
+            const vector<string> userListJson = j["data"];
             for (int i = 0; i < (int)userListJson.size(); i++)
             {
-                json jTmp = json::parse(userListJson[i]);
+                const json jTmp = json::parse(userListJson[i]);
                 consumerClass tmp;
                 tmp.uid = jTmp["uid"];
                 tmp.name = jTmp["name"];

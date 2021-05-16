@@ -17,8 +17,8 @@ userCenter::~userCenter()
 
 void userCenter::init()
 {
-    QRegExp regx1("^[a-zA-Z0-9_\\-]{0,16}$");
-    QValidator *validator1 = new QRegExpValidator(regx1, ui->usernameEdit);
+    const QRegExp regx1("^[a-zA-Z0-9_\\-]{0,16}$");
+    const QValidator *validator1 = new QRegExpValidator(regx1, ui->usernameEdit);
     ui->usernameEdit->setValidator(validator1);
     sqlite *db = new sqlite();
     db->openDb();
@@ -113,11 +113,11 @@ void userCenter::changeUserName()
                 infile.open("sellerFile.json");
                 infile >> sellerJson;
                 infile.close();
-                json j = json::parse(sellerJson);
+                const json j = json::parse(sellerJson);
                 vector<string> userListJson = j["data"];
                 for (int i = 0; i < (int)userListJson.size(); i++)
                 {
-                    json jTmp = json::parse(userListJson[i]);
+                    const json jTmp = json::parse(userListJson[i]);
                     sellerClass tmp;
                     tmp.uid = jTmp["uid"];
                     tmp.name = jTmp["name"];
@@ -200,11 +200,11 @@ void userCenter::changeUserName()
                 infile.open("consumerFile.json");
                 infile >> consumerJson;
                 infile.close();
-                json j = json::parse(consumerJson);
+                const json j = json::parse(consumerJson);
                 vector<string> userListJson = j["data"];
                 for (int i = 0; i < (int)userListJson.size(); i++)
                 {
-                    json jTmp = json::parse(userListJson[i]);
+                    const json jTmp = json::parse(userListJson[i]);
                     consumerClass tmp;
                     tmp.uid = jTmp["uid"];
                     tmp.name = jTmp["name"];
@@ -310,11 +310,11 @@ void userCenter::changePassword()
                 infile.open("sellerFile.json");
                 infile >> sellerJson;
                 infile.close();
-                json j = json::parse(sellerJson);
+                const json j = json::parse(sellerJson);
                 vector<string> userListJson = j["data"];
                 for (int i = 0; i < (int)userListJson.size(); i++)
                 {
-                    json jTmp = json::parse(userListJson[i]);
+                    const json jTmp = json::parse(userListJson[i]);
                     sellerClass tmp;
                     tmp.uid = jTmp["uid"];
                     tmp.name = jTmp["name"];
@@ -388,11 +388,11 @@ void userCenter::changePassword()
                 infile.open("consumerFile.json");
                 infile >> consumerJson;
                 infile.close();
-                json j = json::parse(consumerJson);
+                const json j = json::parse(consumerJson);
                 vector<string> userListJson = j["data"];
                 for (int i = 0; i < (int)userListJson.size(); i++)
                 {
-                    json jTmp = json::parse(userListJson[i]);
+                    const json jTmp = json::parse(userListJson[i]);
                     consumerClass tmp;
                     tmp.uid = jTmp["uid"];
                     tmp.name = jTmp["name"];
@@ -502,11 +502,11 @@ void userCenter::rechargeConfirm(double moneyToCharge)
             infile.open("sellerFile.json");
             infile >> sellerJson;
             infile.close();
-            json j = json::parse(sellerJson);
+            const json j = json::parse(sellerJson);
             vector<string> userListJson = j["data"];
             for (int i = 0; i < (int)userListJson.size(); i++)
             {
-                json jTmp = json::parse(userListJson[i]);
+                const json jTmp = json::parse(userListJson[i]);
                 sellerClass tmp;
                 tmp.uid = jTmp["uid"];
                 tmp.name = jTmp["name"];
@@ -562,11 +562,11 @@ void userCenter::rechargeConfirm(double moneyToCharge)
             infile.open("consumerFile.json");
             infile >> consumerJson;
             infile.close();
-            json j = json::parse(consumerJson);
+            const json j = json::parse(consumerJson);
             vector<string> userListJson = j["data"];
             for (int i = 0; i < (int)userListJson.size(); i++)
             {
-                json jTmp = json::parse(userListJson[i]);
+                const json jTmp = json::parse(userListJson[i]);
                 consumerClass tmp;
                 tmp.uid = jTmp["uid"];
                 tmp.name = jTmp["name"];

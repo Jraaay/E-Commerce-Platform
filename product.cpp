@@ -153,23 +153,6 @@ void product::openUserCenter()
 
 void product::test()
 {
-    //    for (int i = 0; i < 10; i++)
-    //    {
-    //        vector<QImage> tmpImage;
-    //        productItem tmp(to_string(i), to_string(i), i, i, tmpImage, -1, i);
-    //        productList.push_back(tmp);
-    //    }
-    //    db->openDb();
-    //    QString tableName = "productItem";
-    //    if (!db->isTableExist(tableName))
-    //    {
-    //        db->createTable();
-    //    }
-    //    vector<QImage> tmpImage;
-    //    productItem tmp(to_string(1), to_string(1), 1, 1, tmpImage, -1, 1);
-    //    db->singleInsertData(tmp);
-    //    db->closeDb();
-    //    showProduct();
     addProduct *ap;
     ap = new addProduct(curUser->uid);
     ap->father = this;
@@ -200,8 +183,8 @@ void product::showProduct(bool getFromDB)
     ui->place->show();
     ui->listWidget->clear();
     ui->listWidget->verticalScrollBar()->setSingleStep(16);
-    string typeList[4] = {"", "食物", "衣服", "书籍"};
-    string typeListEn[4] = {"", "Food", "Clothes", "Book"};
+    const string typeList[4] = {"", "食物", "衣服", "书籍"};
+    const string typeListEn[4] = {"", "Food", "Clothes", "Book"};
 
     ifstream infile;
     string sellerJson = "";
@@ -212,11 +195,11 @@ void product::showProduct(bool getFromDB)
         infile.open("sellerFile.json");
         infile >> sellerJson;
         infile.close();
-        json j = json::parse(sellerJson);
+        const json j = json::parse(sellerJson);
         vector<string> userListJson = j["data"];
         for (int i = 0; i < (int)userListJson.size(); i++)
         {
-            json jTmp = json::parse(userListJson[i]);
+            const json jTmp = json::parse(userListJson[i]);
             sellerClass tmp;
             tmp.uid = jTmp["uid"];
             tmp.name = jTmp["name"];
@@ -246,8 +229,6 @@ void product::showProduct(bool getFromDB)
         w->ui->price->setText(priceText);
         string remainText = w->ui->remain->text().toStdString() + to_string(productList[i]->remaining);
         w->ui->remain->setText(remainText.c_str());
-        //        productItem tmpProduct = *productList[i];
-        //        qDebug() << to_string(productList[i]->type).c_str();
         string typeText;
         if (w->ui->type->text() == "类型：")
         {
@@ -302,7 +283,7 @@ void product::showProduct(bool getFromDB)
 
 QString product::geteElidedText(QFont font, QString str, int MaxWidth)
 {
-    QFontMetrics fontWidth(font);
+    const QFontMetrics fontWidth(font);
     int width = fontWidth.horizontalAdvance(str); //计算字符串宽度
     if (width >= MaxWidth)                        //当字符串宽度大于最大宽度时进行转换
     {
@@ -361,7 +342,7 @@ void product::onListMailItemClicked(QListWidgetItem *item)
 void product::showPhoto()
 {
 
-    productItem itemToShow = *productList[curProduct];
+    const productItem itemToShow = *productList[curProduct];
     QImage img;
     if (itemToShow.photo.size() > 0)
     {
@@ -372,8 +353,8 @@ void product::showPhoto()
         img.load(":/image/noImage.png");
     }
     QPixmap pixmap = QPixmap::fromImage(img);
-    int width = 155;
-    int height = 195;
+    const int width = 155;
+    const int height = 195;
     pixmap = pixmap.scaled(width * 2, height * 2, Qt::KeepAspectRatio, Qt::FastTransformation); // 按比例缩放
     pixmap = pixmap.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);       // 按比例缩放
     ui->mainPhoto->setIconSize(QSize(155, 195));
@@ -392,8 +373,8 @@ void product::showPhoto()
             photo = QPixmap::fromImage(QImage(":/image/noImage.png"));
             photoLabelList[i]->setScaledContents(true);
         }
-        int width = 60;
-        int height = 75;
+        const int width = 60;
+        const int height = 75;
         photo = photo.scaled(width * 2, height * 2, Qt::KeepAspectRatio, Qt::FastTransformation); // 按比例缩放
         photo = photo.scaled(width, height, Qt::KeepAspectRatio, Qt::SmoothTransformation);       // 按比例缩放
         photoLabelList[i]->setPixmap(photo);
@@ -431,7 +412,7 @@ bool product::eventFilter(QObject *obj, QEvent *event)
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            const QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
             if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(0);
@@ -444,7 +425,7 @@ bool product::eventFilter(QObject *obj, QEvent *event)
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            const QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
             if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(1);
@@ -457,7 +438,7 @@ bool product::eventFilter(QObject *obj, QEvent *event)
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+           const  QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
             if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(2);
@@ -470,7 +451,7 @@ bool product::eventFilter(QObject *obj, QEvent *event)
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            const QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
             if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(3);
@@ -483,7 +464,7 @@ bool product::eventFilter(QObject *obj, QEvent *event)
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            const QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
             if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(4);
@@ -550,8 +531,8 @@ void product::showBigPhoto()
         a->setWindowIcon(QIcon(":/image/logo.png"));
         a->setWindowTitle("查看图片 Review image");
         a->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint);
-        QPixmap pixmap;
-        QImage img(productList[curProduct]->photo[mainPhoto]);
+        const QPixmap pixmap;
+        const QImage img(productList[curProduct]->photo[mainPhoto]);
         pixmap.fromImage(img);
         int width = img.width();
         int height = img.height();
@@ -567,7 +548,7 @@ void product::showBigPhoto()
         }
         a->setMinimumSize(width, height);
         a->setMaximumSize(width, height);
-        string stylesheet = "background-image:url(" + productList[curProduct]->photo[mainPhoto].toStdString() + ");background-position: center;background-repeat: no-repeat;";
+        const string stylesheet = "background-image:url(" + productList[curProduct]->photo[mainPhoto].toStdString() + ");background-position: center;background-repeat: no-repeat;";
         a->setStyleSheet(stylesheet.c_str());
         a->show();
     }
@@ -711,7 +692,7 @@ void product::purchase()
         return;
     }
     db->openDb();
-    vector<productItem *> purchaseProductList = db->queryTable();
+    const vector<productItem *> purchaseProductList = db->queryTable();
     discount = db->getDiscount();
     db->closeDb();
     int productToPurchase = 0;
@@ -728,7 +709,7 @@ void product::purchase()
         purchaseProductList[productToPurchase]->remaining--;
         curUser->balance -= purchaseProductList[productToPurchase]->getPrice(discount);
         db->openDb();
-        db->modifyData(*purchaseProductList[productToPurchase]);
+        db->modifyData(*purchaseProductList[productToPurchase], 0);
         db->closeDb();
         if (curUser->getUserType() == SELLERTYPE)
         {
@@ -740,11 +721,11 @@ void product::purchase()
                 infile.open("sellerFile.json");
                 infile >> sellerJson;
                 infile.close();
-                json j = json::parse(sellerJson);
+                const json j = json::parse(sellerJson);
                 vector<string> userListJson = j["data"];
                 for (int i = 0; i < (int)userListJson.size(); i++)
                 {
-                    json jTmp = json::parse(userListJson[i]);
+                    const json jTmp = json::parse(userListJson[i]);
                     sellerClass tmp;
                     tmp.uid = jTmp["uid"];
                     tmp.name = jTmp["name"];
@@ -794,11 +775,11 @@ void product::purchase()
                 infile.open("consumerFile.json");
                 infile >> consumerJson;
                 infile.close();
-                json j = json::parse(consumerJson);
+                const json j = json::parse(consumerJson);
                 vector<string> userListJson = j["data"];
                 for (int i = 0; i < (int)userListJson.size(); i++)
                 {
-                    json jTmp = json::parse(userListJson[i]);
+                    const json jTmp = json::parse(userListJson[i]);
                     consumerClass tmp;
                     tmp.uid = jTmp["uid"];
                     tmp.name = jTmp["name"];

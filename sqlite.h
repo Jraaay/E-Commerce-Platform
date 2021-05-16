@@ -24,7 +24,7 @@ public:
     // 插入单条数据
     void singleInsertData(productItem item);
     // 修改数据
-    void modifyData(productItem item);
+    void modifyData(productItem item, int updateImage);
     // 删除数据
     void deleteData(int id);
     void newDiscount(int id);

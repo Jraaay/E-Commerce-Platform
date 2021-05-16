@@ -22,12 +22,12 @@ void addProduct::init(productItem productToModify)
 {
     ui->name->setTextMargins(5, 0, 0, 0);
     ui->price->setTextMargins(5, 0, 0, 0);
-    QRegExp regx1("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$");
-    QValidator *validator1 = new QRegExpValidator(regx1, ui->price);
+    const QRegExp regx1("^(([1-9]{1}\\d*)|([0]{1}))(\\.(\\d){0,2})?$");
+    const QValidator *validator1 = new QRegExpValidator(regx1, ui->price);
     ui->price->setValidator(validator1);
     ui->remain->setTextMargins(5, 0, 0, 0);
-    QRegExp regx2("^\\d+$");
-    QValidator *validator2 = new QRegExpValidator(regx2, ui->remain);
+    const QRegExp regx2("^\\d+$");
+    const QValidator *validator2 = new QRegExpValidator(regx2, ui->remain);
     ui->remain->setValidator(validator2);
     ui->description->setTextMargins(5, 5, 0, 0);
     connect(ui->cancel, &QPushButton::clicked, this, &QWidget::close);
@@ -79,10 +79,10 @@ void addProduct::selectPhotoFun()
 {
     selectFile = new QFileDialog;
     selectFile->setOption(selectFile->DontUseNativeDialog, false);
-    QStringList photosNameTmp = selectFile->getOpenFileNames(0, "添加图片 Add photos", "‪C:\\Users\\Jray\\Pictures\\123456\\", "Images (*.jpg *.jpeg *.png *.gif);; All Files (*.*)", 0, 0);
+    const QStringList photosNameTmp = selectFile->getOpenFileNames(0, "添加图片 Add photos", "‪C:\\Users\\Jray\\Pictures\\123456\\", "Images (*.jpg *.jpeg *.png *.gif);; All Files (*.*)", 0, 0);
     for (int i = 0; i < photosNameTmp.size(); i++)
     {
-        QString photoNameTmp = photosNameTmp[i];
+        const QString photoNameTmp = photosNameTmp[i];
         if (photoNameTmp != "")
         {
             photosList.push_back(photoNameTmp);
@@ -243,7 +243,7 @@ bool addProduct::eventFilter(QObject *obj, QEvent *event)
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            const QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
             if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(0);
@@ -256,7 +256,7 @@ bool addProduct::eventFilter(QObject *obj, QEvent *event)
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            const QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
             if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(1);
@@ -269,7 +269,7 @@ bool addProduct::eventFilter(QObject *obj, QEvent *event)
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            const QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
             if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(2);
@@ -282,7 +282,7 @@ bool addProduct::eventFilter(QObject *obj, QEvent *event)
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-            QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            const QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
             if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(3);
@@ -340,7 +340,7 @@ void addProduct::saveProduct()
     if (modifyId != -1)
     {
 
-        db.modifyData(productToSave);
+        db.modifyData(productToSave, 1);
     }
     else
     {
