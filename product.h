@@ -28,15 +28,10 @@ class product : public QWidget
 public:
     product(QTranslator *translator, userClass *curUserFromWidget, QWidget *parent = nullptr);
     ~product();
-    int curType;
-    userClass *curUser;
     void logoutFun();
     void init();
-    void test();
+    void openAddProduct();
     void onListMailItemClicked(QListWidgetItem *item);
-    int curFirstPhoto;
-    int mainPhoto;
-    int curProduct;
     void showPhoto();
     void prePhoto();
     void nextPhoto();
@@ -51,17 +46,20 @@ public:
     void priceAscendSort();
     void purchase();
     void refresh();
-    int curPage;
-    int sortMethod;
     void manage();
     void refreshUser();
-    vector<productItem *> productList;
     void showProduct(bool getFromDB = false);
-    sqlite *db;
-    vector<vector<double>> discount;
-    QTranslator *translatorPtr;
-    vector<QListWidgetItem *> itemList;
-    vector<productListUi *> uiList;
+    userClass *curUser;                 // 当前用户
+    int curFirstPhoto;                  // 当前的第一张图片
+    int mainPhoto;                      // 主图片
+    int curProduct;                     // 当前商品
+    int sortMethod;                     // 排序方法
+    vector<productItem *> productList;  // 商品列表
+    sqlite *db;                         // 数据库
+    vector<vector<double>> discount;    // 折扣列表
+    QTranslator *translatorPtr;         // 翻译器指针
+    vector<QListWidgetItem *> itemList; // item列表
+    vector<productListUi *> uiList;     // item的ui的列表
 
 private:
     Ui::product *ui;

@@ -2,7 +2,7 @@
 #include "ui_widget.h"
 #include <QDebug>
 #include "loginandregister.h"
-
+/* 登录与注册 */
 void Widget::loginRegFun()
 {
     const string loginName = ui->userName->text().toStdString();
@@ -33,12 +33,12 @@ void Widget::loginRegFun()
         outFile.close();
     }
 
-
     if (curType == SELLERTYPE)
     {
         ifstream infile;
         string sellerJson = "";
-        try{
+        try
+        {
             infile.open("sellerFile.json");
             infile >> sellerJson;
             infile.close();
@@ -56,7 +56,7 @@ void Widget::loginRegFun()
                 sellerList.push_back(tmp);
             }
         }
-        catch (exception& e)
+        catch (exception &e)
         {
             qDebug() << e.what() << endl;
             vector<string> tmp;
@@ -72,7 +72,8 @@ void Widget::loginRegFun()
     {
         ifstream infile;
         string consumerJson = "";
-        try{
+        try
+        {
             infile.open("consumerFile.json");
             infile >> consumerJson;
             infile.close();
@@ -90,7 +91,7 @@ void Widget::loginRegFun()
                 consumerList.push_back(tmp);
             }
         }
-        catch (exception& e)
+        catch (exception &e)
         {
             qDebug() << e.what() << endl;
             vector<string> tmp;
@@ -274,6 +275,7 @@ void Widget::loginRegFun()
     }
 }
 
+/* 服用注册和登录按钮 */
 void Widget::loginRegSwitchFun()
 {
     if (ui->reg->text() == "注册")
@@ -306,6 +308,7 @@ void Widget::loginRegSwitchFun()
     }
 }
 
+/* 游客登录 */
 void Widget::guestLogin()
 {
     curType = GUESTTYPE;
@@ -314,13 +317,5 @@ void Widget::guestLogin()
     guest->name = "Guest";
     guest->balance = 0;
     curConsumer = *guest;
-    //    msgBox = new QMessageBox("Login",
-    //                             "使用游客身份登录成功",
-    //                             QMessageBox::Information,
-    //                             QMessageBox::Ok | QMessageBox::Default,
-    //                             QMessageBox::Cancel | QMessageBox::Escape,
-    //                             0);
-    //    msgBox->setWindowIcon(QIcon(":/image/logo.png"));
-    //    msgBox->show();
     showProduct();
 }

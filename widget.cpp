@@ -6,46 +6,36 @@
 Widget::Widget(QTranslator *translator, QWidget *parent)
     : QWidget(parent), ui(new Ui::Widget)
 {
-    ui->setupUi(this);
-    translatorPtr = translator;
-    ui->passwordAgain->setHidden(true);
-    init();
-    connect(ui->login, &QPushButton::clicked, this, &Widget::loginRegFun);
-    connect(ui->reg, &QPushButton::clicked, this, &Widget::loginRegSwitchFun);
-    connect(ui->seller, &QPushButton::clicked, this, &Widget::setTypeSeller);
-    connect(ui->consumer, &QPushButton::clicked, this, &Widget::setTypeConsumer);
-    connect(ui->password, &QLineEdit::returnPressed, ui->login, &QPushButton::click);
-    connect(ui->passwordAgain, &QLineEdit::returnPressed, ui->login, &QPushButton::click);
-    connect(ui->guestLogin, &QPushButton::clicked, this, &Widget::guestLogin);
-    connect(ui->language, &QPushButton::clicked, this, &Widget::changeLang);
-    connect(ui->userName, &QLineEdit::inputRejected, this, &Widget::invalidUsername);
-    connect(ui->userName, &QLineEdit::textEdited, this, &Widget::validUsername);
+    ui->setupUi(this);                  // 初始化界面
+    translatorPtr = translator;         // 加载翻译
+    ui->passwordAgain->setHidden(true); // 隐藏注册时的第二次密码输入
+    init();                             // 初始化
 }
 
 Widget::~Widget()
 {
-    delete ui;
+    delete ui; // 析构函数删除界面
 }
 
+/* 展示商品界面 */
 void Widget::showProduct()
 {
-    product *pro;
-    if (curType == SELLERTYPE)
+    product *pro;              // 新建商品展示页面
+    if (curType == SELLERTYPE) // 根据类型进行传参初始化
     {
         pro = new product(translatorPtr, &curSeller);
-        pro->curType = curType;
         pro->show();
         this->close();
     }
     else
     {
         pro = new product(translatorPtr, &curConsumer);
-        pro->curType = curType;
         pro->show();
         this->close();
     }
 }
 
+/* 商家登录 */
 void Widget::setTypeSeller()
 {
     ui->consumer->setStyleSheet("padding: -1;background-color: rgb(255,255,255);border:none;border-radius:30px;color:gray");
@@ -54,6 +44,7 @@ void Widget::setTypeSeller()
     curType = SELLERTYPE;
 }
 
+/* 消费者登录 */
 void Widget::setTypeConsumer()
 {
     ui->consumer->setStyleSheet("padding: -1;background-color: rgb(255,255,255);border:none;border-radius:30px;color:black");
@@ -62,22 +53,23 @@ void Widget::setTypeConsumer()
     curType = CONSUMERTYPE;
 }
 
-void Widget::init()
+/* 初始化 */
+void Widget::init() // 初始化
 {
-    ui->warning->hide();
-    const QRegExp regx1("^[a-zA-Z0-9_\\-]{0,16}$");
+    ui->warning->hide();                            // 隐藏用户名不合法提示
+    const QRegExp regx1("^[a-zA-Z0-9_\\-]{0,16}$"); // 设置正则表达式
     const QValidator *validator1 = new QRegExpValidator(regx1, ui->userName);
-    ui->userName->setValidator(validator1);
-    curType = CONSUMERTYPE;
+    ui->userName->setValidator(validator1); // 设置正则匹配
+    curType = CONSUMERTYPE;                 // 初始化类型为消费者
     ifstream infile;
     string sellerJson = "";
-    try
+    try // 读取消费者、商家和最大uid文件
     {
         infile.open("sellerFile.json");
         infile >> sellerJson;
         infile.close();
     }
-    catch (exception& e)
+    catch (exception &e) // 错误读取处理
     {
         qDebug() << e.what() << endl;
     }
@@ -92,12 +84,13 @@ void Widget::init()
         outFile.close();
     }
     string consumerJson = "";
-    try{
+    try
+    {
         infile.open("consumerFile.json");
         infile >> consumerJson;
         infile.close();
     }
-    catch (exception& e)
+    catch (exception &e) // 错误读取处理
     {
         qDebug() << e.what() << endl;
     }
@@ -119,7 +112,7 @@ void Widget::init()
         infile >> uidMaxJson;
         infile.close();
     }
-    catch (exception &e)
+    catch (exception &e) // 错误读取处理
     {
         qDebug() << e.what() << endl;
     }
@@ -134,9 +127,21 @@ void Widget::init()
         outFile << j.dump();
         outFile.close();
     }
-    ui->userName->setFocus();
+    ui->userName->setFocus(); // 焦点设置到用户名方便用户输入
+    // 进行信号与槽绑定
+    connect(ui->login, &QPushButton::clicked, this, &Widget::loginRegFun);
+    connect(ui->reg, &QPushButton::clicked, this, &Widget::loginRegSwitchFun);
+    connect(ui->seller, &QPushButton::clicked, this, &Widget::setTypeSeller);
+    connect(ui->consumer, &QPushButton::clicked, this, &Widget::setTypeConsumer);
+    connect(ui->password, &QLineEdit::returnPressed, ui->login, &QPushButton::click);
+    connect(ui->passwordAgain, &QLineEdit::returnPressed, ui->login, &QPushButton::click);
+    connect(ui->guestLogin, &QPushButton::clicked, this, &Widget::guestLogin);
+    connect(ui->language, &QPushButton::clicked, this, &Widget::changeLang);
+    connect(ui->userName, &QLineEdit::inputRejected, this, &Widget::invalidUsername);
+    connect(ui->userName, &QLineEdit::textEdited, this, &Widget::validUsername);
 }
 
+/* 更换界面语言 */
 void Widget::changeLang()
 {
     if (ui->language->text() == "切换为中文")
@@ -152,11 +157,13 @@ void Widget::changeLang()
     ui->retranslateUi(this);
 }
 
+/* 不合法用户名提示 */
 void Widget::invalidUsername()
 {
     ui->warning->show();
 }
 
+/* 合法用户名关闭提示 */
 void Widget::validUsername()
 {
     ui->warning->hide();

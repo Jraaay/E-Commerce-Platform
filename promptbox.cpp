@@ -9,7 +9,7 @@ promptBox::promptBox(QWidget *parent, string showText, int showTime) : QWidget(p
     setWindowFlags(Qt::WindowStaysOnTopHint);
     setWindowFlag(Qt::FramelessWindowHint);
     setAttribute(Qt::WA_TranslucentBackground, true);
-    QTimer::singleShot(showTime, this, &promptBox::closePromptBox);
+    QTimer::singleShot(showTime, this, &promptBox::closePromptBox); // 设置自动关闭和析构
     ui->setupUi(this);
     ui->label->setText(showText.c_str());
 }

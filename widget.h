@@ -26,25 +26,25 @@ class Widget : public QWidget
 public:
     Widget(QTranslator *translator, QWidget *parent = nullptr);
     ~Widget();
-    int curType;
-    consumerClass curConsumer;
-    sellerClass curSeller;
     void loginRegFun();
     void guestLogin();
     void showProduct();
     void changeLang();
     void invalidUsername();
     void validUsername();
-    QTranslator *translatorPtr;
+    int curType;
+    consumerClass curConsumer;  // 当前消费者
+    sellerClass curSeller;      // 当前商家
+    QTranslator *translatorPtr; // 翻译文件
 
 private:
-    Ui::Widget *ui;
-    QMessageBox *msgBox;
     void init();
     void loginRegSwitchFun();
     void saveUserList(list<string>);
-    list<string> getUserList();
     void setTypeSeller();
     void setTypeConsumer();
+    list<string> getUserList();
+    Ui::Widget *ui;      // ui文件
+    QMessageBox *msgBox; // 提示框
 };
 #endif // WIDGET_H

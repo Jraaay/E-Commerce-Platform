@@ -15,12 +15,13 @@ product::product(QTranslator *translator, userClass *curUserFromWidget, QWidget 
     init();
 }
 
+/* 初始化 */
 void product::init()
 {
     sortMethod = 0;
     ui->setupUi(this);
     connect(ui->logout, &QPushButton::clicked, this, &product::logoutFun);
-    connect(ui->addProduct, &QPushButton::clicked, this, &product::test);
+    connect(ui->addProduct, &QPushButton::clicked, this, &product::openAddProduct);
     connect(ui->nextPhoto, &QPushButton::clicked, this, &product::nextPhoto);
     connect(ui->prePhoto, &QPushButton::clicked, this, &product::prePhoto);
     connect(ui->mainPhoto, &QPushButton::clicked, this, &product::showBigPhoto);
@@ -125,10 +126,6 @@ void product::init()
     }
     ui->userCenter->setText(curUser->name.c_str());
     db = new sqlite;
-    //    db->openDb();
-    //    productList = db->queryTable();
-    //    db->closeDb();
-    //    qDebug() << 1 << endl;
     db->openDb();
     productList = db->queryTable();
     discount = db->getDiscount();
@@ -136,6 +133,7 @@ void product::init()
     showProduct();
 }
 
+/* 登出 */
 void product::logoutFun()
 {
     Widget *w;
@@ -144,6 +142,7 @@ void product::logoutFun()
     this->close();
 }
 
+/* 打开用户中心 */
 void product::openUserCenter()
 {
     userCenter *w;
@@ -151,7 +150,8 @@ void product::openUserCenter()
     w->show();
 }
 
-void product::test()
+/* 添加商品 */
+void product::openAddProduct()
 {
     addProduct *ap;
     ap = new addProduct(curUser->uid);
@@ -159,6 +159,7 @@ void product::test()
     ap->show();
 }
 
+/* 展示商品 */
 void product::showProduct(bool getFromDB)
 {
     for (int i = 0; i < (int)itemList.size(); i++)
@@ -215,7 +216,7 @@ void product::showProduct(bool getFromDB)
         return;
     }
 
-    for (int i = 0; i < (int)productList.size(); i++)
+    for (int i = 0; i < (int)productList.size(); i++) // 循环添加所有商品
     {
         QListWidgetItem *tmp = new QListWidgetItem();
         itemList.push_back(tmp);
@@ -281,6 +282,7 @@ void product::showProduct(bool getFromDB)
     }
 }
 
+/* 超长字符串处理 */
 QString product::geteElidedText(QFont font, QString str, int MaxWidth)
 {
     const QFontMetrics fontWidth(font);
@@ -292,6 +294,7 @@ QString product::geteElidedText(QFont font, QString str, int MaxWidth)
     return str; //返回处理后的字符串
 }
 
+/* 点击商品 */
 void product::onListMailItemClicked(QListWidgetItem *item)
 {
     ui->place->hide();
@@ -339,6 +342,7 @@ void product::onListMailItemClicked(QListWidgetItem *item)
     showPhoto();
 }
 
+/* 展示图片 */
 void product::showPhoto()
 {
 
@@ -406,6 +410,7 @@ void product::showPhoto()
     }
 }
 
+/* 处理点击事件 */
 bool product::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == ui->image_1) //指定某个QLabel
@@ -438,7 +443,7 @@ bool product::eventFilter(QObject *obj, QEvent *event)
     {
         if (event->type() == QEvent::MouseButtonPress) //鼠标点击
         {
-           const  QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
+            const QMouseEvent *mouseEvent = static_cast<QMouseEvent *>(event); // 事件转换
             if (mouseEvent->button() == Qt::LeftButton)
             {
                 setMainPhoto(2);
@@ -475,12 +480,12 @@ bool product::eventFilter(QObject *obj, QEvent *event)
     }
     else
     {
-        // pass the event on to the parent class
         return QWidget::eventFilter(obj, event);
     }
     return false;
 }
 
+/* 设置主图片 */
 void product::setMainPhoto(int mainPhotoNo)
 {
     if (mainPhotoNo + curFirstPhoto < int(productList[curProduct]->photo.size()))
@@ -495,6 +500,7 @@ void product::setMainPhoto(int mainPhotoNo)
     showPhoto();
 }
 
+/* 上一张 */
 void product::prePhoto()
 {
     if (curFirstPhoto > 0)
@@ -509,6 +515,7 @@ void product::prePhoto()
     }
 }
 
+/* 下一张 */
 void product::nextPhoto()
 {
     if (curFirstPhoto < int(productList[curProduct]->photo.size()) - 5)
@@ -523,6 +530,7 @@ void product::nextPhoto()
     }
 }
 
+/* 展示大图 */
 void product::showBigPhoto()
 {
     if (productList[curProduct]->photo.size() > 0)
@@ -554,6 +562,7 @@ void product::showBigPhoto()
     }
 }
 
+/* 搜索商品 */
 void product::search()
 {
     db->openDb();
@@ -605,6 +614,7 @@ void product::search()
     showProduct();
 }
 
+/* 默认排序 */
 void product::defaultSort()
 {
     sortMethod = DEFAULT_SORT;
@@ -623,6 +633,7 @@ void product::defaultSort()
     ui->priceAscend->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;");
 }
 
+/* 价格降序 */
 void product::priceDescendSort()
 {
     sortMethod = PRICE_DESCEND_SORT;
@@ -653,6 +664,7 @@ void product::priceDescendSort()
     ui->priceAscend->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;");
 }
 
+/* 价格升序 */
 void product::priceAscendSort()
 {
     sortMethod = PRICE_ASCEND_SORT;
@@ -683,6 +695,7 @@ void product::priceAscendSort()
     ui->defaultSort->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;");
 }
 
+/* 点击购买 */
 void product::purchase()
 {
     if (curUser->getUserType() == GUESTTYPE)
@@ -884,6 +897,7 @@ void product::purchase()
     }
 }
 
+/* 刷新 */
 void product::refresh()
 {
     db->openDb();
@@ -935,9 +949,10 @@ void product::refresh()
     showProduct();
 }
 
+/* 管理商品 */
 void product::manage()
 {
-    addProduct *ap;
+    addProduct *ap; // 复用添加商品界面
     ap = new addProduct(*productList[curProduct]);
     ap->father = this;
     ap->show();
@@ -954,6 +969,7 @@ product::~product()
     delete curUser;
 }
 
+/* 修改用户名后刷新 */
 void product::refreshUser()
 {
     ui->userCenter->setText(curUser->name.c_str());

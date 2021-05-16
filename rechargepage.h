@@ -27,8 +27,8 @@ public:
     void buy648();
     void buyOther();
     void rechargeConfirm();
-    QObject *parentuserCenter;
-    double price = 0;
+    QObject *parentuserCenter; // 父亲指针
+    double price = 0;          // 充值金额
 
 private:
     Ui::rechargePage *ui;

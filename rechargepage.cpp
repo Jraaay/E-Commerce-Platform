@@ -14,6 +14,7 @@ rechargePage::~rechargePage()
     delete ui;
 }
 
+/* 初始化 */
 void rechargePage::init()
 {
     connect(ui->buy6, &QPushButton::clicked, this, &rechargePage::buy6);
@@ -119,6 +120,7 @@ void rechargePage::buyOther()
     price = 0;
 }
 
+/* 确认充值 */
 void rechargePage::rechargeConfirm()
 {
     if (price == 0)

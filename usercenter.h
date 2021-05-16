@@ -33,10 +33,10 @@ public:
     void rechargeConfirm(double moneyToCharge);
     void resetDiscount();
     void saveDiscount();
-    userClass *curUser;
-    vector<vector<double>> discount;
-    int discountPlace = -1;
-    product *fatherPtr;
+    userClass *curUser;              // 当前用户
+    vector<vector<double>> discount; // 折扣列表
+    int discountPlace = -1;          // 用于存哪一个商家
+    product *fatherPtr;              // 父亲指针
 
 private:
     Ui::userCenter *ui;

@@ -35,15 +35,15 @@ public:
     void saveProduct();
     void delProduct();
     void setMainPhoto(int mainPhotoNo);
-    QFileDialog *selectFile;
-    vector<QString> photosList;
-    vector<QPixmap> photosImageList;
-    int mainPhoto;
-    int curFirstPhoto;
     bool eventFilter(QObject *obj, QEvent *event); // 添加时间过滤器声明
-    void *father = nullptr;
-    int modifyId = -1;
-    int sellerId = -1;
+    int mainPhoto;                                 // 主图片
+    int curFirstPhoto;                             // 当前的第一张图片
+    QFileDialog *selectFile;                       // 文件选择器
+    vector<QString> photosList;                    // 图片文件列表
+    vector<QPixmap> photosImageList;               //图片列表
+    void *father = nullptr;                        // 父亲指针
+    int modifyId = -1;                             // 修改的商品id
+    int sellerId = -1;                             // 商家id
 
 private:
     Ui::addProduct *ui;

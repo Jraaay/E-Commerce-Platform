@@ -2,9 +2,9 @@
 #include "ui_usercenter.h"
 
 userCenter::userCenter(userClass *curUserFromWidget, product *father, QWidget *parent) : QWidget(parent),
-                                                                        ui(new Ui::userCenter)
+                                                                                         ui(new Ui::userCenter)
 {
-    fatherPtr = father;
+    fatherPtr = father; // 设置父亲指针方便调用
     ui->setupUi(this);
     curUser = curUserFromWidget;
     init();
@@ -15,21 +15,22 @@ userCenter::~userCenter()
     delete ui;
 }
 
+/* 初始化 */
 void userCenter::init()
 {
     const QRegExp regx1("^[a-zA-Z0-9_\\-]{0,16}$");
     const QValidator *validator1 = new QRegExpValidator(regx1, ui->usernameEdit);
-    ui->usernameEdit->setValidator(validator1);
+    ui->usernameEdit->setValidator(validator1); // 正则匹配
     sqlite *db = new sqlite();
     db->openDb();
-    discount = db->getDiscount();
+    discount = db->getDiscount(); // 获取折扣数组
     db->closeDb();
     delete db;
 
     if (curUser->getUserType() == SELLERTYPE)
     {
 
-        for (int i = 0; i < (int)discount.size(); i++)
+        for (int i = 0; i < (int)discount.size(); i++) // 找到该商家的折扣
         {
             if (discount[i][3] == curUser->uid)
             {
@@ -37,6 +38,7 @@ void userCenter::init()
                 break;
             }
         }
+        // 设置样式和折扣
         ui->food->setTextMargins(5, 0, 0, 0);
         ui->clothes->setTextMargins(5, 0, 0, 0);
         ui->book->setTextMargins(5, 0, 0, 0);
@@ -44,6 +46,7 @@ void userCenter::init()
         ui->clothes->setText(QString::number((1 - discount[discountPlace][1]) * 100));
         ui->book->setText(QString::number((1 - discount[discountPlace][2]) * 100));
 
+        //设置正则匹配
         QRegExp *regx1 = new QRegExp("^(100|(([1-9]){1}[0-9]?|0{1})((\\.)([0-9]){1,2})?)$");
         QValidator *validator1 = new QRegExpValidator(*regx1, ui->food);
         ui->food->setValidator(validator1);
@@ -56,6 +59,7 @@ void userCenter::init()
         delete regx1;
     }
 
+    // 设置样式
     ui->tabWidget->setCurrentIndex(0);
     ui->tabWidget->tabBar()->hide();
     ui->title->setText(ui->title->text().replace("XXX", curUser->name.c_str()));
@@ -65,6 +69,7 @@ void userCenter::init()
     ui->username->setText(curUser->name.c_str());
     ui->uid->setText(QString::number(curUser->uid));
 
+    // 显示余额
     char priceText[1000] = "";
     sprintf(priceText, "%.2lf", curUser->balance);
     ui->balanceText->setText(priceText);
@@ -76,6 +81,7 @@ void userCenter::init()
     {
         ui->balance->hide();
     }
+    // 链接信号与槽
     connect(ui->changeUsername, &QPushButton::clicked, this, &userCenter::changeUserName);
     connect(ui->changePassword, &QPushButton::clicked, this, &userCenter::changePassword);
     connect(ui->account, &QPushButton::clicked, this, &userCenter::toAccount);
@@ -86,6 +92,7 @@ void userCenter::init()
     connect(ui->save, &QPushButton::clicked, this, &userCenter::saveDiscount);
 }
 
+/* 修改用户名 */
 void userCenter::changeUserName()
 {
     if (ui->changeUsername->text() == "修改")
@@ -109,7 +116,8 @@ void userCenter::changeUserName()
             ifstream infile;
             string sellerJson = "";
             vector<sellerClass> sellerList;
-            try{
+            try
+            {
                 infile.open("sellerFile.json");
                 infile >> sellerJson;
                 infile.close();
@@ -127,7 +135,7 @@ void userCenter::changeUserName()
                     sellerList.push_back(tmp);
                 }
             }
-            catch (exception& e)
+            catch (exception &e)
             {
                 qDebug() << e.what() << endl;
                 vector<string> tmp;
@@ -196,7 +204,8 @@ void userCenter::changeUserName()
             ifstream infile;
             string consumerJson = "";
             vector<consumerClass> consumerList;
-            try{
+            try
+            {
                 infile.open("consumerFile.json");
                 infile >> consumerJson;
                 infile.close();
@@ -214,7 +223,7 @@ void userCenter::changeUserName()
                     consumerList.push_back(tmp);
                 }
             }
-            catch (exception& e)
+            catch (exception &e)
             {
                 qDebug() << e.what() << endl;
                 vector<string> tmp;
@@ -281,6 +290,7 @@ void userCenter::changeUserName()
     }
 }
 
+/* 修改密码 */
 void userCenter::changePassword()
 {
     if (ui->changePassword->text() == "修改密码")
@@ -306,7 +316,8 @@ void userCenter::changePassword()
             ifstream infile;
             string sellerJson = "";
             vector<sellerClass> sellerList;
-            try{
+            try
+            {
                 infile.open("sellerFile.json");
                 infile >> sellerJson;
                 infile.close();
@@ -324,7 +335,7 @@ void userCenter::changePassword()
                     sellerList.push_back(tmp);
                 }
             }
-            catch (exception& e)
+            catch (exception &e)
             {
                 qDebug() << e.what() << endl;
                 vector<string> tmp;
@@ -353,7 +364,7 @@ void userCenter::changePassword()
             }
             else
             {
-                sellerList[numToChange].setPass(QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString());
+                sellerList[numToChange].setPass(QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString()); // 密码MD5加密
                 vector<string> sellerJsonList;
                 for (int i = 0; i < (int)sellerList.size(); i++)
                 {
@@ -384,7 +395,8 @@ void userCenter::changePassword()
             ifstream infile;
             string consumerJson = "";
             vector<consumerClass> consumerList;
-            try{
+            try
+            {
                 infile.open("consumerFile.json");
                 infile >> consumerJson;
                 infile.close();
@@ -402,7 +414,7 @@ void userCenter::changePassword()
                     consumerList.push_back(tmp);
                 }
             }
-            catch (exception& e)
+            catch (exception &e)
             {
                 qDebug() << e.what() << endl;
                 vector<string> tmp;
@@ -431,7 +443,7 @@ void userCenter::changePassword()
             }
             else
             {
-                consumerList[numToChange].setPass(QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString());
+                consumerList[numToChange].setPass(QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString()); // 密码MD5加密
                 vector<string> consumerJsonList;
                 for (int i = 0; i < (int)consumerList.size(); i++)
                 {
@@ -460,6 +472,7 @@ void userCenter::changePassword()
     }
 }
 
+/* 打开账户管理界面 */
 void userCenter::toAccount()
 {
     ui->balance->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
@@ -468,6 +481,7 @@ void userCenter::toAccount()
     ui->tabWidget->setCurrentIndex(0);
 }
 
+/* 打开余额界面 */
 void userCenter::toBalancePage()
 {
     ui->account->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
@@ -476,6 +490,7 @@ void userCenter::toBalancePage()
     ui->tabWidget->setCurrentIndex(1);
 }
 
+/* 打开折扣管理界面 */
 void userCenter::toDiscuss()
 {
     ui->balance->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
@@ -484,12 +499,14 @@ void userCenter::toDiscuss()
     ui->tabWidget->setCurrentIndex(2);
 }
 
+/* 打开充值界面 */
 void userCenter::recharge()
 {
     rechargePage *tmp = new rechargePage(nullptr, this);
     tmp->show();
 }
 
+/* 确认充值 */
 void userCenter::rechargeConfirm(double moneyToCharge)
 {
     curUser->recharge(moneyToCharge);
@@ -498,7 +515,8 @@ void userCenter::rechargeConfirm(double moneyToCharge)
         ifstream infile;
         string sellerJson = "";
         vector<sellerClass> sellerList;
-        try{
+        try
+        {
             infile.open("sellerFile.json");
             infile >> sellerJson;
             infile.close();
@@ -516,7 +534,7 @@ void userCenter::rechargeConfirm(double moneyToCharge)
                 sellerList.push_back(tmp);
             }
         }
-        catch (exception& e)
+        catch (exception &e)
         {
             qDebug() << e.what() << endl;
             vector<string> tmp;
@@ -558,7 +576,8 @@ void userCenter::rechargeConfirm(double moneyToCharge)
         ifstream infile;
         string consumerJson = "";
         vector<consumerClass> consumerList;
-        try{
+        try
+        {
             infile.open("consumerFile.json");
             infile >> consumerJson;
             infile.close();
@@ -576,7 +595,7 @@ void userCenter::rechargeConfirm(double moneyToCharge)
                 consumerList.push_back(tmp);
             }
         }
-        catch (exception& e)
+        catch (exception &e)
         {
             qDebug() << e.what() << endl;
             vector<string> tmp;
@@ -619,6 +638,7 @@ void userCenter::rechargeConfirm(double moneyToCharge)
     moneyToCharge = 0;
 }
 
+/* 重置折扣 */
 void userCenter::resetDiscount()
 {
     ui->food->setText(QString::number(1 - discount[discountPlace][0]));
@@ -626,6 +646,7 @@ void userCenter::resetDiscount()
     ui->book->setText(QString::number(1 - discount[discountPlace][2]));
 }
 
+/* 保存折扣 */
 void userCenter::saveDiscount()
 {
     discount[discountPlace][0] = 1 - ui->food->text().toDouble() * 0.01;

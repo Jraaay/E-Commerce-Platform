@@ -1,7 +1,7 @@
 #include "sqlite.h"
 #include <QDebug>
 
-//构造函数设置数据库的连接参数
+/* 构造函数设置数据库的连接参数 */
 sqlite::sqlite()
 {
     if (QSqlDatabase::contains("qt_sql_default_connection"))
@@ -17,7 +17,7 @@ sqlite::sqlite()
     }
 }
 
-//打开数据库
+/* 打开数据库 */
 bool sqlite::openDb()
 {
     if (!db.open())
@@ -31,12 +31,11 @@ bool sqlite::openDb()
         {
             createTable();
         }
-        // do something
     }
     return true;
 }
 
-// 判断数据库中某个数据表是否存在
+/* 判断数据库中某个数据表是否存在 */
 bool sqlite::isTableExist(QString &tableName)
 {
     if (db.tables().contains(tableName))
@@ -46,7 +45,7 @@ bool sqlite::isTableExist(QString &tableName)
     return false;
 }
 
-// 创建数据表
+/* 创建数据表 */
 void sqlite::createTable()
 {
     // 用于执行sql语句的对象
@@ -88,7 +87,8 @@ void sqlite::createTable()
     }
 }
 
-void sqlite::singleInsertData(productItem item) // 插入单条数据
+/* 插入单条数据 */
+void sqlite::singleInsertData(productItem item)
 {
     QSqlQuery sqlQuery;
     sqlQuery.prepare("INSERT INTO `productItem` (`name`,`description`,`price`,`remaining`,`mainPhoto`,`type`, `seller`) VALUES (:name, :description, :price, :remaining, :mainPhoto, :type, :seller)");
@@ -110,7 +110,7 @@ void sqlite::singleInsertData(productItem item) // 插入单条数据
         qDebug() << "Insert successed!" << sqlQuery.lastInsertId().toInt();
     }
     int productId = sqlQuery.lastInsertId().toInt();
-    string destFolder = "./source/" + to_string(productId);
+    string destFolder = "./source/" + to_string(productId); // 图片保存到软件目录的source中防止删除源文件
     QDir dir;
     dir.mkpath(destFolder.c_str());
     for (int i = 0; i < int(item.photo.size()); i++)
@@ -131,7 +131,7 @@ void sqlite::singleInsertData(productItem item) // 插入单条数据
     }
 }
 
-// 查询全部数据
+/* 查询全部数据 */
 vector<productItem *> sqlite::queryTable(string LIKE, string SORT)
 {
     vector<productItem *> productList;
@@ -188,7 +188,8 @@ vector<productItem *> sqlite::queryTable(string LIKE, string SORT)
     return productList;
 }
 
-void sqlite::modifyData(productItem item, int updateImage) // 更新单条数据
+/* 更新单条数据 */
+void sqlite::modifyData(productItem item, int updateImage)
 {
     QSqlQuery sqlQuery;
     sqlQuery.prepare("UPDATE `productItem` SET "
@@ -216,7 +217,7 @@ void sqlite::modifyData(productItem item, int updateImage) // 更新单条数据
     {
         qDebug() << "Update successed!";
     }
-    if (updateImage)
+    if (updateImage) //对图片更改进行处理
     {
         const int productId = item.id;
         sqlQuery.prepare("DELETE FROM `productPhoto` "
@@ -268,7 +269,8 @@ void sqlite::modifyData(productItem item, int updateImage) // 更新单条数据
     }
 }
 
-void sqlite::deleteData(int id) // 删除单条数据
+/* 删除单条数据 */
+void sqlite::deleteData(int id)
 {
     QSqlQuery sqlQuery;
 
@@ -286,6 +288,7 @@ void sqlite::deleteData(int id) // 删除单条数据
     }
 }
 
+/* 新账户初始化 */
 void sqlite::newDiscount(int id)
 {
     QSqlQuery sqlQuery;
@@ -302,6 +305,7 @@ void sqlite::newDiscount(int id)
     }
 }
 
+/* 获取所有折扣 */
 vector<vector<double>> sqlite::getDiscount()
 {
     vector<vector<double>> discount;
@@ -327,6 +331,7 @@ vector<vector<double>> sqlite::getDiscount()
     return discount;
 }
 
+/* 保存折扣 */
 void sqlite::setDiscount(vector<vector<double>> discount)
 {
     QSqlQuery sqlQuery;
@@ -349,7 +354,7 @@ void sqlite::setDiscount(vector<vector<double>> discount)
     }
 }
 
-//关闭数据库
+/* 关闭数据库 */
 void sqlite::closeDb(void)
 {
     db.close();

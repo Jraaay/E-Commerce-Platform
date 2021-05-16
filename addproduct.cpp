@@ -2,6 +2,7 @@
 #include "ui_addproduct.h"
 #include <QDebug>
 
+/* 添加商品 */
 addProduct::addProduct(int seller, QWidget *parent) : QWidget(parent),
                                                       ui(new Ui::addProduct)
 {
@@ -10,6 +11,7 @@ addProduct::addProduct(int seller, QWidget *parent) : QWidget(parent),
     init();
 }
 
+/* 修改商品 */
 addProduct::addProduct(productItem productToModify, QWidget *parent) : QWidget(parent),
                                                                        ui(new Ui::addProduct)
 {
@@ -18,6 +20,7 @@ addProduct::addProduct(productItem productToModify, QWidget *parent) : QWidget(p
     init(productToModify);
 }
 
+/* 初始化 */
 void addProduct::init(productItem productToModify)
 {
     ui->name->setTextMargins(5, 0, 0, 0);
@@ -75,6 +78,7 @@ void addProduct::init(productItem productToModify)
     }
 }
 
+/* 选择图片 */
 void addProduct::selectPhotoFun()
 {
     selectFile = new QFileDialog;
@@ -100,6 +104,7 @@ void addProduct::selectPhotoFun()
     delete selectFile;
 }
 
+/* 展示图片 */
 void addProduct::photoShow()
 {
     for (int i = 0; i < 4; i++)
@@ -155,6 +160,7 @@ void addProduct::photoShow()
     }
 }
 
+/* 上一页 */
 void addProduct::prePhoto()
 {
     if (curFirstPhoto > 0)
@@ -169,6 +175,7 @@ void addProduct::prePhoto()
     }
 }
 
+/* 下一页 */
 void addProduct::nextPhoto()
 {
     if (curFirstPhoto < int(photosList.size()) - 4)
@@ -183,6 +190,7 @@ void addProduct::nextPhoto()
     }
 }
 
+/* 删除图片 */
 void addProduct::delPhoto()
 {
     int delPhotoNo = 0;
@@ -223,6 +231,7 @@ void addProduct::delPhoto()
     }
 }
 
+/* 设置主图片 */
 void addProduct::setMainPhoto(int mainPhotoNo)
 {
     if (mainPhotoNo + curFirstPhoto < int(photosList.size()))
@@ -237,6 +246,7 @@ void addProduct::setMainPhoto(int mainPhotoNo)
     photoShow();
 }
 
+/* 添加事件处理器处理点击事件 */
 bool addProduct::eventFilter(QObject *obj, QEvent *event)
 {
     if (obj == ui->image_1) //指定某个QLabel
@@ -293,12 +303,12 @@ bool addProduct::eventFilter(QObject *obj, QEvent *event)
     }
     else
     {
-        // pass the event on to the parent class
         return QWidget::eventFilter(obj, event);
     }
     return false;
 }
 
+/* 保存商品 */
 void addProduct::saveProduct()
 {
     productItem productToSave;
@@ -354,6 +364,7 @@ void addProduct::saveProduct()
     this->close();
 }
 
+/* 删除商品 */
 void addProduct::delProduct()
 {
     sqlite db;
