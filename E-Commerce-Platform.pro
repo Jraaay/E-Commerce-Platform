@@ -20,6 +20,8 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     addproduct.cpp \
+    cart.cpp \
+    cartitemui.cpp \
     loginandregister.cpp \
     main.cpp \
     product.cpp \
@@ -34,6 +36,8 @@ SOURCES += \
 
 HEADERS += \
     addproduct.h \
+    cart.h \
+    cartitemui.h \
     loginandregister.h \
     product.h \
     productitem.h \
@@ -47,6 +51,8 @@ HEADERS += \
 
 FORMS += \
     addproduct.ui \
+    cart.ui \
+    cartitemui.ui \
     product.ui \
     productlistui.ui \
     promptbox.ui \
