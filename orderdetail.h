@@ -49,6 +49,7 @@ public:
     vector<double> price;
     vector<QListWidgetItem *> itemList; // item列表
     vector<productListUi *> uiList;        // item的ui的列表
+    void payForOrder();
 
 private:
     Ui::OrderDetail *ui;

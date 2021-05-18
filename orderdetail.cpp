@@ -174,3 +174,130 @@ QString OrderDetail::geteElidedText(QFont font, QString str, int MaxWidth)
     }
     return str; //返回处理后的字符串
 }
+
+/* 支付 */
+void OrderDetail::payForOrder()
+{
+    if (curUser->balance >= priceSum)
+    {
+
+        curUser->balance -= priceSum;
+        if (curUser->getUserType() == SELLERTYPE)
+        {
+            ifstream infile;
+            string sellerJson;
+            vector<sellerClass> sellerList;
+            try
+            {
+                infile.open("sellerFile.json");
+                infile >> sellerJson;
+                infile.close();
+                const json j = json::parse(sellerJson);
+                vector<string> userListJson = j["data"];
+                for (int i = 0; i < (int)userListJson.size(); i++)
+                {
+                    const json jTmp = json::parse(userListJson[i]);
+                    sellerClass tmp;
+                    tmp.uid = jTmp["uid"];
+                    tmp.name = jTmp["name"];
+                    tmp.type = jTmp["type"];
+                    tmp.balance = jTmp["balance"];
+                    tmp.setPass(jTmp["password"]);
+                    sellerList.push_back(tmp);
+                }
+            }
+            catch (exception &e)
+            {
+                qDebug() << e.what() << endl;
+                return;
+            }
+
+            int numToChange;
+            for (int i = 0; i < (int)sellerList.size(); i++)
+            {
+                if (sellerList[i].uid == curUser->uid)
+                {
+                    numToChange = i;
+                }
+            }
+            sellerList[numToChange].balance = curUser->balance;
+            vector<string> sellerJsonList;
+            for (int i = 0; i < (int)sellerList.size(); i++)
+            {
+                sellerJsonList.push_back(sellerList[i].getJson());
+            }
+            json jTmp;
+            jTmp["data"] = sellerJsonList;
+            ofstream outFile;
+            outFile.open("sellerFile.json");
+            outFile << jTmp.dump();
+            outFile.close();
+            db->openDb();
+            db->payOrder(_orderId);
+            db->closeDb();
+            promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
+            prompt->show();
+        }
+        else
+        {
+            ifstream infile;
+            string consumerJson;
+            vector<consumerClass> consumerList;
+            try
+            {
+                infile.open("consumerFile.json");
+                infile >> consumerJson;
+                infile.close();
+                const json j = json::parse(consumerJson);
+                vector<string> userListJson = j["data"];
+                for (int i = 0; i < (int)userListJson.size(); i++)
+                {
+                    const json jTmp = json::parse(userListJson[i]);
+                    consumerClass tmp;
+                    tmp.uid = jTmp["uid"];
+                    tmp.name = jTmp["name"];
+                    tmp.type = jTmp["type"];
+                    tmp.balance = jTmp["balance"];
+                    tmp.setPass(jTmp["password"]);
+                    consumerList.push_back(tmp);
+                }
+            }
+            catch (exception &e)
+            {
+                qDebug() << e.what() << endl;
+                return;
+            }
+
+            int numToChange;
+            for (int i = 0; i < (int)consumerList.size(); i++)
+            {
+                if (consumerList[i].uid == curUser->uid)
+                {
+                    numToChange = i;
+                }
+            }
+            consumerList[numToChange].balance = curUser->balance;
+            vector<string> consumerJsonList;
+            for (int i = 0; i < (int)consumerList.size(); i++)
+            {
+                consumerJsonList.push_back(consumerList[i].getJson());
+            }
+            json jTmp;
+            jTmp["data"] = consumerJsonList;
+            ofstream outFile;
+            outFile.open("consumerFile.json");
+            outFile << jTmp.dump();
+            outFile.close();
+            db->openDb();
+            db->payOrder(_orderId);
+            db->closeDb();
+            promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
+            prompt->show();
+        }
+    }
+    else
+    {
+        promptBox *prompt = new promptBox(nullptr, "余额不足\nLack of balance");
+        prompt->show();
+    }
+}
