@@ -11,7 +11,6 @@ Cart::Cart(userClass *curUserFromWidget, QWidget *parent) :
 
 Cart::~Cart()
 {
-    delete ui;
     for (int i = 0; i < (int)productList.size(); i++)
     {
         delete productList[i];
@@ -23,13 +22,13 @@ Cart::~Cart()
 
 void Cart::init()
 {
-    sortMethod = 0;
     ui->setupUi(this);
     connect(ui->nextPhoto, &QPushButton::clicked, this, &Cart::nextPhoto);
     connect(ui->prePhoto, &QPushButton::clicked, this, &Cart::prePhoto);
     connect(ui->mainPhoto, &QPushButton::clicked, this, &Cart::showBigPhoto);
     connect(ui->refresh, &QPushButton::clicked, this, &Cart::refresh);
     connect(ui->selectall, &QPushButton::clicked, this, &Cart::selectAll);
+    connect(ui->buy, &QPushButton::clicked, this, &Cart::generateOrder);
     void (Cart::*slotFun)(QListWidgetItem *) = &Cart::onListMailItemClicked;
     void (QListWidget::*signal)(QListWidgetItem *) = &QListWidget::itemClicked;
     connect(ui->listWidget, signal, this, slotFun);
@@ -532,10 +531,87 @@ void Cart::countPrice()
     ui->cartPrice->setText(priceText);
 }
 
+/* 全选 */
 void Cart::selectAll()
 {
     for (int i = 0; i < (int)uiList.size(); i++)
     {
         uiList[i]->ui->buyCheck->setChecked(true);
     }
+}
+
+void Cart::generateOrder()
+{
+    db->openDb();
+    for (int i = 0; i < (int)productList.size(); i++)
+    {
+        delete productList[i];
+    }
+    productList.clear();
+    numberList.clear();
+    checkedList.clear();
+    db->queryCart(curUser->uid, productList, numberList, checkedList);
+    discount = db->getDiscount();
+    db->closeDb();
+
+    vector<productItem> orderList;
+    vector<int> count;
+    vector<double> price;
+    double priceSum = 0;
+    for (int i = 0; i < (int)uiList.size(); i++)
+    {
+        if (uiList[i]->ui->number->text().toInt() > productList[i]->remaining)
+        {
+            for (int j = 0; j < i; j++)
+            {
+                if (uiList[i]->ui->buyCheck->isChecked())
+                {
+                    productList[i]->remaining+=uiList[i]->ui->number->text().toInt();
+                    db->openDb();
+                    db->modifyData(*productList[i], 0);
+                    db->closeDb();
+                }
+            }
+            refresh();
+            promptBox *pb = new promptBox(nullptr, "商品: " + productList[i]->name + " 的库存不足");
+            pb->show();
+            break;
+        }
+        if (uiList[i]->ui->buyCheck->isChecked())
+        {
+            priceSum += productList[i]->getPrice(discount) * uiList[i]->ui->number->text().toInt();
+            orderList.push_back(*productList[i]);
+            count.push_back(uiList[i]->ui->number->text().toInt());
+            price.push_back(productList[i]->getPrice(discount));
+            productList[i]->remaining-=uiList[i]->ui->number->text().toInt();
+            db->openDb();
+            db->modifyData(*productList[i], 0);
+            db->closeDb();
+        }
+    }
+    db->openDb();
+    int orderId = db->generateOrder(curUser->uid, orderList, count, price, priceSum);
+    db->closeDb();
+    userClass *curUserToOrder;
+    if (curUser->getUserType() == CONSUMERTYPE)
+    {
+        curUserToOrder = new consumerClass();
+        curUserToOrder->uid = curUser->uid;
+        curUserToOrder->name = curUser->name;
+        curUserToOrder->type = curUser->type;
+        curUserToOrder->balance = curUser->balance;
+        curUserToOrder->setPass(curUser->getPass());
+    }
+    else
+    {
+
+        curUserToOrder = new sellerClass();
+        curUserToOrder->uid = curUser->uid;
+        curUserToOrder->name = curUser->name;
+        curUserToOrder->type = curUser->type;
+        curUserToOrder->balance = curUser->balance;
+        curUserToOrder->setPass(curUser->getPass());
+    }
+    OrderDetail *od = new OrderDetail(curUserToOrder, orderId);
+    od->show();
 }

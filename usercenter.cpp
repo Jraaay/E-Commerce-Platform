@@ -26,7 +26,6 @@ void userCenter::init()
     discount = db->getDiscount(); // 获取折扣数组
     db->closeDb();
     delete db;
-
     if (curUser->getUserType() == SELLERTYPE)
     {
 
@@ -68,6 +67,10 @@ void userCenter::init()
     ui->passwordAgain->hide();
     ui->username->setText(curUser->name.c_str());
     ui->uid->setText(QString::number(curUser->uid));
+    ui->orderListWidget->setFrameShape(QListWidget::NoFrame);
+    void (userCenter::*slotFun)(QListWidgetItem *) = &userCenter::onListMailItemClicked;
+    void (QListWidget::*signal)(QListWidgetItem *) = &QListWidget::itemClicked;
+    connect(ui->orderListWidget, signal, this, slotFun);
 
     // 显示余额
     char priceText[1000] = "";
@@ -87,6 +90,7 @@ void userCenter::init()
     connect(ui->account, &QPushButton::clicked, this, &userCenter::toAccount);
     connect(ui->balance, &QPushButton::clicked, this, &userCenter::toBalancePage);
     connect(ui->discount, &QPushButton::clicked, this, &userCenter::toDiscuss);
+    connect(ui->order, &QPushButton::clicked, this, &userCenter::toOrders);
     connect(ui->recharge, &QPushButton::clicked, this, &userCenter::recharge);
     connect(ui->reset, &QPushButton::clicked, this, &userCenter::resetDiscount);
     connect(ui->save, &QPushButton::clicked, this, &userCenter::saveDiscount);
@@ -472,12 +476,57 @@ void userCenter::changePassword()
     }
 }
 
+void userCenter::showOrders()
+{
+    sqlite db;
+    db.openDb();
+    vector<double> priceSum;
+    vector<long long> time;
+    vector<bool> paid;
+    db.getOrderList(curUser->uid, orderId, priceSum, time, paid);
+    db.closeDb();
+    for (int i = 0; i < (int)itemList.size(); i++)
+    {
+        delete itemList[i];
+        delete uiList[i];
+    }
+    itemList.clear();
+    uiList.clear();
+    ui->orderListWidget->clear();
+    ui->orderListWidget->verticalScrollBar()->setSingleStep(16);
+
+    for (int i = 0; i < (int)orderId.size(); i++) // 循环添加所有订单
+    {
+        QListWidgetItem *tmp = new QListWidgetItem();
+        itemList.push_back(tmp);
+        ui->orderListWidget->addItem(tmp);
+        tmp->setSizeHint(QSize(626, 160));
+        OrderItem *w = new OrderItem(ui->orderListWidget);
+        uiList.push_back(w);
+        w->ui->orderId->setText(QString::number(orderId[i]));
+        char priceText[1000] = "";
+        sprintf(priceText, "%.2lf", priceSum[i]);
+        w->ui->price->setText(priceText);
+        time_t t = time[i];
+        tm* local = localtime(&t);
+        char buf[128] = { 0 };
+        strftime(buf, 64, "%Y-%m-%d %H:%M:%S", local);
+        w->ui->time->setText(buf);
+        if (!paid[i])
+        {
+            w->ui->paid->setIcon(QIcon(":/image/unpaid.png"));
+        }
+        ui->orderListWidget->setItemWidget(tmp, w);
+    }
+}
+
 /* 打开账户管理界面 */
 void userCenter::toAccount()
 {
     ui->balance->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->discount->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->account->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:#1c87ff");
+    ui->order->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->tabWidget->setCurrentIndex(0);
 }
 
@@ -487,6 +536,7 @@ void userCenter::toBalancePage()
     ui->account->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->discount->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->balance->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:#1c87ff");
+    ui->order->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->tabWidget->setCurrentIndex(1);
 }
 
@@ -496,7 +546,19 @@ void userCenter::toDiscuss()
     ui->balance->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->account->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->discount->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:#1c87ff");
+    ui->order->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->tabWidget->setCurrentIndex(2);
+}
+
+/* 打开我的订单界面 */
+void userCenter::toOrders()
+{
+    ui->balance->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
+    ui->account->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
+    ui->discount->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
+    ui->order->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:#1c87ff");
+    ui->tabWidget->setCurrentIndex(3);
+    showOrders();
 }
 
 /* 打开充值界面 */
@@ -659,4 +721,44 @@ void userCenter::saveDiscount()
     delete db;
     promptBox *prompt = new promptBox(nullptr, "保存成功\nSave successfully");
     prompt->show();
+}
+
+/* 点击商品 */
+void userCenter::onListMailItemClicked(QListWidgetItem *item)
+{
+    int curItem = 0;
+    while (curItem < ui->orderListWidget->count())
+    {
+        if (ui->orderListWidget->item(curItem) == item)
+        {
+            break;
+        }
+        else
+        {
+            curItem++;
+        }
+    }
+    userClass *curUserToOrder;
+    if (curUser->getUserType() == CONSUMERTYPE)
+    {
+        curUserToOrder = new consumerClass();
+        curUserToOrder->uid = curUser->uid;
+        curUserToOrder->name = curUser->name;
+        curUserToOrder->type = curUser->type;
+        curUserToOrder->balance = curUser->balance;
+        curUserToOrder->setPass(curUser->getPass());
+    }
+    else
+    {
+
+        curUserToOrder = new sellerClass();
+        curUserToOrder->uid = curUser->uid;
+        curUserToOrder->name = curUser->name;
+        curUserToOrder->type = curUser->type;
+        curUserToOrder->balance = curUser->balance;
+        curUserToOrder->setPass(curUser->getPass());
+    }
+    OrderDetail *od = new OrderDetail(curUserToOrder, orderId[curItem]);
+    od->show();
+
 }

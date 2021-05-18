@@ -24,6 +24,8 @@ SOURCES += \
     cartitemui.cpp \
     loginandregister.cpp \
     main.cpp \
+    orderdetail.cpp \
+    orderitem.cpp \
     product.cpp \
     productitem.cpp \
     productlistui.cpp \
@@ -39,6 +41,8 @@ HEADERS += \
     cart.h \
     cartitemui.h \
     loginandregister.h \
+    orderdetail.h \
+    orderitem.h \
     product.h \
     productitem.h \
     productlistui.h \
@@ -53,6 +57,8 @@ FORMS += \
     addproduct.ui \
     cart.ui \
     cartitemui.ui \
+    orderdetail.ui \
+    orderitem.ui \
     product.ui \
     productlistui.ui \
     promptbox.ui \

@@ -10,6 +10,8 @@
 #include <QTabBar>
 #include "rechargepage.h"
 #include "sqlite.h"
+#include "orderitem.h"
+#include "ui_orderitem.h"
 
 namespace Ui
 {
@@ -29,14 +31,20 @@ public:
     void toBalancePage();
     void toAccount();
     void toDiscuss();
+    void toOrders();
     void recharge();
     void rechargeConfirm(double moneyToCharge);
     void resetDiscount();
     void saveDiscount();
+    void showOrders();
+    vector<int> orderId;
     userClass *curUser;              // 当前用户
     vector<vector<double>> discount; // 折扣列表
     int discountPlace = -1;          // 用于存哪一个商家
     product *fatherPtr;              // 父亲指针
+    vector<QListWidgetItem *> itemList; // item列表
+    vector<OrderItem *> uiList;     // item的ui的列表
+    void onListMailItemClicked(QListWidgetItem *item);
 
 private:
     Ui::userCenter *ui;

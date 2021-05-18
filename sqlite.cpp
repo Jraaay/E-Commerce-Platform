@@ -96,6 +96,28 @@ void sqlite::createTable()
     {
         qDebug() << "Table created!";
     }
+    createSql = QString("CREATE TABLE `order` (`id` INTEGER PRIMARY KEY, `userId` INTEGER NOT NULL,`price` INTEGER NOT NULL, `time` INTEGER NOT NULL, `paied` BOOLEAN DEFAULT false);");
+    sqlQuery.prepare(createSql);
+    // 执行sql语句
+    if (!sqlQuery.exec())
+    {
+        qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
+    }
+    else
+    {
+        qDebug() << "Table created!";
+    }
+    createSql = QString("CREATE TABLE `orderItem` (`id` INTEGER PRIMARY KEY, `orderId` INTEGER NOT NULL,`productId` INTEGER NOT NULL, `price` BOOLEAN DEFAULT false, `number` INTEGER NOT NULL);");
+    sqlQuery.prepare(createSql);
+    // 执行sql语句
+    if (!sqlQuery.exec())
+    {
+        qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
+    }
+    else
+    {
+        qDebug() << "Table created!";
+    }
 }
 
 /* 插入单条数据 */
@@ -505,6 +527,175 @@ void sqlite::setDiscount(vector<vector<double>> discount)
         }
     }
 }
+
+int sqlite::generateOrder(int userId, vector<productItem> orderList, vector<int> count, vector<double> price, double priceSum)
+{
+    int orderId;
+    QSqlQuery sqlQuery;
+    //(`id` INTEGER PRIMARY KEY, `userId` INTEGER NOT NULL,`price` INTEGER NOT NULL, `time` INTEGER NOT NULL, `paied` BOOLEAN DEFAULT false)
+    sqlQuery.prepare("INSERT INTO `order` (`userId`, `price`, `time`) VALUES (:userId, :price, :time)");
+    sqlQuery.bindValue(":userId", userId);
+    sqlQuery.bindValue(":price", priceSum);
+    time_t t;
+    time(&t);
+    qDebug() << t;
+    sqlQuery.bindValue(":time", QVariant::fromValue(t));
+    if (!sqlQuery.exec())
+    {
+        qDebug() << "Error: Fail to generate order. " << sqlQuery.lastError();
+    }
+    else
+    {
+        qDebug() << "Order generated!";
+        orderId = sqlQuery.lastInsertId().toInt();
+    }
+    for (int i = 0; i < (int)orderList.size(); i++)
+    {
+        sqlQuery.prepare("INSERT INTO `orderItem` (`orderId`, `productId`, `price`, `number`) VALUES (:orderId, :productId, :price, :number)");
+        sqlQuery.bindValue(":orderId", orderId);
+        sqlQuery.bindValue(":productId", orderList[i].id);
+        sqlQuery.bindValue(":price", price[i]);
+        sqlQuery.bindValue(":number", count[i]);
+        if (!sqlQuery.exec())
+        {
+            qDebug() << "Error: Fail to generate order. " << sqlQuery.lastError();
+        }
+        else
+        {
+            qDebug() << "Order generated!";
+        }
+    }
+    return orderId;
+}
+
+void sqlite::getOrder(int orderId, bool &paied, long long &time, int &userId, vector<productItem *> &orderList, vector<int> &count, vector<double> &price, double &priceSum)
+{
+    QSqlQuery sqlQuery;
+    sqlQuery.prepare("SELECT * FROM `order` WHERE `id`==:orderId ");
+    sqlQuery.bindValue(":orderId", orderId);
+    if (!sqlQuery.exec())
+    {
+        qDebug() << "Error: Fail to query table. " << sqlQuery.lastError();
+    }
+    else
+    {
+        while (sqlQuery.next())
+        {
+            paied = sqlQuery.value(4).toBool();
+            time = sqlQuery.value(3).toLongLong();
+            priceSum = sqlQuery.value(2).toDouble();
+            userId = sqlQuery.value(1).toInt();
+            QSqlQuery sqlQuery2;
+            sqlQuery2.prepare("SELECT * FROM `orderItem` WHERE `orderId`==:orderId ");
+            sqlQuery2.bindValue(":orderId", sqlQuery.value(0).toInt());
+            sqlQuery2.exec();
+            while (sqlQuery2.next())
+            {
+                QSqlQuery sqlQuery3;
+                sqlQuery3.prepare("SELECT * FROM `productItem` WHERE `id`==:productId ");
+                sqlQuery3.bindValue(":productId", sqlQuery2.value(2).toInt());
+                sqlQuery3.exec();
+                while (sqlQuery3.next())
+                {
+                    productItem *tmp;
+                    switch (sqlQuery3.value(6).toInt())
+                    {
+                    case FOODTYPE:
+                        tmp = new foodItem;
+                        break;
+                    case CLOTHESTYPE:
+                        tmp = new clothesItem;
+                        break;
+                    case BOOKTYPE:
+                        tmp = new bookItem;
+                        break;
+                    default:
+                        tmp = new productItem;
+                    }
+                    tmp->id = sqlQuery3.value(0).toInt();
+                    tmp->name = sqlQuery3.value(1).toString().toStdString();
+                    tmp->description = sqlQuery3.value(2).toString().toStdString();
+                    tmp->price = sqlQuery3.value(3).toDouble();
+                    tmp->remaining = sqlQuery3.value(4).toInt();
+                    tmp->mainPhoto = sqlQuery3.value(5).toInt();
+                    tmp->type = sqlQuery3.value(6).toInt();
+                    tmp->seller = sqlQuery3.value(8).toInt();
+                    QSqlQuery sqlQueryPhoto;
+                    sqlQueryPhoto.exec("SELECT * FROM `productPhoto` WHERE `productId` LIKE " + sqlQuery3.value(0).toString());
+                    while (sqlQueryPhoto.next())
+                    {
+                        tmp->photo.push_back(sqlQueryPhoto.value(2).toString());
+                    }
+                    //(`id` INTEGER PRIMARY KEY, `orderId` INTEGER NOT NULL,`productId` INTEGER NOT NULL, `price` BOOLEAN DEFAULT false, `number` INTEGER NOT NULL)
+                    orderList.push_back(tmp);
+                    price.push_back(sqlQuery2.value(3).toDouble());
+                    count.push_back(sqlQuery2.value(4).toInt());
+                }
+            }
+        }
+    }
+}
+
+void sqlite::payOrder(int orderId)
+{
+    QSqlQuery sqlQuery;
+    sqlQuery.prepare("UPDATE `order` SET "
+                     "`paied`=true "
+                     "WHERE `id`==:id;");
+    sqlQuery.bindValue(":id", orderId);
+    if (!sqlQuery.exec())
+    {
+        qDebug() << "Error: Fail to pay order. " << sqlQuery.lastError();
+    }
+    else
+    {
+        qDebug() << "Order paied!";
+    }
+}
+
+
+void sqlite::getOrderList(int userId, vector<int> &orderId, vector<double> &priceSum, vector<long long> &time, vector<bool> &paid)
+{
+    QSqlQuery sqlQuery;
+    sqlQuery.prepare("SELECT * FROM `order` WHERE `userId`==:userId ");
+    sqlQuery.bindValue(":userId", userId);
+    if (!sqlQuery.exec())
+    {
+        qDebug() << "Error: Fail to get orders. " << sqlQuery.lastError();
+    }
+    else
+    {
+        qDebug() << "Order get!";
+        while (sqlQuery.next())
+        {
+            orderId.push_back(sqlQuery.value(0).toInt());
+            priceSum.push_back(sqlQuery.value(2).toDouble());
+            time.push_back(sqlQuery.value(3).toLongLong());
+            paid.push_back(sqlQuery.value(4).toBool());
+        }
+    }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /* 关闭数据库 */
 void sqlite::closeDb(void)

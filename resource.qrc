@@ -1,5 +1,7 @@
 <RCC>
   <qresource prefix="/">
+    <file>image/unpaid.png</file>
+    <file>image/paid.png</file>
     <file>image/addToCart.png</file>
     <file>image/cart.png</file>
     <file>image/sub.png</file>

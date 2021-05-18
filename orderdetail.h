@@ -1,5 +1,5 @@
-#ifndef CART_H
-#define CART_H
+#ifndef ORDERDETAIL_H
+#define ORDERDETAIL_H
 
 #include <QWidget>
 #include <vector>
@@ -17,48 +17,42 @@
 #include "cartitemui.h"
 #include "ui_cartitemui.h"
 #include "promptbox.h"
-#include "orderdetail.h"
-#include "user.h"
+#include "productlistui.h"
+#include "ui_productlistui.h"
 
 namespace Ui {
-class Cart;
+class OrderDetail;
 }
 
-class Cart : public QWidget
+class OrderDetail : public QWidget
 {
     Q_OBJECT
 
 public:
-    explicit Cart(userClass *curUserFromWidget, QWidget *parent = nullptr);
-    ~Cart();
+    explicit OrderDetail(userClass *curUserFromFather, int orderId, QWidget *parent = nullptr);
+    ~OrderDetail();
     void init();
     void showProduct(bool getFromDB = false);
     QString geteElidedText(QFont font, QString str, int MaxWidth);
-    void onListMailItemClicked(QListWidgetItem *item);
-    void showPhoto();
-    bool eventFilter(QObject *obj, QEvent *event);
-    void setMainPhoto(int mainPhotoNo);
-    void prePhoto();
-    void nextPhoto();
-    void showBigPhoto();
-    void refresh();
-    void countPrice();
-    void selectAll();
-    void generateOrder();
     userClass *curUser;                 // 当前用户
     int curFirstPhoto;                  // 当前的第一张图片
     int mainPhoto;                      // 主图片
     int curProduct;                     // 当前商品
+    bool paied;
+    long long time;
     vector<productItem *> productList;  // 商品列表
     vector<int> numberList;             // 购买量列表
     vector<bool> checkedList;           // 选中列表
     sqlite *db;                         // 数据库
-    vector<vector<double>> discount;    // 折扣列表
+    double priceSum;
+    vector<int> count;
+    vector<double> price;
     vector<QListWidgetItem *> itemList; // item列表
-    vector<CartItemUi *> uiList;        // item的ui的列表
+    vector<productListUi *> uiList;        // item的ui的列表
 
 private:
-    Ui::Cart *ui;
+    Ui::OrderDetail *ui;
+    int _orderId;
 };
 
-#endif // CART_H
+#endif // ORDERDETAIL_H
