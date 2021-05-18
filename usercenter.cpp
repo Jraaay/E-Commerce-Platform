@@ -483,6 +483,7 @@ void userCenter::showOrders()
     vector<double> priceSum;
     vector<long long> time;
     vector<bool> paid;
+    orderId.clear();
     db.getOrderList(curUser->uid, orderId, priceSum, time, paid);
     db.closeDb();
     for (int i = 0; i < (int)itemList.size(); i++)
