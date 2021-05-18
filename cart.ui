@@ -6,20 +6,20 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1280</width>
-    <height>720</height>
+    <width>1160</width>
+    <height>680</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
-    <width>1280</width>
-    <height>720</height>
+    <width>1160</width>
+    <height>680</height>
    </size>
   </property>
   <property name="maximumSize">
    <size>
-    <width>1280</width>
-    <height>720</height>
+    <width>1160</width>
+    <height>680</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -166,8 +166,8 @@
           <widget class="QListWidget" name="listWidget">
            <property name="minimumSize">
             <size>
-             <width>0</width>
-             <height>585</height>
+             <width>626</width>
+             <height>535</height>
             </size>
            </property>
            <property name="styleSheet">
@@ -324,8 +324,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>606</width>
-            <height>1295</height>
+            <width>526</width>
+            <height>1384</height>
            </rect>
           </property>
           <property name="minimumSize">
