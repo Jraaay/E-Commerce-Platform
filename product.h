@@ -11,6 +11,7 @@
 #include "addproduct.h"
 #include <QListWidgetItem>
 #include <QTranslator>
+#include "cart.h"
 
 #define DEFAULT_SORT 0
 #define PRICE_DESCEND_SORT 1
@@ -49,6 +50,8 @@ public:
     void manage();
     void refreshUser();
     void showProduct(bool getFromDB = false);
+    void openCart();
+    void addToCart();
     userClass *curUser;                 // 当前用户
     int curFirstPhoto;                  // 当前的第一张图片
     int mainPhoto;                      // 主图片

@@ -33,6 +33,8 @@ void product::init()
     connect(ui->purchase, &QPushButton::clicked, this, &product::purchase);
     connect(ui->manage, &QPushButton::clicked, this, &product::manage);
     connect(ui->refresh, &QPushButton::clicked, this, &product::refresh);
+    connect(ui->cart, &QPushButton::clicked, this, &product::openCart);
+    connect(ui->addToCart, &QPushButton::clicked, this, &product::addToCart);
     void (product::*slotFun)(QListWidgetItem *) = &product::onListMailItemClicked;
     void (QListWidget::*signal)(QListWidgetItem *) = &QListWidget::itemClicked;
     connect(ui->listWidget, signal, this, slotFun);
@@ -176,6 +178,7 @@ void product::showProduct(bool getFromDB)
         {
             delete productList[i];
         }
+        productList.clear();
         productList = db->queryTable();
         discount = db->getDiscount();
         db->closeDb();
@@ -973,4 +976,18 @@ product::~product()
 void product::refreshUser()
 {
     ui->userCenter->setText(curUser->name.c_str());
+}
+
+/* 打开购物车 */
+void product::openCart()
+{
+    Cart *cartPage = new Cart(curUser);
+    cartPage->show();
+}
+
+void product::addToCart()
+{
+    db->openDb();
+    db->modifyItemInCart(productList[curProduct]->id, curUser->uid);
+    db->closeDb();
 }

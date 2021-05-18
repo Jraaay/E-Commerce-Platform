@@ -23,6 +23,9 @@ public:
     vector<productItem *> queryTable(string LIKE = "", string SORT = "");
     // 插入单条数据
     void singleInsertData(productItem item);
+    void modifyItemInCart(int productId, int userId, int number = -1, bool checked = true);
+    void deleteItemFromCart(int productId, int userId);
+    void queryCart(int userId, vector<productItem *> &productList, vector<int> &numberList, vector<bool> &checkedList);
     // 修改数据
     void modifyData(productItem item, int updateImage);
     // 删除数据

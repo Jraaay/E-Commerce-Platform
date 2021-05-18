@@ -17,13 +17,13 @@
    <string>商品</string>
   </property>
   <property name="styleSheet">
-   <string notr="true"/>
+   <string notr="true">background-color: rgb(255, 255, 255);</string>
   </property>
   <widget class="QLabel" name="mainPhoto">
    <property name="geometry">
     <rect>
-     <x>20</x>
-     <y>15</y>
+     <x>40</x>
+     <y>10</y>
      <width>111</width>
      <height>131</height>
     </rect>
@@ -43,7 +43,7 @@
     <rect>
      <x>160</x>
      <y>10</y>
-     <width>460</width>
+     <width>361</width>
      <height>50</height>
     </rect>
    </property>
@@ -142,7 +142,7 @@
     <rect>
      <x>160</x>
      <y>110</y>
-     <width>161</width>
+     <width>101</width>
      <height>41</height>
     </rect>
    </property>
@@ -162,9 +162,9 @@
   <widget class="QLabel" name="type">
    <property name="geometry">
     <rect>
-     <x>320</x>
+     <x>260</x>
      <y>110</y>
-     <width>101</width>
+     <width>91</width>
      <height>41</height>
     </rect>
    </property>
@@ -184,7 +184,7 @@
   <widget class="QLabel" name="seller">
    <property name="geometry">
     <rect>
-     <x>500</x>
+     <x>350</x>
      <y>110</y>
      <width>111</width>
      <height>41</height>
@@ -226,6 +226,153 @@
     <string>￥2020</string>
    </property>
   </widget>
+  <widget class="QCheckBox" name="buyCheck">
+   <property name="geometry">
+    <rect>
+     <x>10</x>
+     <y>65</y>
+     <width>16</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>16</width>
+     <height>16</height>
+    </size>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(255, 255, 255, 0);</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>20</width>
+     <height>20</height>
+    </size>
+   </property>
+   <property name="tristate">
+    <bool>false</bool>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="number">
+   <property name="geometry">
+    <rect>
+     <x>520</x>
+     <y>120</y>
+     <width>41</width>
+     <height>20</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+    </font>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: whitesmoke;border: none;</string>
+   </property>
+   <property name="text">
+    <string>1</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignCenter</set>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="plus">
+   <property name="geometry">
+    <rect>
+     <x>560</x>
+     <y>119</y>
+     <width>31</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(255, 255, 255, 0);border: none;</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/plus.png</normaloff>:/image/plus.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>12</width>
+     <height>12</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="sub">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="geometry">
+    <rect>
+     <x>490</x>
+     <y>119</y>
+     <width>31</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(255, 255, 255, 0);border: none;</string>
+   </property>
+   <property name="text">
+    <string/>
+   </property>
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/image/sub.png</normaloff>:/image/sub.png</iconset>
+   </property>
+   <property name="iconSize">
+    <size>
+     <width>12</width>
+     <height>12</height>
+    </size>
+   </property>
+  </widget>
+  <widget class="QPushButton" name="deleteCart">
+   <property name="geometry">
+    <rect>
+     <x>540</x>
+     <y>20</y>
+     <width>51</width>
+     <height>23</height>
+    </rect>
+   </property>
+   <property name="font">
+    <font>
+     <family>微软雅黑</family>
+     <pointsize>10</pointsize>
+    </font>
+   </property>
+   <property name="cursor">
+    <cursorShape>PointingHandCursor</cursorShape>
+   </property>
+   <property name="styleSheet">
+    <string notr="true">background-color: rgba(255, 255, 255, 0);border: none;color:gray;</string>
+   </property>
+   <property name="text">
+    <string>删除</string>
+   </property>
+  </widget>
   <zorder>mainPhoto</zorder>
   <zorder>name</zorder>
   <zorder>label_4</zorder>
@@ -235,7 +382,14 @@
   <zorder>type</zorder>
   <zorder>seller</zorder>
   <zorder>priceRaw</zorder>
+  <zorder>buyCheck</zorder>
+  <zorder>number</zorder>
+  <zorder>plus</zorder>
+  <zorder>sub</zorder>
+  <zorder>deleteCart</zorder>
  </widget>
- <resources/>
+ <resources>
+  <include location="resource.qrc"/>
+ </resources>
  <connections/>
 </ui>

@@ -61,7 +61,10 @@
       </spacer>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0,0,0,0,0,0,0,0">
+      <layout class="QHBoxLayout" name="horizontalLayout_3" stretch="0,0,0,0,0,0,0,0,0,0,0">
+       <property name="spacing">
+        <number>10</number>
+       </property>
        <item>
         <widget class="QPushButton" name="refresh">
          <property name="minimumSize">
@@ -147,13 +150,13 @@
         <widget class="QLineEdit" name="search">
          <property name="minimumSize">
           <size>
-           <width>600</width>
+           <width>500</width>
            <height>60</height>
           </size>
          </property>
          <property name="maximumSize">
           <size>
-           <width>600</width>
+           <width>500</width>
            <height>60</height>
           </size>
          </property>
@@ -221,6 +224,35 @@
          </property>
          <property name="text">
           <string/>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="cart">
+         <property name="minimumSize">
+          <size>
+           <width>60</width>
+           <height>50</height>
+          </size>
+         </property>
+         <property name="cursor">
+          <cursorShape>PointingHandCursor</cursorShape>
+         </property>
+         <property name="styleSheet">
+          <string notr="true">background-color: rgb(255, 255, 255);border:none;</string>
+         </property>
+         <property name="text">
+          <string/>
+         </property>
+         <property name="icon">
+          <iconset resource="resource.qrc">
+           <normaloff>:/image/cart.png</normaloff>:/image/cart.png</iconset>
+         </property>
+         <property name="iconSize">
+          <size>
+           <width>32</width>
+           <height>32</height>
+          </size>
          </property>
         </widget>
        </item>
@@ -505,8 +537,8 @@ padding: -1;</string>
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>604</width>
-            <height>1258</height>
+            <width>606</width>
+            <height>1295</height>
            </rect>
           </property>
           <property name="minimumSize">
@@ -1178,6 +1210,35 @@ background-color: rgb(255,255,255);border:none;padding: -1;
                 </widget>
                </item>
                <item>
+                <widget class="QPushButton" name="addToCart">
+                 <property name="minimumSize">
+                  <size>
+                   <width>35</width>
+                   <height>0</height>
+                  </size>
+                 </property>
+                 <property name="cursor">
+                  <cursorShape>PointingHandCursor</cursorShape>
+                 </property>
+                 <property name="styleSheet">
+                  <string notr="true">background-color: rgb(255, 255, 255);border:none;</string>
+                 </property>
+                 <property name="text">
+                  <string/>
+                 </property>
+                 <property name="icon">
+                  <iconset resource="resource.qrc">
+                   <normaloff>:/image/addToCart.png</normaloff>:/image/addToCart.png</iconset>
+                 </property>
+                 <property name="iconSize">
+                  <size>
+                   <width>25</width>
+                   <height>25</height>
+                  </size>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <spacer name="horizontalSpacer_11">
                  <property name="orientation">
                   <enum>Qt::Horizontal</enum>
@@ -1187,7 +1248,7 @@ background-color: rgb(255,255,255);border:none;padding: -1;
                  </property>
                  <property name="sizeHint" stdset="0">
                   <size>
-                   <width>50</width>
+                   <width>30</width>
                    <height>20</height>
                   </size>
                  </property>
@@ -1341,7 +1402,6 @@ background-color: rgb(255,255,255);border:none;padding: -1;
   </layout>
  </widget>
  <resources>
-  <include location="resource.qrc"/>
   <include location="resource.qrc"/>
  </resources>
  <connections/>

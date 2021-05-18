@@ -13,7 +13,7 @@ sqlite::sqlite()
         // 建立和SQlite数据库的连接
         db = QSqlDatabase::addDatabase("QSQLITE");
         // 设置数据库文件的名字
-        db.setDatabaseName("productList.db");
+        db.setDatabaseName("E-Commerce-Platform.db");
     }
 }
 
@@ -85,6 +85,17 @@ void sqlite::createTable()
     {
         qDebug() << "Table created!";
     }
+    createSql = QString("CREATE TABLE `cart` (`id` INTEGER PRIMARY KEY, `userId` INTEGER NOT NULL,`productId` INTEGER NOT NULL, `number` INTEGER NOT NULL, `checked` BOOLEAN DEFAULT true);");
+    sqlQuery.prepare(createSql);
+    // 执行sql语句
+    if (!sqlQuery.exec())
+    {
+        qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
+    }
+    else
+    {
+        qDebug() << "Table created!";
+    }
 }
 
 /* 插入单条数据 */
@@ -127,6 +138,147 @@ void sqlite::singleInsertData(productItem item)
         else
         {
             qDebug() << "Insert successed!" << sqlQuery.lastInsertId().toInt();
+        }
+    }
+}
+
+/* 加购物车 */
+void sqlite::modifyItemInCart(int productId, int userId, int number, bool checked)
+{
+    QSqlQuery sqlQuery;
+    bool exist = false;
+    sqlQuery.prepare("SELECT * FROM `cart` WHERE `userId`==:userId AND `productId`==:productId ");
+    sqlQuery.bindValue(":userId", userId);
+    sqlQuery.bindValue(":productId", productId);
+    if (!sqlQuery.exec())
+    {
+        qDebug() << "Error: Fail to query table. " << sqlQuery.lastError();
+    }
+    else
+    {
+        while (sqlQuery.next())
+        {
+            if (number == -1)
+            {
+                number = sqlQuery.value(3).toInt() + 1;
+            }
+            QSqlQuery sqlQuery2;
+            sqlQuery2.prepare("UPDATE `cart` SET "
+                             "`userId`=:userId,"
+                             "`productId`=:productId,"
+                             "`number`=:number,"
+                             "`checked`=:checked "
+                             "WHERE `id`==:id;");
+            sqlQuery2.bindValue(":userId", userId);
+            sqlQuery2.bindValue(":productId", productId);
+            sqlQuery2.bindValue(":number", number);
+            sqlQuery2.bindValue(":checked", checked);
+            sqlQuery2.bindValue(":id", sqlQuery.value(0).toInt());
+            if (!sqlQuery2.exec())
+            {
+                qDebug() << "Error: Fail to update. " << sqlQuery2.lastError();
+            }
+            else
+            {
+                qDebug() << "Update successed!";
+            }
+            exist = true;
+        }
+    }
+    if (!exist)
+    {
+        if (number == -1)
+        {
+            number = 1;
+        }
+        sqlQuery.prepare("INSERT INTO `cart` (`userId`,`productId`, `number`) VALUES (:userId, :productId, :number)");
+        sqlQuery.bindValue(":userId", userId);
+        sqlQuery.bindValue(":productId", productId);
+        sqlQuery.bindValue(":number", number);
+
+        // 执行sql语句
+        if (!sqlQuery.exec())
+        {
+            qDebug() << "Error: Fail to insert. " << sqlQuery.lastError();
+        }
+        else
+        {
+            qDebug() << "Insert successed!" << sqlQuery.lastInsertId().toInt();
+        }
+    }
+}
+
+/* 删除购物车物品 */
+void sqlite::deleteItemFromCart(int productId, int userId)
+{
+    QSqlQuery sqlQuery;
+    sqlQuery.prepare("DELETE FROM `cart` "
+                     "WHERE `productId`=:productId AND `userId`==:userId ;");
+    sqlQuery.bindValue(":productId", productId);
+    sqlQuery.bindValue(":userId", userId);
+    if (!sqlQuery.exec())
+    {
+        qDebug() << "Error: Fail to delete item from cart. " << sqlQuery.lastError();
+    }
+    else
+    {
+        qDebug() << "Delete item from cart successed!" << sqlQuery.lastInsertId().toInt();
+    }
+}
+
+/* 列出购物车 */
+void sqlite::queryCart(int userId, vector<productItem *> &productList, vector<int> &numberList, vector<bool> &checkedList)
+{
+    QSqlQuery sqlQuery;
+    sqlQuery.prepare("SELECT * FROM `cart` WHERE `userId`==:userId ");
+    sqlQuery.bindValue(":userId", userId);
+    if (!sqlQuery.exec())
+    {
+        qDebug() << "Error: Fail to query table. " << sqlQuery.lastError();
+    }
+    else
+    {
+        while (sqlQuery.next())
+        {
+            QSqlQuery sqlQuery2;
+            sqlQuery2.prepare("SELECT * FROM `productItem` WHERE `id`==:productId ");
+            sqlQuery2.bindValue(":productId", sqlQuery.value(2).toInt());
+            sqlQuery2.exec();
+            while (sqlQuery2.next())
+            {
+                productItem *tmp;
+                switch (sqlQuery2.value(6).toInt())
+                {
+                case FOODTYPE:
+                    tmp = new foodItem;
+                    break;
+                case CLOTHESTYPE:
+                    tmp = new clothesItem;
+                    break;
+                case BOOKTYPE:
+                    tmp = new bookItem;
+                    break;
+                default:
+                    tmp = new productItem;
+                }
+                tmp->id = sqlQuery2.value(0).toInt();
+                tmp->name = sqlQuery2.value(1).toString().toStdString();
+                tmp->description = sqlQuery2.value(2).toString().toStdString();
+                tmp->price = sqlQuery2.value(3).toDouble();
+                tmp->remaining = sqlQuery2.value(4).toInt();
+                tmp->mainPhoto = sqlQuery2.value(5).toInt();
+                tmp->type = sqlQuery2.value(6).toInt();
+                tmp->seller = sqlQuery2.value(8).toInt();
+                QSqlQuery sqlQueryPhoto;
+                sqlQueryPhoto.exec("SELECT * FROM `productPhoto` WHERE `productId` LIKE " + sqlQuery2.value(0).toString());
+                while (sqlQueryPhoto.next())
+                {
+                    tmp->photo.push_back(sqlQueryPhoto.value(2).toString());
+                }
+                productList.push_back(tmp);
+                numberList.push_back(sqlQuery.value(3).toInt());
+                checkedList.push_back(sqlQuery.value(4).toBool());
+            }
         }
     }
 }
