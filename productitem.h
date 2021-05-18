@@ -9,6 +9,7 @@
 #include <QImage>
 #include <vector>
 #include <QDebug>
+#include <math.h>
 
 using namespace std;
 
@@ -50,7 +51,7 @@ public:
                 break;
             }
         }
-        return (double)(int)(price * discountThis * 100) / 100;
+        return (double)floor(price * discountThis * 100) / 100;
     }
     virtual ~foodItem()
     {
@@ -71,7 +72,7 @@ public:
                 break;
             }
         }
-        return (double)(int)(price * discountThis * 100) / 100;
+        return (double)floor(price * discountThis * 100) / 100;
     }
     virtual ~clothesItem()
     {
@@ -92,7 +93,7 @@ public:
                 break;
             }
         }
-        return (double)(int)(price * discountThis * 100) / 100;
+        return (double)floor(price * discountThis * 100) / 100;
     }
     virtual ~bookItem()
     {
