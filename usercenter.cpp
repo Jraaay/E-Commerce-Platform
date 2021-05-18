@@ -117,41 +117,7 @@ void userCenter::changeUserName()
     {
         if (curUser->getUserType() == SELLERTYPE)
         {
-            ifstream infile;
-            string sellerJson = "";
-            vector<sellerClass> sellerList;
-            try
-            {
-                infile.open("sellerFile.json");
-                infile >> sellerJson;
-                infile.close();
-                const json j = json::parse(sellerJson);
-                vector<string> userListJson = j["data"];
-                for (int i = 0; i < (int)userListJson.size(); i++)
-                {
-                    const json jTmp = json::parse(userListJson[i]);
-                    sellerClass tmp;
-                    tmp.uid = jTmp["uid"];
-                    tmp.name = jTmp["name"];
-                    tmp.type = jTmp["type"];
-                    tmp.balance = jTmp["balance"];
-                    tmp.setPass(jTmp["password"]);
-                    sellerList.push_back(tmp);
-                }
-            }
-            catch (exception &e)
-            {
-                qDebug() << e.what() << endl;
-                vector<string> tmp;
-                json j;
-                j["data"] = tmp;
-                ofstream outFile;
-                outFile.open("sellerFile.json");
-                outFile << j.dump();
-                outFile.close();
-                close();
-                return;
-            }
+            vector<sellerClass> sellerList = userManager::getSellerList();
             bool only = true;
             int numToChange;
             for (int i = 0; i < (int)sellerList.size(); i++)
@@ -205,41 +171,7 @@ void userCenter::changeUserName()
         }
         else
         {
-            ifstream infile;
-            string consumerJson = "";
-            vector<consumerClass> consumerList;
-            try
-            {
-                infile.open("consumerFile.json");
-                infile >> consumerJson;
-                infile.close();
-                const json j = json::parse(consumerJson);
-                vector<string> userListJson = j["data"];
-                for (int i = 0; i < (int)userListJson.size(); i++)
-                {
-                    const json jTmp = json::parse(userListJson[i]);
-                    consumerClass tmp;
-                    tmp.uid = jTmp["uid"];
-                    tmp.name = jTmp["name"];
-                    tmp.type = jTmp["type"];
-                    tmp.balance = jTmp["balance"];
-                    tmp.setPass(jTmp["password"]);
-                    consumerList.push_back(tmp);
-                }
-            }
-            catch (exception &e)
-            {
-                qDebug() << e.what() << endl;
-                vector<string> tmp;
-                json j;
-                j["data"] = tmp;
-                ofstream outFile;
-                outFile.open("consumerFile.json");
-                outFile << j.dump();
-                outFile.close();
-                close();
-                return;
-            }
+            vector<consumerClass> consumerList = userManager::getConsumerList();
             bool only = true;
             int numToChange;
             for (int i = 0; i < (int)consumerList.size(); i++)
@@ -317,41 +249,7 @@ void userCenter::changePassword()
     {
         if (curUser->getUserType() == SELLERTYPE)
         {
-            ifstream infile;
-            string sellerJson = "";
-            vector<sellerClass> sellerList;
-            try
-            {
-                infile.open("sellerFile.json");
-                infile >> sellerJson;
-                infile.close();
-                const json j = json::parse(sellerJson);
-                vector<string> userListJson = j["data"];
-                for (int i = 0; i < (int)userListJson.size(); i++)
-                {
-                    const json jTmp = json::parse(userListJson[i]);
-                    sellerClass tmp;
-                    tmp.uid = jTmp["uid"];
-                    tmp.name = jTmp["name"];
-                    tmp.type = jTmp["type"];
-                    tmp.balance = jTmp["balance"];
-                    tmp.setPass(jTmp["password"]);
-                    sellerList.push_back(tmp);
-                }
-            }
-            catch (exception &e)
-            {
-                qDebug() << e.what() << endl;
-                vector<string> tmp;
-                json j;
-                j["data"] = tmp;
-                ofstream outFile;
-                outFile.open("sellerFile.json");
-                outFile << j.dump();
-                outFile.close();
-                close();
-                return;
-            }
+            vector<sellerClass> sellerList = userManager::getSellerList();
             int numToChange = 0;
             for (int i = 0; i < (int)sellerList.size(); i++)
             {
@@ -396,41 +294,7 @@ void userCenter::changePassword()
         }
         else
         {
-            ifstream infile;
-            string consumerJson = "";
-            vector<consumerClass> consumerList;
-            try
-            {
-                infile.open("consumerFile.json");
-                infile >> consumerJson;
-                infile.close();
-                const json j = json::parse(consumerJson);
-                vector<string> userListJson = j["data"];
-                for (int i = 0; i < (int)userListJson.size(); i++)
-                {
-                    const json jTmp = json::parse(userListJson[i]);
-                    consumerClass tmp;
-                    tmp.uid = jTmp["uid"];
-                    tmp.name = jTmp["name"];
-                    tmp.type = jTmp["type"];
-                    tmp.balance = jTmp["balance"];
-                    tmp.setPass(jTmp["password"]);
-                    consumerList.push_back(tmp);
-                }
-            }
-            catch (exception &e)
-            {
-                qDebug() << e.what() << endl;
-                vector<string> tmp;
-                json j;
-                j["data"] = tmp;
-                ofstream outFile;
-                outFile.open("consumerFile.json");
-                outFile << j.dump();
-                outFile.close();
-                close();
-                return;
-            }
+            vector<consumerClass> consumerList = userManager::getConsumerList();
             int numToChange = 0;
             for (int i = 0; i < (int)consumerList.size(); i++)
             {
@@ -529,6 +393,8 @@ void userCenter::toAccount()
     ui->account->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:#1c87ff");
     ui->order->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->tabWidget->setCurrentIndex(0);
+    userManager::getUser(curUser->uid, *curUser);
+    ui->username->setText(curUser->name.c_str());
 }
 
 /* 打开余额界面 */
@@ -539,6 +405,11 @@ void userCenter::toBalancePage()
     ui->balance->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:#1c87ff");
     ui->order->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->tabWidget->setCurrentIndex(1);
+    userManager::getUser(curUser->uid, *curUser);
+    // 显示余额
+    char priceText[1000] = "";
+    sprintf(priceText, "%.2lf", curUser->balance);
+    ui->balanceText->setText(priceText);
 }
 
 /* 打开折扣管理界面 */
@@ -575,41 +446,7 @@ void userCenter::rechargeConfirm(double moneyToCharge)
     curUser->recharge(moneyToCharge);
     if (curUser->getUserType() == SELLERTYPE)
     {
-        ifstream infile;
-        string sellerJson = "";
-        vector<sellerClass> sellerList;
-        try
-        {
-            infile.open("sellerFile.json");
-            infile >> sellerJson;
-            infile.close();
-            const json j = json::parse(sellerJson);
-            vector<string> userListJson = j["data"];
-            for (int i = 0; i < (int)userListJson.size(); i++)
-            {
-                const json jTmp = json::parse(userListJson[i]);
-                sellerClass tmp;
-                tmp.uid = jTmp["uid"];
-                tmp.name = jTmp["name"];
-                tmp.type = jTmp["type"];
-                tmp.balance = jTmp["balance"];
-                tmp.setPass(jTmp["password"]);
-                sellerList.push_back(tmp);
-            }
-        }
-        catch (exception &e)
-        {
-            qDebug() << e.what() << endl;
-            vector<string> tmp;
-            json j;
-            j["data"] = tmp;
-            ofstream outFile;
-            outFile.open("sellerFile.json");
-            outFile << j.dump();
-            outFile.close();
-            close();
-            return;
-        }
+        vector<sellerClass> sellerList = userManager::getSellerList();
         int numToChange = 0;
         for (int i = 0; i < (int)sellerList.size(); i++)
         {
@@ -636,41 +473,7 @@ void userCenter::rechargeConfirm(double moneyToCharge)
     }
     else
     {
-        ifstream infile;
-        string consumerJson = "";
-        vector<consumerClass> consumerList;
-        try
-        {
-            infile.open("consumerFile.json");
-            infile >> consumerJson;
-            infile.close();
-            const json j = json::parse(consumerJson);
-            vector<string> userListJson = j["data"];
-            for (int i = 0; i < (int)userListJson.size(); i++)
-            {
-                const json jTmp = json::parse(userListJson[i]);
-                consumerClass tmp;
-                tmp.uid = jTmp["uid"];
-                tmp.name = jTmp["name"];
-                tmp.type = jTmp["type"];
-                tmp.balance = jTmp["balance"];
-                tmp.setPass(jTmp["password"]);
-                consumerList.push_back(tmp);
-            }
-        }
-        catch (exception &e)
-        {
-            qDebug() << e.what() << endl;
-            vector<string> tmp;
-            json j;
-            j["data"] = tmp;
-            ofstream outFile;
-            outFile.open("consumerFile.json");
-            outFile << j.dump();
-            outFile.close();
-            close();
-            return;
-        }
+        vector<consumerClass> consumerList = userManager::getConsumerList();
         int numToChange = 0;
         for (int i = 0; i < (int)consumerList.size(); i++)
         {
@@ -724,7 +527,7 @@ void userCenter::saveDiscount()
     prompt->show();
 }
 
-/* 点击商品 */
+/* 点击订单 */
 void userCenter::onListMailItemClicked(QListWidgetItem *item)
 {
     int curItem = 0;
@@ -759,7 +562,7 @@ void userCenter::onListMailItemClicked(QListWidgetItem *item)
         curUserToOrder->balance = curUser->balance;
         curUserToOrder->setPass(curUser->getPass());
     }
-    OrderDetail *od = new OrderDetail(curUserToOrder, orderId[curItem]);
+    OrderDetail *od = new OrderDetail(curUserToOrder, orderId[curItem], this);
     od->show();
 
 }

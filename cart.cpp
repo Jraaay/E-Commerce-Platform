@@ -130,34 +130,8 @@ void Cart::showProduct(bool getFromDB)
     const string typeList[4] = {"", "食物", "衣服", "书籍"};
     const string typeListEn[4] = {"", "Food", "Clothes", "Book"};
 
-    ifstream infile;
-    string sellerJson = "";
-    vector<sellerClass> sellerList;
+    vector<sellerClass> sellerList = userManager::getSellerList();
 
-    try
-    {
-        infile.open("sellerFile.json");
-        infile >> sellerJson;
-        infile.close();
-        const json j = json::parse(sellerJson);
-        vector<string> userListJson = j["data"];
-        for (int i = 0; i < (int)userListJson.size(); i++)
-        {
-            const json jTmp = json::parse(userListJson[i]);
-            sellerClass tmp;
-            tmp.uid = jTmp["uid"];
-            tmp.name = jTmp["name"];
-            tmp.type = jTmp["type"];
-            tmp.balance = jTmp["balance"];
-            tmp.setPass(jTmp["password"]);
-            sellerList.push_back(tmp);
-        }
-    }
-    catch (exception &e)
-    {
-        close();
-        return;
-    }
 
     for (int i = 0; i < (int)productList.size(); i++) // 循环添加所有商品
     {
@@ -592,6 +566,7 @@ void Cart::generateOrder()
     db->openDb();
     int orderId = db->generateOrder(curUser->uid, orderList, count, price, priceSum);
     db->closeDb();
+    refresh();
     userClass *curUserToOrder;
     if (curUser->getUserType() == CONSUMERTYPE)
     {

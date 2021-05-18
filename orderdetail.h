@@ -19,6 +19,7 @@
 #include "promptbox.h"
 #include "productlistui.h"
 #include "ui_productlistui.h"
+#include "usermanager.h"
 
 namespace Ui {
 class OrderDetail;
@@ -29,7 +30,7 @@ class OrderDetail : public QWidget
     Q_OBJECT
 
 public:
-    explicit OrderDetail(userClass *curUserFromFather, int orderId, QWidget *parent = nullptr);
+    explicit OrderDetail(userClass *curUserFromFather, int orderId, void* father = nullptr, QWidget *parent = nullptr);
     ~OrderDetail();
     void init();
     void showProduct(bool getFromDB = false);
@@ -38,7 +39,7 @@ public:
     int curFirstPhoto;                  // 当前的第一张图片
     int mainPhoto;                      // 主图片
     int curProduct;                     // 当前商品
-    bool paied;
+    bool paid;
     long long time;
     vector<productItem *> productList;  // 商品列表
     vector<int> numberList;             // 购买量列表
@@ -54,6 +55,7 @@ public:
 private:
     Ui::OrderDetail *ui;
     int _orderId;
+    void *_father;
 };
 
 #endif // ORDERDETAIL_H

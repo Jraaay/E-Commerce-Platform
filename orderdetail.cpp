@@ -1,12 +1,14 @@
 #include "orderdetail.h"
 #include "ui_orderdetail.h"
+#include "usercenter.h"
 
-OrderDetail::OrderDetail(userClass *curUserFromFather, int orderId, QWidget *parent) :
+OrderDetail::OrderDetail(userClass *curUserFromFather, int orderId, void* father, QWidget *parent) :
     QWidget(parent),
     ui(new Ui::OrderDetail)
 {
     curUser = curUserFromFather;
     _orderId = orderId;
+    _father = father;
     init();
 }
 
@@ -32,13 +34,19 @@ void OrderDetail::init()
     checkedList.clear();
     count.clear();
     price.clear();
-    db->getOrder(_orderId, paied, time, curUser->uid, productList, count, price, priceSum);
+    db->getOrder(_orderId, paid, time, curUser->uid, productList, count, price, priceSum);
     db->closeDb();
     char priceText[1000] = "";
     sprintf(priceText, "￥%.2lf", priceSum);
+    if (paid)
+    {
+        ui->buy->setText("已支付");
+        ui->buy->setEnabled(false);
+    }
     ui->priceSum->setText(priceText);
     ui->orderId->setText(ui->orderId->text() + QString::number(_orderId));
     showProduct();
+    connect(ui->buy, &QPushButton::clicked, this, &OrderDetail::payForOrder);
 }
 
 void OrderDetail::showProduct(bool getFromDB)
@@ -63,7 +71,7 @@ void OrderDetail::showProduct(bool getFromDB)
         checkedList.clear();
         count.clear();
         price.clear();
-        db->getOrder(_orderId, paied, time, curUser->uid, productList, count, price, priceSum);
+        db->getOrder(_orderId, paid, time, curUser->uid, productList, count, price, priceSum);
         db->closeDb();
     }
     ui->listWidget->clear();
@@ -71,34 +79,7 @@ void OrderDetail::showProduct(bool getFromDB)
     const string typeList[4] = {"", "食物", "衣服", "书籍"};
     const string typeListEn[4] = {"", "Food", "Clothes", "Book"};
 
-    ifstream infile;
-    string sellerJson = "";
-    vector<sellerClass> sellerList;
-
-    try
-    {
-        infile.open("sellerFile.json");
-        infile >> sellerJson;
-        infile.close();
-        const json j = json::parse(sellerJson);
-        vector<string> userListJson = j["data"];
-        for (int i = 0; i < (int)userListJson.size(); i++)
-        {
-            const json jTmp = json::parse(userListJson[i]);
-            sellerClass tmp;
-            tmp.uid = jTmp["uid"];
-            tmp.name = jTmp["name"];
-            tmp.type = jTmp["type"];
-            tmp.balance = jTmp["balance"];
-            tmp.setPass(jTmp["password"]);
-            sellerList.push_back(tmp);
-        }
-    }
-    catch (exception &e)
-    {
-        close();
-        return;
-    }
+    vector<sellerClass> sellerList = userManager::getSellerList();
 
     for (int i = 0; i < (int)productList.size(); i++) // 循环添加所有商品
     {
@@ -180,37 +161,34 @@ void OrderDetail::payForOrder()
 {
     if (curUser->balance >= priceSum)
     {
-
-        curUser->balance -= priceSum;
-        if (curUser->getUserType() == SELLERTYPE)
+        vector<sellerClass> sellerList = userManager::getSellerList();
+        for (int i = 0; i < (int)productList.size(); i++)
         {
-            ifstream infile;
-            string sellerJson;
-            vector<sellerClass> sellerList;
-            try
+            int numToChange;
+            for (int i = 0; i < (int)sellerList.size(); i++)
             {
-                infile.open("sellerFile.json");
-                infile >> sellerJson;
-                infile.close();
-                const json j = json::parse(sellerJson);
-                vector<string> userListJson = j["data"];
-                for (int i = 0; i < (int)userListJson.size(); i++)
+                if (sellerList[i].uid == productList[i]->seller)
                 {
-                    const json jTmp = json::parse(userListJson[i]);
-                    sellerClass tmp;
-                    tmp.uid = jTmp["uid"];
-                    tmp.name = jTmp["name"];
-                    tmp.type = jTmp["type"];
-                    tmp.balance = jTmp["balance"];
-                    tmp.setPass(jTmp["password"]);
-                    sellerList.push_back(tmp);
+                    numToChange = i;
                 }
             }
-            catch (exception &e)
-            {
-                qDebug() << e.what() << endl;
-                return;
-            }
+            sellerList[numToChange].balance += price[i] * count[i];
+        }
+        vector<string> sellerJsonList;
+        for (int i = 0; i < (int)sellerList.size(); i++)
+        {
+            sellerJsonList.push_back(sellerList[i].getJson());
+        }
+        json jTmp;
+        jTmp["data"] = sellerJsonList;
+        ofstream outFile;
+        outFile.open("sellerFile.json");
+        outFile << jTmp.dump();
+        outFile.close();
+        if (curUser->getUserType() == SELLERTYPE)
+        {
+            vector<sellerClass> sellerList = userManager::getSellerList();
+
 
             int numToChange;
             for (int i = 0; i < (int)sellerList.size(); i++)
@@ -220,7 +198,7 @@ void OrderDetail::payForOrder()
                     numToChange = i;
                 }
             }
-            sellerList[numToChange].balance = curUser->balance;
+            sellerList[numToChange].balance -= priceSum;
             vector<string> sellerJsonList;
             for (int i = 0; i < (int)sellerList.size(); i++)
             {
@@ -240,33 +218,7 @@ void OrderDetail::payForOrder()
         }
         else
         {
-            ifstream infile;
-            string consumerJson;
-            vector<consumerClass> consumerList;
-            try
-            {
-                infile.open("consumerFile.json");
-                infile >> consumerJson;
-                infile.close();
-                const json j = json::parse(consumerJson);
-                vector<string> userListJson = j["data"];
-                for (int i = 0; i < (int)userListJson.size(); i++)
-                {
-                    const json jTmp = json::parse(userListJson[i]);
-                    consumerClass tmp;
-                    tmp.uid = jTmp["uid"];
-                    tmp.name = jTmp["name"];
-                    tmp.type = jTmp["type"];
-                    tmp.balance = jTmp["balance"];
-                    tmp.setPass(jTmp["password"]);
-                    consumerList.push_back(tmp);
-                }
-            }
-            catch (exception &e)
-            {
-                qDebug() << e.what() << endl;
-                return;
-            }
+            vector<consumerClass> consumerList = userManager::getConsumerList();
 
             int numToChange;
             for (int i = 0; i < (int)consumerList.size(); i++)
@@ -276,7 +228,7 @@ void OrderDetail::payForOrder()
                     numToChange = i;
                 }
             }
-            consumerList[numToChange].balance = curUser->balance;
+            consumerList[numToChange].balance -= priceSum;
             vector<string> consumerJsonList;
             for (int i = 0; i < (int)consumerList.size(); i++)
             {
@@ -294,6 +246,11 @@ void OrderDetail::payForOrder()
             promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
             prompt->show();
         }
+        if (_father != nullptr)
+        {
+            ((userCenter *)_father)->showOrders();
+        }
+        close();
     }
     else
     {

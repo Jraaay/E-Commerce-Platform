@@ -9,99 +9,16 @@ void Widget::loginRegFun()
     const string loginPassword = QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString();
     vector<sellerClass> sellerList;
     vector<consumerClass> consumerList;
-    ifstream infile;
-    string uidMaxJson = "";
-    int uidMax;
-    try
-    {
-        infile.open("uidMaxFile.json");
-        infile >> uidMaxJson;
-        infile.close();
-        const json j = json::parse(uidMaxJson);
-        uidMax = j["uid"];
-    }
-    catch (exception &e)
-    {
-        uidMaxJson = "";
-        qDebug() << e.what() << endl;
-        const int tmp = 0;
-        json j;
-        j["uid"] = tmp;
-        ofstream outFile;
-        outFile.open("uidMaxFile.json");
-        outFile << j.dump();
-        outFile.close();
-    }
+    int uidMax = userManager::getMaxUid();
+
 
     if (curType == SELLERTYPE)
     {
-        ifstream infile;
-        string sellerJson = "";
-        try
-        {
-            infile.open("sellerFile.json");
-            infile >> sellerJson;
-            infile.close();
-            const json j = json::parse(sellerJson);
-            const vector<string> userListJson = j["data"];
-            for (int i = 0; i < (int)userListJson.size(); i++)
-            {
-                const json jTmp = json::parse(userListJson[i]);
-                sellerClass tmp;
-                tmp.uid = jTmp["uid"];
-                tmp.name = jTmp["name"];
-                tmp.type = jTmp["type"];
-                tmp.balance = jTmp["balance"];
-                tmp.setPass(jTmp["password"]);
-                sellerList.push_back(tmp);
-            }
-        }
-        catch (exception &e)
-        {
-            qDebug() << e.what() << endl;
-            vector<string> tmp;
-            json j;
-            j["data"] = tmp;
-            ofstream outFile;
-            outFile.open("sellerFile.json");
-            outFile << j.dump();
-            outFile.close();
-        }
+        sellerList = userManager::getSellerList();
     }
     if (curType == CONSUMERTYPE)
     {
-        ifstream infile;
-        string consumerJson = "";
-        try
-        {
-            infile.open("consumerFile.json");
-            infile >> consumerJson;
-            infile.close();
-            const json j = json::parse(consumerJson);
-            const vector<string> userListJson = j["data"];
-            for (int i = 0; i < (int)userListJson.size(); i++)
-            {
-                const json jTmp = json::parse(userListJson[i]);
-                consumerClass tmp;
-                tmp.uid = jTmp["uid"];
-                tmp.name = jTmp["name"];
-                tmp.type = jTmp["type"];
-                tmp.balance = jTmp["balance"];
-                tmp.setPass(jTmp["password"]);
-                consumerList.push_back(tmp);
-            }
-        }
-        catch (exception &e)
-        {
-            qDebug() << e.what() << endl;
-            vector<string> tmp;
-            json j;
-            j["data"] = tmp;
-            ofstream outFile;
-            outFile.open("consumerFile.json");
-            outFile << j.dump();
-            outFile.close();
-        }
+        consumerList = userManager::getConsumerList();
     }
     if (ui->login->text() == "登录" || ui->login->text() == "Sign in")
     {

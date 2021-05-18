@@ -19,6 +19,7 @@
 #include "promptbox.h"
 #include "orderdetail.h"
 #include "user.h"
+#include "usermanager.h"
 
 namespace Ui {
 class Cart;

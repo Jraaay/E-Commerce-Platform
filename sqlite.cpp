@@ -551,6 +551,7 @@ int sqlite::generateOrder(int userId, vector<productItem> orderList, vector<int>
     }
     for (int i = 0; i < (int)orderList.size(); i++)
     {
+        deleteItemFromCart(orderList[i].id, userId);
         sqlQuery.prepare("INSERT INTO `orderItem` (`orderId`, `productId`, `price`, `number`) VALUES (:orderId, :productId, :price, :number)");
         sqlQuery.bindValue(":orderId", orderId);
         sqlQuery.bindValue(":productId", orderList[i].id);
@@ -571,7 +572,7 @@ int sqlite::generateOrder(int userId, vector<productItem> orderList, vector<int>
 void sqlite::getOrder(int orderId, bool &paied, long long &time, int &userId, vector<productItem *> &orderList, vector<int> &count, vector<double> &price, double &priceSum)
 {
     QSqlQuery sqlQuery;
-    sqlQuery.prepare("SELECT * FROM `order` WHERE `id`==:orderId ");
+    sqlQuery.prepare("SELECT * FROM `order` WHERE `id`==:orderId");
     sqlQuery.bindValue(":orderId", orderId);
     if (!sqlQuery.exec())
     {
@@ -657,7 +658,7 @@ void sqlite::payOrder(int orderId)
 void sqlite::getOrderList(int userId, vector<int> &orderId, vector<double> &priceSum, vector<long long> &time, vector<bool> &paid)
 {
     QSqlQuery sqlQuery;
-    sqlQuery.prepare("SELECT * FROM `order` WHERE `userId`==:userId ");
+    sqlQuery.prepare("SELECT * FROM `order` WHERE `userId`==:userId  ORDER BY `time` DESC");
     sqlQuery.bindValue(":userId", userId);
     if (!sqlQuery.exec())
     {

@@ -190,34 +190,7 @@ void product::showProduct(bool getFromDB)
     const string typeList[4] = {"", "食物", "衣服", "书籍"};
     const string typeListEn[4] = {"", "Food", "Clothes", "Book"};
 
-    ifstream infile;
-    string sellerJson = "";
-    vector<sellerClass> sellerList;
-
-    try
-    {
-        infile.open("sellerFile.json");
-        infile >> sellerJson;
-        infile.close();
-        const json j = json::parse(sellerJson);
-        vector<string> userListJson = j["data"];
-        for (int i = 0; i < (int)userListJson.size(); i++)
-        {
-            const json jTmp = json::parse(userListJson[i]);
-            sellerClass tmp;
-            tmp.uid = jTmp["uid"];
-            tmp.name = jTmp["name"];
-            tmp.type = jTmp["type"];
-            tmp.balance = jTmp["balance"];
-            tmp.setPass(jTmp["password"]);
-            sellerList.push_back(tmp);
-        }
-    }
-    catch (exception &e)
-    {
-        logoutFun();
-        return;
-    }
+    vector<sellerClass> sellerList = userManager::getSellerList();
 
     for (int i = 0; i < (int)productList.size(); i++) // 循环添加所有商品
     {
@@ -729,34 +702,7 @@ void product::purchase()
         db->closeDb();
         if (curUser->getUserType() == SELLERTYPE)
         {
-            ifstream infile;
-            string sellerJson;
-            vector<sellerClass> sellerList;
-            try
-            {
-                infile.open("sellerFile.json");
-                infile >> sellerJson;
-                infile.close();
-                const json j = json::parse(sellerJson);
-                vector<string> userListJson = j["data"];
-                for (int i = 0; i < (int)userListJson.size(); i++)
-                {
-                    const json jTmp = json::parse(userListJson[i]);
-                    sellerClass tmp;
-                    tmp.uid = jTmp["uid"];
-                    tmp.name = jTmp["name"];
-                    tmp.type = jTmp["type"];
-                    tmp.balance = jTmp["balance"];
-                    tmp.setPass(jTmp["password"]);
-                    sellerList.push_back(tmp);
-                }
-            }
-            catch (exception &e)
-            {
-                qDebug() << e.what() << endl;
-                logoutFun();
-                return;
-            }
+            vector<sellerClass> sellerList = userManager::getSellerList();
 
             int numToChange;
             for (int i = 0; i < (int)sellerList.size(); i++)
@@ -783,34 +729,7 @@ void product::purchase()
         }
         else
         {
-            ifstream infile;
-            string consumerJson;
-            vector<consumerClass> consumerList;
-            try
-            {
-                infile.open("consumerFile.json");
-                infile >> consumerJson;
-                infile.close();
-                const json j = json::parse(consumerJson);
-                vector<string> userListJson = j["data"];
-                for (int i = 0; i < (int)userListJson.size(); i++)
-                {
-                    const json jTmp = json::parse(userListJson[i]);
-                    consumerClass tmp;
-                    tmp.uid = jTmp["uid"];
-                    tmp.name = jTmp["name"];
-                    tmp.type = jTmp["type"];
-                    tmp.balance = jTmp["balance"];
-                    tmp.setPass(jTmp["password"]);
-                    consumerList.push_back(tmp);
-                }
-            }
-            catch (exception &e)
-            {
-                qDebug() << e.what() << endl;
-                logoutFun();
-                return;
-            }
+            vector<consumerClass> consumerList = userManager::getConsumerList();
 
             int numToChange;
             for (int i = 0; i < (int)consumerList.size(); i++)

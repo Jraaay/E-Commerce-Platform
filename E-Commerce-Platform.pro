@@ -34,6 +34,7 @@ SOURCES += \
     sqlite.cpp \
     user.cpp \
     usercenter.cpp \
+    usermanager.cpp \
     widget.cpp
 
 HEADERS += \
@@ -51,6 +52,7 @@ HEADERS += \
     sqlite.h \
     user.h \
     usercenter.h \
+    usermanager.h \
     widget.h
 
 FORMS += \

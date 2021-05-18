@@ -3,6 +3,7 @@
 
 #include "promptbox.h"
 #include "sqlite.h"
+#include "usermanager.h"
 
 class loginAndRegister
 {
