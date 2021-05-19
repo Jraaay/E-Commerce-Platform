@@ -946,4 +946,6 @@ void product::addToCart()
     db->openDb();
     db->modifyItemInCart(productList[curProduct]->id, curUser->uid);
     db->closeDb();
+    promptBox *pb = new promptBox(nullptr, "成功加入购物车\nSuccessfully add to cart");
+    pb->show();
 }
