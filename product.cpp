@@ -117,6 +117,8 @@ void product::init()
         ui->manage->setEnabled(false);
         ui->manage->hide();
         ui->userCenter->setEnabled(false);
+        ui->cart->hide();
+        ui->addToCart->hide();
     }
     else
     {
@@ -696,10 +698,45 @@ void product::purchase()
     if (purchaseProductList[productToPurchase]->remaining > 0 && curUser->balance >= purchaseProductList[productToPurchase]->getPrice(discount))
     {
         purchaseProductList[productToPurchase]->remaining--;
-        curUser->balance -= purchaseProductList[productToPurchase]->getPrice(discount);
         db->openDb();
         db->modifyData(*purchaseProductList[productToPurchase], 0);
         db->closeDb();
+
+        vector<sellerClass> sellerList = userManager::getSellerList();
+        int numToChange;
+        for (int i = 0; i < (int)sellerList.size(); i++)
+        {
+            if (sellerList[i].uid == productList[i]->seller)
+            {
+                numToChange = i;
+            }
+        }
+        sellerList[numToChange].balance += purchaseProductList[productToPurchase]->getPrice(discount);
+        vector<string> sellerJsonList;
+        for (int i = 0; i < (int)sellerList.size(); i++)
+        {
+            sellerJsonList.push_back(sellerList[i].getJson());
+        }
+        json jTmp;
+        jTmp["data"] = sellerJsonList;
+        ofstream outFile;
+        outFile.open("sellerFile.json");
+        outFile << jTmp.dump();
+        outFile.close();
+
+        vector<productItem> a;
+        vector<int> b;
+        vector<double> c;
+        productItem tmp;
+        tmp.id = purchaseProductList[productToPurchase]->id;
+        a.push_back(tmp);
+        b.push_back(1);
+        c.push_back(purchaseProductList[productToPurchase]->getPrice(discount));
+        db->openDb();
+        int orderId = db->generateOrder(curUser->uid, a, b, c, purchaseProductList[productToPurchase]->getPrice(discount));
+        db->payOrder(orderId);
+        db->closeDb();
+
         if (curUser->getUserType() == SELLERTYPE)
         {
             vector<sellerClass> sellerList = userManager::getSellerList();
@@ -712,7 +749,7 @@ void product::purchase()
                     numToChange = i;
                 }
             }
-            sellerList[numToChange].balance = curUser->balance;
+            sellerList[numToChange].balance -= purchaseProductList[productToPurchase]->getPrice(discount);
             vector<string> sellerJsonList;
             for (int i = 0; i < (int)sellerList.size(); i++)
             {
@@ -739,7 +776,7 @@ void product::purchase()
                     numToChange = i;
                 }
             }
-            consumerList[numToChange].balance = curUser->balance;
+            consumerList[numToChange].balance -= purchaseProductList[productToPurchase]->getPrice(discount);
             vector<string> consumerJsonList;
             for (int i = 0; i < (int)consumerList.size(); i++)
             {
