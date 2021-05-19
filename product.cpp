@@ -579,14 +579,14 @@ void product::search()
     else if (sortMethod == PRICE_DESCEND_SORT)
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
-        for (int i = 0; i < (int)productList.size(); i++)
+        for (int i = 0; i < (int)productList.size() - 1; i++)
         {
-            for (int j = 0; j < (int)productList.size() - i; j++)
+            for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[i]->getPrice(discount) > productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice(discount) > productList[j]->getPrice(discount))
                 {
-                    productItem *tmp = productList[i];
-                    productList[i] = productList[j];
+                    productItem *tmp = productList[j + 1];
+                    productList[j + 1] = productList[j];
                     productList[j] = tmp;
                 }
             }
@@ -596,14 +596,14 @@ void product::search()
     else
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
-        for (int i = 0; i < (int)productList.size(); i++)
+        for (int i = 0; i < (int)productList.size() - 1; i++)
         {
-            for (int j = 0; j < (int)productList.size() - i; j++)
+            for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[i]->getPrice(discount) < productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice(discount) < productList[j]->getPrice(discount))
                 {
-                    productItem *tmp = productList[i];
-                    productList[i] = productList[j];
+                    productItem *tmp = productList[j + 1];
+                    productList[j + 1] = productList[j];
                     productList[j] = tmp;
                 }
             }
@@ -645,14 +645,14 @@ void product::priceDescendSort()
     productList.clear();
     productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
     discount = db->getDiscount();
-    for (int i = 0; i < (int)productList.size(); i++)
+    for (int i = 0; i < (int)productList.size() - 1; i++)
     {
-        for (int j = 0; j < (int)productList.size() - i; j++)
+        for (int j = 0; j < (int)productList.size() - 1 - i; j++)
         {
-            if (productList[i]->getPrice(discount) > productList[j]->getPrice(discount))
+            if (productList[j + 1]->getPrice(discount) > productList[j]->getPrice(discount))
             {
-                productItem *tmp = productList[i];
-                productList[i] = productList[j];
+                productItem *tmp = productList[j + 1];
+                productList[j + 1] = productList[j];
                 productList[j] = tmp;
             }
         }
@@ -676,14 +676,14 @@ void product::priceAscendSort()
     productList.clear();
     productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
     discount = db->getDiscount();
-    for (int i = 0; i < (int)productList.size(); i++)
+    for (int i = 0; i < (int)productList.size() - 1; i++)
     {
-        for (int j = 0; j < (int)productList.size() - i; j++)
+        for (int j = 0; j < (int)productList.size() - 1 - i; j++)
         {
-            if (productList[i]->getPrice(discount) < productList[j]->getPrice(discount))
+            if (productList[j + 1]->getPrice(discount) < productList[j]->getPrice(discount))
             {
-                productItem *tmp = productList[i];
-                productList[i] = productList[j];
+                productItem *tmp = productList[j + 1];
+                productList[j + 1] = productList[j];
                 productList[j] = tmp;
             }
         }
@@ -857,14 +857,14 @@ void product::purchase()
     else if (sortMethod == PRICE_DESCEND_SORT)
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
-        for (int i = 0; i < (int)productList.size(); i++)
+        for (int i = 0; i < (int)productList.size() - 1; i++)
         {
-            for (int j = 0; j < (int)productList.size() - i; j++)
+            for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[i]->getPrice(discount) > productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice(discount) > productList[j]->getPrice(discount))
                 {
-                    productItem *tmp = productList[i];
-                    productList[i] = productList[j];
+                    productItem *tmp = productList[j + 1];
+                    productList[j + 1] = productList[j];
                     productList[j] = tmp;
                 }
             }
@@ -874,14 +874,14 @@ void product::purchase()
     else
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
-        for (int i = 0; i < (int)productList.size(); i++)
+        for (int i = 0; i < (int)productList.size() - 1; i++)
         {
-            for (int j = 0; j < (int)productList.size() - i; j++)
+            for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[i]->getPrice(discount) < productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice(discount) < productList[j]->getPrice(discount))
                 {
-                    productItem *tmp = productList[i];
-                    productList[i] = productList[j];
+                    productItem *tmp = productList[j + 1];
+                    productList[j + 1] = productList[j];
                     productList[j] = tmp;
                 }
             }
@@ -915,14 +915,14 @@ void product::refresh()
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
         discount = db->getDiscount();
-        for (int i = 0; i < (int)productList.size(); i++)
+        for (int i = 0; i < (int)productList.size() - 1; i++)
         {
-            for (int j = 0; j < (int)productList.size() - i; j++)
+            for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[i]->getPrice(discount) > productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice(discount) > productList[j]->getPrice(discount))
                 {
-                    productItem *tmp = productList[i];
-                    productList[i] = productList[j];
+                    productItem *tmp = productList[j + 1];
+                    productList[j + 1] = productList[j];
                     productList[j] = tmp;
                 }
             }
@@ -936,10 +936,10 @@ void product::refresh()
         {
             for (int j = 0; j < (int)productList.size() - i; j++)
             {
-                if (productList[i]->getPrice(discount) < productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice(discount) < productList[j]->getPrice(discount))
                 {
-                    productItem *tmp = productList[i];
-                    productList[i] = productList[j];
+                    productItem *tmp = productList[j + 1];
+                    productList[j + 1] = productList[j];
                     productList[j] = tmp;
                 }
             }
