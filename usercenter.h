@@ -28,9 +28,9 @@ public:
     void init();
     void changeUserName();
     void changePassword();
-    void toBalancePage();
-    void toAccount();
-    void toDiscuss();
+    void toBalancePage() const;
+    void toAccount() const;
+    void toDiscuss() const;
     void toOrders();
     void recharge();
     void rechargeConfirm(double moneyToCharge);

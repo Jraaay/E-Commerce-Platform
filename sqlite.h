@@ -24,17 +24,17 @@ public:
     // 查询全部数据
     vector<productItem *> queryTable(string LIKE = "", string SORT = "") const;
     // 插入单条数据
-    void singleInsertData(productItem item);
+    void singleInsertData(productItem item) const;
     void modifyItemInCart(int productId, int userId, int number = -1, bool checked = true);
     void deleteItemFromCart(int productId, int userId);
     void queryCart(int userId, vector<productItem *> &productList, vector<int> &numberList, vector<bool> &checkedList);
     // 修改数据
     void modifyData(productItem item, int updateImage) const;
     // 删除数据
-    void deleteData(int id);
-    void newDiscount(int id);
-    vector<vector<double>> getDiscount();
-    void setDiscount(vector<vector<double>> discount);
+    void deleteData(int id) const;
+    void newDiscount(int id) const;
+    vector<vector<double>> getDiscount() const;
+    void setDiscount(vector<vector<double>> discount) const;
     int generateOrder(int userId, vector<productItem> orderList, vector<int> count, vector<double> price, double priceSum);
     void getOrder(int orderId, bool &paied, long long &time, int &userId, vector<productItem *> &orderList, vector<int> &count, vector<double> &price, double &priceSum);
     void payOrder(int orderId);
