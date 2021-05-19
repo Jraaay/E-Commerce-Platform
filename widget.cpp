@@ -158,13 +158,13 @@ void Widget::changeLang()
 }
 
 /* 不合法用户名提示 */
-void Widget::invalidUsername()
+void Widget::invalidUsername() const
 {
     ui->warning->show();
 }
 
 /* 合法用户名关闭提示 */
-void Widget::validUsername()
+void Widget::validUsername() const
 {
     ui->warning->hide();
 }

@@ -18,7 +18,7 @@ class rechargePage : public QWidget
 public:
     explicit rechargePage(QWidget *parent = nullptr, QObject *uc = nullptr);
     ~rechargePage();
-    void init();
+    void init() const;
     void buy6();
     void buy30();
     void buy98();

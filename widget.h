@@ -30,8 +30,8 @@ public:
     void guestLogin();
     void showProduct();
     void changeLang();
-    void invalidUsername();
-    void validUsername();
+    void invalidUsername() const;
+    void validUsername() const;
     int curType;
     consumerClass curConsumer;  // 当前消费者
     sellerClass curSeller;      // 当前商家
@@ -39,7 +39,7 @@ public:
 
 private:
     void init();
-    void loginRegSwitchFun();
+    void loginRegSwitchFun() const;
     void saveUserList(list<string>);
     void setTypeSeller();
     void setTypeConsumer();

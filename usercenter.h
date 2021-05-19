@@ -26,12 +26,12 @@ public:
     void init();
     void changeUserName();
     void changePassword();
-    void toBalancePage();
-    void toAccount();
-    void toDiscuss();
+    void toBalancePage() const;
+    void toAccount() const;
+    void toDiscuss() const;
     void recharge();
     void rechargeConfirm(double moneyToCharge);
-    void resetDiscount();
+    void resetDiscount() const;
     void saveDiscount();
     userClass *curUser;              // 当前用户
     vector<vector<double>> discount; // 折扣列表

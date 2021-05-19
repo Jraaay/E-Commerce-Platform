@@ -105,7 +105,7 @@ void addProduct::selectPhotoFun()
 }
 
 /* 展示图片 */
-void addProduct::photoShow()
+void addProduct::photoShow() const
 {
     for (int i = 0; i < 4; i++)
     {

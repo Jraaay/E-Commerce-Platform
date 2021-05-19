@@ -32,22 +32,22 @@ public:
     void init();
     void openAddProduct();
     void onListMailItemClicked(QListWidgetItem *item);
-    void showPhoto();
+    void showPhoto() const;
     void prePhoto();
     void nextPhoto();
-    QString geteElidedText(QFont font, QString str, int MaxWidth);
+    QString geteElidedText(QFont font, QString str, int MaxWidth) const;
     bool eventFilter(QObject *obj, QEvent *event);
     void setMainPhoto(int mainPhotoNo);
     void openUserCenter();
     void search();
-    void showBigPhoto();
+    void showBigPhoto() const;
     void defaultSort();
     void priceDescendSort();
     void priceAscendSort();
     void purchase();
     void refresh();
     void manage();
-    void refreshUser();
+    void refreshUser() const;
     void showProduct(bool getFromDB = false);
     userClass *curUser;                 // 当前用户
     int curFirstPhoto;                  // 当前的第一张图片
