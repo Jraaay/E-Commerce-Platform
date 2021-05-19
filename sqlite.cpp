@@ -36,7 +36,7 @@ bool sqlite::openDb()
 }
 
 /* 判断数据库中某个数据表是否存在 */
-bool sqlite::isTableExist(QString &tableName)
+bool sqlite::isTableExist(QString &tableName) const
 {
     if (db.tables().contains(tableName))
     {
@@ -46,7 +46,7 @@ bool sqlite::isTableExist(QString &tableName)
 }
 
 /* 创建数据表 */
-void sqlite::createTable()
+void sqlite::createTable() const
 {
     // 用于执行sql语句的对象
     QSqlQuery sqlQuery;
@@ -121,7 +121,7 @@ void sqlite::createTable()
 }
 
 /* 插入单条数据 */
-void sqlite::singleInsertData(productItem item)
+void sqlite::singleInsertData(productItem item) const
 {
     QSqlQuery sqlQuery;
     sqlQuery.prepare("INSERT INTO `productItem` (`name`,`description`,`price`,`remaining`,`mainPhoto`,`type`, `seller`) VALUES (:name, :description, :price, :remaining, :mainPhoto, :type, :seller)");
@@ -306,7 +306,7 @@ void sqlite::queryCart(int userId, vector<productItem *> &productList, vector<in
 }
 
 /* 查询全部数据 */
-vector<productItem *> sqlite::queryTable(string LIKE, string SORT)
+vector<productItem *> sqlite::queryTable(string LIKE, string SORT) const
 {
     vector<productItem *> productList;
     QSqlQuery sqlQuery;
@@ -363,7 +363,7 @@ vector<productItem *> sqlite::queryTable(string LIKE, string SORT)
 }
 
 /* 更新单条数据 */
-void sqlite::modifyData(productItem item, int updateImage)
+void sqlite::modifyData(productItem item, int updateImage) const
 {
     QSqlQuery sqlQuery;
     sqlQuery.prepare("UPDATE `productItem` SET "
@@ -444,7 +444,7 @@ void sqlite::modifyData(productItem item, int updateImage)
 }
 
 /* 删除单条数据 */
-void sqlite::deleteData(int id)
+void sqlite::deleteData(int id) const
 {
     QSqlQuery sqlQuery;
 
@@ -463,7 +463,7 @@ void sqlite::deleteData(int id)
 }
 
 /* 新账户初始化 */
-void sqlite::newDiscount(int id)
+void sqlite::newDiscount(int id) const
 {
     QSqlQuery sqlQuery;
     QString createSql = QString("INSERT INTO `discount` (`fooddiscount`,`clothesdiscount`, `bookdiscount`, `seller`) VALUES (1, 1, 1, :seller)");
@@ -480,7 +480,7 @@ void sqlite::newDiscount(int id)
 }
 
 /* 获取所有折扣 */
-vector<vector<double>> sqlite::getDiscount()
+vector<vector<double>> sqlite::getDiscount() const
 {
     vector<vector<double>> discount;
     QSqlQuery sqlQuery;
@@ -506,7 +506,7 @@ vector<vector<double>> sqlite::getDiscount()
 }
 
 /* 保存折扣 */
-void sqlite::setDiscount(vector<vector<double>> discount)
+void sqlite::setDiscount(vector<vector<double>> discount) const
 {
     QSqlQuery sqlQuery;
     for (int i = 0; i < (int)discount.size(); i++)

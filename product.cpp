@@ -261,7 +261,7 @@ void product::showProduct(bool getFromDB)
 }
 
 /* 超长字符串处理 */
-QString product::geteElidedText(QFont font, QString str, int MaxWidth)
+QString product::geteElidedText(QFont font, QString str, int MaxWidth) const
 {
     const QFontMetrics fontWidth(font);
     int width = fontWidth.horizontalAdvance(str); //计算字符串宽度
@@ -321,7 +321,7 @@ void product::onListMailItemClicked(QListWidgetItem *item)
 }
 
 /* 展示图片 */
-void product::showPhoto()
+void product::showPhoto() const
 {
 
     const productItem itemToShow = *productList[curProduct];
@@ -509,7 +509,7 @@ void product::nextPhoto()
 }
 
 /* 展示大图 */
-void product::showBigPhoto()
+void product::showBigPhoto() const
 {
     if (productList[curProduct]->photo.size() > 0)
     {
@@ -929,7 +929,7 @@ product::~product()
 }
 
 /* 修改用户名后刷新 */
-void product::refreshUser()
+void product::refreshUser() const
 {
     ui->userCenter->setText(curUser->name.c_str());
 }

@@ -193,7 +193,7 @@ void Widget::loginRegFun()
 }
 
 /* 服用注册和登录按钮 */
-void Widget::loginRegSwitchFun()
+void Widget::loginRegSwitchFun() const
 {
     if (ui->reg->text() == "注册")
     {

@@ -386,7 +386,7 @@ void userCenter::showOrders()
 }
 
 /* 打开账户管理界面 */
-void userCenter::toAccount()
+void userCenter::toAccount() const
 {
     ui->balance->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->discount->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
@@ -398,7 +398,7 @@ void userCenter::toAccount()
 }
 
 /* 打开余额界面 */
-void userCenter::toBalancePage()
+void userCenter::toBalancePage() const
 {
     ui->account->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->discount->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
@@ -413,7 +413,7 @@ void userCenter::toBalancePage()
 }
 
 /* 打开折扣管理界面 */
-void userCenter::toDiscuss()
+void userCenter::toDiscuss() const
 {
     ui->balance->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
     ui->account->setStyleSheet("background-color: rgb(255,255,255);border:none;border-radius:30px;padding: -1;color:gray");
@@ -505,7 +505,7 @@ void userCenter::rechargeConfirm(double moneyToCharge)
 }
 
 /* 重置折扣 */
-void userCenter::resetDiscount()
+void userCenter::resetDiscount() const
 {
     ui->food->setText(QString::number(1 - discount[discountPlace][0]));
     ui->clothes->setText(QString::number(1 - discount[discountPlace][1]));

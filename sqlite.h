@@ -18,18 +18,18 @@ public:
     // 打开数据库
     bool openDb(void);
     // 创建数据表
-    void createTable(void);
+    void createTable(void) const;
     // 判断数据表是否存在
-    bool isTableExist(QString &tableName);
+    bool isTableExist(QString &tableName) const;
     // 查询全部数据
-    vector<productItem *> queryTable(string LIKE = "", string SORT = "");
+    vector<productItem *> queryTable(string LIKE = "", string SORT = "") const;
     // 插入单条数据
     void singleInsertData(productItem item);
     void modifyItemInCart(int productId, int userId, int number = -1, bool checked = true);
     void deleteItemFromCart(int productId, int userId);
     void queryCart(int userId, vector<productItem *> &productList, vector<int> &numberList, vector<bool> &checkedList);
     // 修改数据
-    void modifyData(productItem item, int updateImage);
+    void modifyData(productItem item, int updateImage) const;
     // 删除数据
     void deleteData(int id);
     void newDiscount(int id);

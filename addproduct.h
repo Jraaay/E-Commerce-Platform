@@ -28,7 +28,7 @@ public:
     ~addProduct();
     void init(productItem productToModify = productItem());
     void selectPhotoFun();
-    void photoShow();
+    void photoShow() const;
     void nextPhoto();
     void prePhoto();
     void delPhoto();

@@ -15,7 +15,7 @@ rechargePage::~rechargePage()
 }
 
 /* 初始化 */
-void rechargePage::init()
+void rechargePage::init() const
 {
     connect(ui->buy6, &QPushButton::clicked, this, &rechargePage::buy6);
     connect(ui->buy30, &QPushButton::clicked, this, &rechargePage::buy30);

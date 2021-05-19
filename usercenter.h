@@ -34,7 +34,7 @@ public:
     void toOrders();
     void recharge();
     void rechargeConfirm(double moneyToCharge);
-    void resetDiscount();
+    void resetDiscount() const;
     void saveDiscount();
     void showOrders();
     vector<int> orderId;
