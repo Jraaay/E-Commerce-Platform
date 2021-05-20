@@ -264,7 +264,10 @@ void sqlite::modifyData(productItem item, int updateImage) const
             dir.setPath(".");
             qDebug() << destFolder.c_str() << endl
                      << ("./source/" + to_string(productId)).c_str();
-            qDebug() << dir.rename((destFolder).c_str(), ("./source/" + to_string(productId)).c_str());
+            while (!dir.rename((destFolder).c_str(), ("./source/" + to_string(productId)).c_str()))
+            {
+                qDebug() << "Rename failed";
+            }
         }
     }
 }
