@@ -43,57 +43,10 @@ void product::init()
     ui->image_3->installEventFilter(this);
     ui->image_4->installEventFilter(this);
     ui->image_5->installEventFilter(this);
-    ui->scrollArea->verticalScrollBar()->setStyleSheet("QScrollBar:vertical"
-                                                       "{"
-                                                       "width:8px;"
-                                                       "background:rgba(0,0,0,0%);"
-                                                       "margin:0px,0px,0px,0px;"
-                                                       "padding-top:9px;"
-                                                       "padding-bottom:9px;"
-                                                       "}"
-                                                       "QScrollBar::handle:vertical"
-                                                       "{"
-                                                       "width:8px;"
-                                                       "background:rgba(0,0,0,25%);"
-                                                       " border-radius:4px;"
-                                                       "min-height:20;"
-                                                       "}"
-                                                       "QScrollBar::handle:vertical:hover"
-                                                       "{"
-                                                       "width:8px;"
-                                                       "background:rgba(0,0,0,50%);"
-                                                       " border-radius:4px;"
-                                                       "min-height:20;"
-                                                       "}"
-                                                       "QScrollBar::add-line:vertical"
-                                                       "{"
-                                                       "height:9px;width:8px;"
-                                                       "border-image:url(:/images/a/3.png);"
-                                                       "subcontrol-position:bottom;"
-                                                       "}"
-                                                       "QScrollBar::sub-line:vertical"
-                                                       "{"
-                                                       "height:9px;width:8px;"
-                                                       "border-image:url(:/images/a/1.png);"
-                                                       "subcontrol-position:top;"
-                                                       "}"
-                                                       "QScrollBar::add-line:vertical:hover"
-                                                       "{"
-                                                       "height:9px;width:8px;"
-                                                       "border-image:url(:/images/a/4.png);"
-                                                       "subcontrol-position:bottom;"
-                                                       "}"
-                                                       "QScrollBar::sub-line:vertical:hover"
-                                                       "{"
-                                                       "height:9px;width:8px;"
-                                                       "border-image:url(:/images/a/2.png);"
-                                                       "subcontrol-position:top;"
-                                                       "}"
-                                                       "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical"
-                                                       "{"
-                                                       "background:rgba(0,0,0,10%);"
-                                                       "border-radius:4px;"
-                                                       "}");
+    ui->listWidget->verticalScrollBar()->setStyleSheet("QScrollBar:vertical { width:8px; background:rgba(0,0,0,0%); margin:0px,0px,0px,0px; padding-top:9px; padding-bottom:9px; } QScrollBar::handle:vertical { width:8px; background:rgba(0,0,0,25%);  border-radius:4px; min-height:20; } QScrollBar::handle:vertical:hover { width:8px; background:rgba(0,0,0,50%);  border-radius:4px; min-height:20; } QScrollBar::add-line:vertical { height:9px;width:8px; border-image:url(:/images/a/3.png); subcontrol-position:bottom; } QScrollBar::sub-line:vertical { height:9px;width:8px; border-image:url(:/images/a/1.png); subcontrol-position:top; } QScrollBar::add-line:vertical:hover { height:9px;width:8px; border-image:url(:/images/a/4.png); subcontrol-position:bottom; } QScrollBar::sub-line:vertical:hover { height:9px;width:8px; border-image:url(:/images/a/2.png); subcontrol-position:top; } QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical { background:rgba(0,0,0,10%); border-radius:4px; }");
+    ui->scrollArea->verticalScrollBar()->setStyleSheet("QScrollBar:vertical { width:8px; background:rgba(0,0,0,0%); margin:0px,0px,0px,0px; padding-top:9px; padding-bottom:9px; } QScrollBar::handle:vertical { width:8px; background:rgba(0,0,0,25%);  border-radius:4px; min-height:20; } QScrollBar::handle:vertical:hover { width:8px; background:rgba(0,0,0,50%);  border-radius:4px; min-height:20; } QScrollBar::add-line:vertical { height:9px;width:8px; border-image:url(:/images/a/3.png); subcontrol-position:bottom; } QScrollBar::sub-line:vertical { height:9px;width:8px; border-image:url(:/images/a/1.png); subcontrol-position:top; } QScrollBar::add-line:vertical:hover { height:9px;width:8px; border-image:url(:/images/a/4.png); subcontrol-position:bottom; } QScrollBar::sub-line:vertical:hover { height:9px;width:8px; border-image:url(:/images/a/2.png); subcontrol-position:top; } QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical { background:rgba(0,0,0,10%); border-radius:4px; }");
+    ui->listWidget->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
+    ui->scrollArea->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
     ui->place->setFixedWidth(626);
     if (curUser->getUserType() == CONSUMERTYPE)
     {
@@ -557,14 +510,14 @@ void product::search()
     else if (sortMethod == PRICE_DESCEND_SORT)
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
-        for (int i = 0; i < (int)productList.size(); i++)
+        for (int i = 0; i < (int)productList.size() - 1; i++)
         {
-            for (int j = 0; j < (int)productList.size() - i; j++)
+            for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[i]->getPrice(discount) > productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice(discount) > productList[j]->getPrice(discount))
                 {
-                    productItem *tmp = productList[i];
-                    productList[i] = productList[j];
+                    productItem *tmp = productList[j + 1];
+                    productList[j + 1] = productList[j];
                     productList[j] = tmp;
                 }
             }
@@ -574,14 +527,14 @@ void product::search()
     else
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
-        for (int i = 0; i < (int)productList.size(); i++)
+        for (int i = 0; i < (int)productList.size() - 1; i++)
         {
-            for (int j = 0; j < (int)productList.size() - i; j++)
+            for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[i]->getPrice(discount) < productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice(discount) < productList[j]->getPrice(discount))
                 {
-                    productItem *tmp = productList[i];
-                    productList[i] = productList[j];
+                    productItem *tmp = productList[j + 1];
+                    productList[j + 1] = productList[j];
                     productList[j] = tmp;
                 }
             }
@@ -623,14 +576,14 @@ void product::priceDescendSort()
     productList.clear();
     productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
     discount = db->getDiscount();
-    for (int i = 0; i < (int)productList.size(); i++)
+    for (int i = 0; i < (int)productList.size() - 1; i++)
     {
-        for (int j = 0; j < (int)productList.size() - i; j++)
+        for (int j = 0; j < (int)productList.size() - 1 - i; j++)
         {
-            if (productList[i]->getPrice(discount) > productList[j]->getPrice(discount))
+            if (productList[j + 1]->getPrice(discount) > productList[j]->getPrice(discount))
             {
-                productItem *tmp = productList[i];
-                productList[i] = productList[j];
+                productItem *tmp = productList[j + 1];
+                productList[j + 1] = productList[j];
                 productList[j] = tmp;
             }
         }
@@ -654,14 +607,14 @@ void product::priceAscendSort()
     productList.clear();
     productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
     discount = db->getDiscount();
-    for (int i = 0; i < (int)productList.size(); i++)
+    for (int i = 0; i < (int)productList.size() - 1; i++)
     {
-        for (int j = 0; j < (int)productList.size() - i; j++)
+        for (int j = 0; j < (int)productList.size() - 1 - i; j++)
         {
-            if (productList[i]->getPrice(discount) < productList[j]->getPrice(discount))
+            if (productList[j + 1]->getPrice(discount) < productList[j]->getPrice(discount))
             {
-                productItem *tmp = productList[i];
-                productList[i] = productList[j];
+                productItem *tmp = productList[j + 1];
+                productList[j + 1] = productList[j];
                 productList[j] = tmp;
             }
         }
@@ -816,14 +769,14 @@ void product::purchase()
     else if (sortMethod == PRICE_DESCEND_SORT)
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
-        for (int i = 0; i < (int)productList.size(); i++)
+        for (int i = 0; i < (int)productList.size() - 1; i++)
         {
-            for (int j = 0; j < (int)productList.size() - i; j++)
+            for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[i]->getPrice(discount) > productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice(discount) > productList[j]->getPrice(discount))
                 {
-                    productItem *tmp = productList[i];
-                    productList[i] = productList[j];
+                    productItem *tmp = productList[j + 1];
+                    productList[j + 1] = productList[j];
                     productList[j] = tmp;
                 }
             }
@@ -833,14 +786,14 @@ void product::purchase()
     else
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
-        for (int i = 0; i < (int)productList.size(); i++)
+        for (int i = 0; i < (int)productList.size() - 1; i++)
         {
-            for (int j = 0; j < (int)productList.size() - i; j++)
+            for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[i]->getPrice(discount) < productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice(discount) < productList[j]->getPrice(discount))
                 {
-                    productItem *tmp = productList[i];
-                    productList[i] = productList[j];
+                    productItem *tmp = productList[j + 1];
+                    productList[j + 1] = productList[j];
                     productList[j] = tmp;
                 }
             }
@@ -874,14 +827,14 @@ void product::refresh()
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
         discount = db->getDiscount();
-        for (int i = 0; i < (int)productList.size(); i++)
+        for (int i = 0; i < (int)productList.size() - 1; i++)
         {
-            for (int j = 0; j < (int)productList.size() - i; j++)
+            for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[i]->getPrice(discount) > productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice(discount) > productList[j]->getPrice(discount))
                 {
-                    productItem *tmp = productList[i];
-                    productList[i] = productList[j];
+                    productItem *tmp = productList[j + 1];
+                    productList[j + 1] = productList[j];
                     productList[j] = tmp;
                 }
             }
@@ -891,14 +844,14 @@ void product::refresh()
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
         discount = db->getDiscount();
-        for (int i = 0; i < (int)productList.size(); i++)
+        for (int i = 0; i < (int)productList.size() - 1; i++)
         {
-            for (int j = 0; j < (int)productList.size() - i; j++)
+            for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[i]->getPrice(discount) < productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice(discount) < productList[j]->getPrice(discount))
                 {
-                    productItem *tmp = productList[i];
-                    productList[i] = productList[j];
+                    productItem *tmp = productList[j + 1];
+                    productList[j + 1] = productList[j];
                     productList[j] = tmp;
                 }
             }

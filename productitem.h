@@ -51,6 +51,10 @@ public:
                 break;
             }
         }
+        if (discountThis == 1)
+        {
+            return price;
+        }
         return (double)floor(price * discountThis * 100) / 100;
     }
     virtual ~foodItem()
@@ -72,6 +76,10 @@ public:
                 break;
             }
         }
+        if (discountThis == 1)
+        {
+            return price;
+        }
         return (double)floor(price * discountThis * 100) / 100;
     }
     virtual ~clothesItem()
@@ -92,6 +100,10 @@ public:
                 discountThis = discount[i][BOOKTYPE - 1];
                 break;
             }
+        }
+        if (discountThis == 1)
+        {
+            return price;
         }
         return (double)floor(price * discountThis * 100) / 100;
     }

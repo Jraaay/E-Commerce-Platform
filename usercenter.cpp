@@ -525,6 +525,7 @@ void userCenter::saveDiscount()
     delete db;
     promptBox *prompt = new promptBox(nullptr, "保存成功\nSave successfully");
     prompt->show();
+    fatherPtr->refresh();
 }
 
 /* 点击订单 */
