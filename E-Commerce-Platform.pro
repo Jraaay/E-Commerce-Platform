@@ -2,6 +2,7 @@ QT       += core gui
 QT       += sql
 QT       += quickwidgets
 QT       += winextras
+QT       += network
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -30,8 +31,10 @@ SOURCES += \
     productitem.cpp \
     productlistui.cpp \
     promptbox.cpp \
+    protocol.cpp \
     rechargepage.cpp \
     sqlite.cpp \
+    tcpclient.cpp \
     user.cpp \
     usercenter.cpp \
     usermanager.cpp \
@@ -48,8 +51,10 @@ HEADERS += \
     productitem.h \
     productlistui.h \
     promptbox.h \
+    protocol.h \
     rechargepage.h \
     sqlite.h \
+    tcpclient.h \
     user.h \
     usercenter.h \
     usermanager.h \
