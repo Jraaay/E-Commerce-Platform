@@ -9,25 +9,37 @@ int userManager::getMaxUid()
 {
     ifstream infile;
     string uidMaxJson = "";
-    int uidMax;
-    try
+    int uidMax = 0;
+    infile.open("uidMaxFile.json");
+    infile >> uidMaxJson;
+    infile.close();
+    QJsonParseError jsonError;
+    QJsonDocument document = QJsonDocument::fromJson(uidMaxJson.c_str(),&jsonError);
+    if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
     {
-        infile.open("uidMaxFile.json");
-        infile >> uidMaxJson;
-        infile.close();
-        const json j = json::parse(uidMaxJson);
-        uidMax = j["uid"];
+        if(document.isObject())
+        {
+            QJsonObject object = document.object();
+            if(object.contains("uid"))
+            {
+                QJsonValue value = object.value("uid");
+                uidMax = value.toInt();
+            }
+        }
     }
-    catch (exception &e)
+    else
     {
         uidMaxJson = "";
-        qDebug() << e.what() << endl;
+        qDebug() << jsonError.error << endl;
         const int tmp = 0;
-        json j;
-        j["uid"] = tmp;
+        QJsonObject object;
+        object.insert("uid", tmp);
+        QJsonDocument document;
+        document.setObject(object);
+        QByteArray array = document.toJson(QJsonDocument::Compact);
         ofstream outFile;
         outFile.open("uidMaxFile.json");
-        outFile << j.dump();
+        outFile << array.toStdString();
         outFile.close();
     }
     return uidMax;
@@ -38,34 +50,53 @@ vector<sellerClass> userManager::getSellerList()
     vector<sellerClass> sellerList;
     ifstream infile;
     string sellerJson = "";
-    try
+    infile.open("sellerFile.json");
+    infile >> sellerJson;
+    infile.close();
+    QJsonParseError jsonError;
+    QJsonArray userListJson;
+    QJsonDocument document = QJsonDocument::fromJson(sellerJson.c_str(),&jsonError);
+    if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
     {
-        infile.open("sellerFile.json");
-        infile >> sellerJson;
-        infile.close();
-        const json j = json::parse(sellerJson);
-        const vector<string> userListJson = j["data"];
+        if(document.isObject())
+        {
+            QJsonObject object = document.object();
+            if(object.contains("data"))
+            {
+                QJsonValue value = object.value("data");
+                userListJson = value.toArray();
+            }
+        }
         for (int i = 0; i < (int)userListJson.size(); i++)
         {
-            const json jTmp = json::parse(userListJson[i]);
-            sellerClass tmp;
-            tmp.uid = jTmp["uid"];
-            tmp.name = jTmp["name"];
-            tmp.type = jTmp["type"];
-            tmp.balance = jTmp["balance"];
-            tmp.setPass(jTmp["password"]);
-            sellerList.push_back(tmp);
+            QJsonArray userListJson1;
+            QJsonDocument document1 = QJsonDocument::fromJson(userListJson[i].toString().toUtf8(),&jsonError);
+            if(document1.isObject())
+            {
+                QJsonObject object = document1.object();
+                sellerClass tmp;
+                tmp.uid = object.value("uid").toInt();
+                tmp.name = object.value("name").toString().toStdString();
+                tmp.type = object.value("type").toInt();
+                tmp.balance = object.value("balance").toDouble();
+                tmp.setPass(object.value("password").toString().toStdString());
+                sellerList.push_back(tmp);
+            }
+
         }
     }
-    catch (exception &e)
+    else
     {
-        qDebug() << e.what() << endl;
-        vector<string> tmp;
-        json j;
-        j["data"] = tmp;
+        qDebug() << jsonError.error << endl;
+        QString tmp = "";
+        QJsonObject object;
+        object.insert("data", tmp);
+        QJsonDocument document;
+        document.setObject(object);
+        QByteArray array = document.toJson(QJsonDocument::Compact);
         ofstream outFile;
         outFile.open("sellerFile.json");
-        outFile << j.dump();
+        outFile << array.toStdString();
         outFile.close();
     }
     return sellerList;
@@ -76,34 +107,53 @@ vector<consumerClass> userManager::getConsumerList()
     vector<consumerClass> consumerList;
     ifstream infile;
     string consumerJson = "";
-    try
+    infile.open("consumerFile.json");
+    infile >> consumerJson;
+    infile.close();
+    QJsonParseError jsonError;
+    QJsonArray userListJson;
+    QJsonDocument document = QJsonDocument::fromJson(consumerJson.c_str(),&jsonError);
+    if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
     {
-        infile.open("consumerFile.json");
-        infile >> consumerJson;
-        infile.close();
-        const json j = json::parse(consumerJson);
-        const vector<string> userListJson = j["data"];
+        if(document.isObject())
+        {
+            QJsonObject object = document.object();
+            if(object.contains("data"))
+            {
+                QJsonValue value = object.value("data");
+                userListJson = value.toArray();
+            }
+        }
         for (int i = 0; i < (int)userListJson.size(); i++)
         {
-            const json jTmp = json::parse(userListJson[i]);
-            consumerClass tmp;
-            tmp.uid = jTmp["uid"];
-            tmp.name = jTmp["name"];
-            tmp.type = jTmp["type"];
-            tmp.balance = jTmp["balance"];
-            tmp.setPass(jTmp["password"]);
-            consumerList.push_back(tmp);
+            QJsonArray userListJson1;
+            QJsonDocument document1 = QJsonDocument::fromJson(userListJson[i].toString().toUtf8(),&jsonError);
+            if(document1.isObject())
+            {
+                QJsonObject object = document1.object();
+                consumerClass tmp;
+                tmp.uid = object.value("uid").toInt();
+                tmp.name = object.value("name").toString().toStdString();
+                tmp.type = object.value("type").toInt();
+                tmp.balance = object.value("balance").toDouble();
+                tmp.setPass(object.value("password").toString().toStdString());
+                consumerList.push_back(tmp);
+            }
+
         }
     }
-    catch (exception &e)
+    else
     {
-        qDebug() << e.what() << endl;
-        vector<string> tmp;
-        json j;
-        j["data"] = tmp;
+        qDebug() << jsonError.error << endl;
+        QString tmp = "";
+        QJsonObject object;
+        object.insert("data", tmp);
+        QJsonDocument document;
+        document.setObject(object);
+        QByteArray array = document.toJson(QJsonDocument::Compact);
         ofstream outFile;
         outFile.open("consumerFile.json");
-        outFile << j.dump();
+        outFile << array.toStdString();
         outFile.close();
     }
     return consumerList;

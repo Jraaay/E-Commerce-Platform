@@ -112,25 +112,32 @@ void Widget::loginRegFun()
                 tmp.type = SELLERTYPE;
                 tmp.balance = 0;
                 sellerList.push_back(tmp);
-                vector<string> sellerJsonList;
+                QVector<QString> sellerJsonList;
                 for (int i = 0; i < (int)sellerList.size(); i++)
                 {
-                    sellerJsonList.push_back(sellerList[i].getJson());
+                    sellerJsonList.push_back(sellerList[i].getJson().c_str());
                 }
-                json j;
-                j["data"] = sellerJsonList;
+                QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
+                QJsonObject object;
+                object.insert("data", array);
+                QJsonDocument document;
+                document.setObject(object);
+                QByteArray byteArray = document.toJson(QJsonDocument::Compact);
                 ofstream outFile;
                 outFile.open("sellerFile.json");
-                outFile << j.dump();
+                outFile << byteArray.toStdString();
                 outFile.close();
                 promptBox *prompt = new promptBox(nullptr, "注册成功\nRegister successfully");
                 prompt->show();
-                json uidJson;
-                uidJson["uid"] = uidMax;
-                ofstream uidOutFile;
-                uidOutFile.open("uidMaxFile.json");
-                uidOutFile << uidJson.dump();
-                uidOutFile.close();
+                QJsonObject object2;
+                object2.insert("uid", uidMax);
+                QJsonDocument document2;
+                document2.setObject(object2);
+                QByteArray array2 = document.toJson(QJsonDocument::Compact);
+                ofstream outFile2;
+                outFile.open("uidMaxFile.json");
+                outFile << array2.toStdString();
+                outFile.close();
                 sqlite db;
                 db.openDb();
                 db.newDiscount(tmp.uid);
@@ -163,25 +170,33 @@ void Widget::loginRegFun()
                 tmp.type = CONSUMERTYPE;
                 tmp.balance = 0;
                 consumerList.push_back(tmp);
-                vector<string> consumerJsonList;
+                QVector<QString> consumerJsonList;
                 for (int i = 0; i < (int)consumerList.size(); i++)
                 {
-                    consumerJsonList.push_back(consumerList[i].getJson());
+                    consumerJsonList.push_back(consumerList[i].getJson().c_str());
                 }
-                json j;
-                j["data"] = consumerJsonList;
+                QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(consumerJsonList));
+                QJsonObject object;
+                object.insert("data", array);
+                QJsonDocument document;
+                document.setObject(object);
+                QByteArray byteArray = document.toJson(QJsonDocument::Compact);
                 ofstream outFile;
                 outFile.open("consumerFile.json");
-                outFile << j.dump();
+                outFile << byteArray.toStdString();
                 outFile.close();
                 promptBox *prompt = new promptBox(nullptr, "注册成功\nRegister successfully");
                 prompt->show();
-                json uidJson;
-                uidJson["uid"] = uidMax;
-                ofstream uidOutFile;
-                uidOutFile.open("uidMaxFile.json");
-                uidOutFile << uidJson.dump();
-                uidOutFile.close();
+
+                QJsonObject object2;
+                object2.insert("uid", uidMax);
+                QJsonDocument document2;
+                document2.setObject(object2);
+                QByteArray array2 = document.toJson(QJsonDocument::Compact);
+                ofstream outFile2;
+                outFile.open("uidMaxFile.json");
+                outFile << array2.toStdString();
+                outFile.close();
             }
             else
             {

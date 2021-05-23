@@ -3,12 +3,15 @@
 
 #include <fstream>
 #include <string>
-#include "nlohmann/json.hpp"
 #include <QDebug>
 #include "user.h"
+#include <QJsonDocument>
+#include <QJsonParseError>
+#include <QJsonObject>
+#include <QJsonValue>
+#include <QJsonArray>
 
 using namespace std;
-using json = nlohmann::json;
 
 class userManager
 {

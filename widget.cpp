@@ -75,12 +75,15 @@ void Widget::init() // 初始化
     }
     if (sellerJson == "")
     {
-        vector<string> tmp;
-        json j;
-        j["data"] = tmp;
+        QString tmp = "";
+        QJsonObject object;
+        object.insert("data", tmp);
+        QJsonDocument document;
+        document.setObject(object);
+        QByteArray array = document.toJson(QJsonDocument::Compact);
         ofstream outFile;
         outFile.open("sellerFile.json");
-        outFile << j.dump();
+        outFile << array.toStdString();
         outFile.close();
     }
     string consumerJson = "";
@@ -97,12 +100,15 @@ void Widget::init() // 初始化
 
     if (consumerJson == "")
     {
-        vector<string> tmp;
-        json j;
-        j["data"] = tmp;
+        QString tmp = "";
+        QJsonObject object;
+        object.insert("data", tmp);
+        QJsonDocument document;
+        document.setObject(object);
+        QByteArray array = document.toJson(QJsonDocument::Compact);
         ofstream outFile;
         outFile.open("consumerFile.json");
-        outFile << j.dump();
+        outFile << array.toStdString();
         outFile.close();
     }
     string uidMaxJson = "";
@@ -119,12 +125,16 @@ void Widget::init() // 初始化
 
     if (uidMaxJson == "")
     {
-        int tmp = 0;
-        json j;
-        j["uid"] = tmp;
+        uidMaxJson = "";
+        const int tmp = 0;
+        QJsonObject object;
+        object.insert("uid", tmp);
+        QJsonDocument document;
+        document.setObject(object);
+        QByteArray array = document.toJson(QJsonDocument::Compact);
         ofstream outFile;
         outFile.open("uidMaxFile.json");
-        outFile << j.dump();
+        outFile << array.toStdString();
         outFile.close();
     }
     ui->userName->setFocus(); // 焦点设置到用户名方便用户输入

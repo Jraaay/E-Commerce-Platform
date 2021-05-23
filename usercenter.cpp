@@ -136,16 +136,20 @@ void userCenter::changeUserName()
             {
                 curUser->name = ui->usernameEdit->text().toStdString();
                 sellerList[numToChange].name = ui->usernameEdit->text().toStdString();
-                vector<string> sellerJsonList;
+                QVector<QString> sellerJsonList;
                 for (int i = 0; i < (int)sellerList.size(); i++)
                 {
-                    sellerJsonList.push_back(sellerList[i].getJson());
+                    sellerJsonList.push_back(sellerList[i].getJson().c_str());
                 }
-                json j;
-                j["data"] = sellerJsonList;
+                QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
+                QJsonObject object;
+                object.insert("data", array);
+                QJsonDocument document;
+                document.setObject(object);
+                QByteArray byteArray = document.toJson(QJsonDocument::Compact);
                 ofstream outFile;
                 outFile.open("sellerFile.json");
-                outFile << j.dump();
+                outFile << byteArray.toStdString();
                 outFile.close();
                 promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
                 fatherPtr->refreshUser();
@@ -190,16 +194,20 @@ void userCenter::changeUserName()
             {
                 curUser->name = ui->usernameEdit->text().toStdString();
                 consumerList[numToChange].name = ui->usernameEdit->text().toStdString();
-                vector<string> consumerJsonList;
+                QVector<QString> consumerJsonList;
                 for (int i = 0; i < (int)consumerList.size(); i++)
                 {
-                    consumerJsonList.push_back(consumerList[i].getJson());
+                    consumerJsonList.push_back(consumerList[i].getJson().c_str());
                 }
-                json j;
-                j["data"] = consumerJsonList;
+                QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(consumerJsonList));
+                QJsonObject object;
+                object.insert("data", array);
+                QJsonDocument document;
+                document.setObject(object);
+                QByteArray byteArray = document.toJson(QJsonDocument::Compact);
                 ofstream outFile;
                 outFile.open("consumerFile.json");
-                outFile << j.dump();
+                outFile << byteArray.toStdString();
                 outFile.close();
                 promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
                 fatherPtr->refreshUser();
@@ -267,16 +275,20 @@ void userCenter::changePassword()
             else
             {
                 sellerList[numToChange].setPass(QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString()); // 密码MD5加密
-                vector<string> sellerJsonList;
+                QVector<QString> sellerJsonList;
                 for (int i = 0; i < (int)sellerList.size(); i++)
                 {
-                    sellerJsonList.push_back(sellerList[i].getJson());
+                    sellerJsonList.push_back(sellerList[i].getJson().c_str());
                 }
-                json jWrite;
-                jWrite["data"] = sellerJsonList;
+                QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
+                QJsonObject object;
+                object.insert("data", array);
+                QJsonDocument document;
+                document.setObject(object);
+                QByteArray byteArray = document.toJson(QJsonDocument::Compact);
                 ofstream outFile;
                 outFile.open("sellerFile.json");
-                outFile << jWrite.dump();
+                outFile << byteArray.toStdString();
                 outFile.close();
                 promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
                 prompt->show();
@@ -312,16 +324,20 @@ void userCenter::changePassword()
             else
             {
                 consumerList[numToChange].setPass(QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString()); // 密码MD5加密
-                vector<string> consumerJsonList;
+                QVector<QString> consumerJsonList;
                 for (int i = 0; i < (int)consumerList.size(); i++)
                 {
-                    consumerJsonList.push_back(consumerList[i].getJson());
+                    consumerJsonList.push_back(consumerList[i].getJson().c_str());
                 }
-                json j;
-                j["data"] = consumerJsonList;
+                QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(consumerJsonList));
+                QJsonObject object;
+                object.insert("data", array);
+                QJsonDocument document;
+                document.setObject(object);
+                QByteArray byteArray = document.toJson(QJsonDocument::Compact);
                 ofstream outFile;
                 outFile.open("consumerFile.json");
-                outFile << j.dump();
+                outFile << byteArray.toStdString();
                 outFile.close();
                 promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
                 prompt->show();
@@ -457,16 +473,20 @@ void userCenter::rechargeConfirm(double moneyToCharge)
             }
         }
         sellerList[numToChange].balance += moneyToCharge;
-        vector<string> sellerJsonList;
+        QVector<QString> sellerJsonList;
         for (int i = 0; i < (int)sellerList.size(); i++)
         {
-            sellerJsonList.push_back(sellerList[i].getJson());
+            sellerJsonList.push_back(sellerList[i].getJson().c_str());
         }
-        json jWrite;
-        jWrite["data"] = sellerJsonList;
+        QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
+        QJsonObject object;
+        object.insert("data", array);
+        QJsonDocument document;
+        document.setObject(object);
+        QByteArray byteArray = document.toJson(QJsonDocument::Compact);
         ofstream outFile;
         outFile.open("sellerFile.json");
-        outFile << jWrite.dump();
+        outFile << byteArray.toStdString();
         outFile.close();
         promptBox *prompt = new promptBox(nullptr, "充值成功\nRecharge successfully");
         prompt->show();
@@ -484,16 +504,20 @@ void userCenter::rechargeConfirm(double moneyToCharge)
             }
         }
         consumerList[numToChange].balance += moneyToCharge;
-        vector<string> consumerJsonList;
+        QVector<QString> consumerJsonList;
         for (int i = 0; i < (int)consumerList.size(); i++)
         {
-            consumerJsonList.push_back(consumerList[i].getJson());
+            consumerJsonList.push_back(consumerList[i].getJson().c_str());
         }
-        json jWrite;
-        jWrite["data"] = consumerJsonList;
+        QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(consumerJsonList));
+        QJsonObject object;
+        object.insert("data", array);
+        QJsonDocument document;
+        document.setObject(object);
+        QByteArray byteArray = document.toJson(QJsonDocument::Compact);
         ofstream outFile;
         outFile.open("consumerFile.json");
-        outFile << jWrite.dump();
+        outFile << byteArray.toStdString();
         outFile.close();
         promptBox *prompt = new promptBox(nullptr, "充值成功\nRecharge successfully");
         prompt->show();

@@ -5,10 +5,10 @@
 #define GUESTTYPE 3
 
 #include <string>
-#include "nlohmann/json.hpp"
+#include <QJsonObject>
+#include <QJsonDocument>
 
 using namespace std;
-using json = nlohmann::json;
 
 class userClass
 {

@@ -4,6 +4,7 @@
 #include "promptbox.h"
 #include "sqlite.h"
 #include "usermanager.h"
+#include <QJsonObject>
 
 class loginAndRegister
 {

@@ -20,6 +20,7 @@
 #include "productlistui.h"
 #include "ui_productlistui.h"
 #include "usermanager.h"
+#include <QJsonArray>
 
 namespace Ui {
 class OrderDetail;

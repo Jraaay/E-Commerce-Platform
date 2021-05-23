@@ -5,12 +5,10 @@
 #include <QCryptographicHash>
 #include <QMessageBox>
 #include <fstream>
-#include "nlohmann/json.hpp"
 #include "user.h"
 #include <QTranslator>
 
 using namespace std;
-using json = nlohmann::json;
 
 QT_BEGIN_NAMESPACE
 namespace Ui

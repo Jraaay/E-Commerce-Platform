@@ -165,31 +165,33 @@ void OrderDetail::payForOrder()
         for (int i = 0; i < (int)productList.size(); i++)
         {
             int numToChange;
-            for (int i = 0; i < (int)sellerList.size(); i++)
+            for (int j = 0; j < (int)sellerList.size(); j++)
             {
-                if (sellerList[i].uid == productList[i]->seller)
+                if (sellerList[j].uid == productList[i]->seller)
                 {
-                    numToChange = i;
+                    numToChange = j;
                 }
             }
             sellerList[numToChange].balance += price[i] * count[i];
         }
-        vector<string> sellerJsonList;
+        QVector<QString> sellerJsonList;
         for (int i = 0; i < (int)sellerList.size(); i++)
         {
-            sellerJsonList.push_back(sellerList[i].getJson());
+            sellerJsonList.push_back(sellerList[i].getJson().c_str());
         }
-        json jTmp;
-        jTmp["data"] = sellerJsonList;
+        QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
+        QJsonObject object;
+        object.insert("data", array);
+        QJsonDocument document;
+        document.setObject(object);
+        QByteArray byteArray = document.toJson(QJsonDocument::Compact);
         ofstream outFile;
         outFile.open("sellerFile.json");
-        outFile << jTmp.dump();
+        outFile << byteArray.toStdString();
         outFile.close();
         if (curUser->getUserType() == SELLERTYPE)
         {
             vector<sellerClass> sellerList = userManager::getSellerList();
-
-
             int numToChange;
             for (int i = 0; i < (int)sellerList.size(); i++)
             {
@@ -199,16 +201,20 @@ void OrderDetail::payForOrder()
                 }
             }
             sellerList[numToChange].balance -= priceSum;
-            vector<string> sellerJsonList;
+            QVector<QString> sellerJsonList;
             for (int i = 0; i < (int)sellerList.size(); i++)
             {
-                sellerJsonList.push_back(sellerList[i].getJson());
+                sellerJsonList.push_back(sellerList[i].getJson().c_str());
             }
-            json jTmp;
-            jTmp["data"] = sellerJsonList;
+            QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
+            QJsonObject object;
+            object.insert("data", array);
+            QJsonDocument document;
+            document.setObject(object);
+            QByteArray byteArray = document.toJson(QJsonDocument::Compact);
             ofstream outFile;
             outFile.open("sellerFile.json");
-            outFile << jTmp.dump();
+            outFile << byteArray.toStdString();
             outFile.close();
             db->openDb();
             db->payOrder(_orderId);
@@ -229,16 +235,20 @@ void OrderDetail::payForOrder()
                 }
             }
             consumerList[numToChange].balance -= priceSum;
-            vector<string> consumerJsonList;
+            QVector<QString> consumerJsonList;
             for (int i = 0; i < (int)consumerList.size(); i++)
             {
-                consumerJsonList.push_back(consumerList[i].getJson());
+                consumerJsonList.push_back(consumerList[i].getJson().c_str());
             }
-            json jTmp;
-            jTmp["data"] = consumerJsonList;
+            QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(consumerJsonList));
+            QJsonObject object;
+            object.insert("data", array);
+            QJsonDocument document;
+            document.setObject(object);
+            QByteArray byteArray = document.toJson(QJsonDocument::Compact);
             ofstream outFile;
             outFile.open("consumerFile.json");
-            outFile << jTmp.dump();
+            outFile << byteArray.toStdString();
             outFile.close();
             db->openDb();
             db->payOrder(_orderId);
