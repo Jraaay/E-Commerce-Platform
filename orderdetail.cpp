@@ -165,7 +165,7 @@ void OrderDetail::payForOrder()
         for (int i = 0; i < (int)productList.size(); i++)
         {
             int numToChange;
-            for (int i = 0; i < (int)sellerList.size(); i++)
+            for (int j = 0; j < (int)sellerList.size(); j++)
             {
                 if (sellerList[i].uid == productList[i]->seller)
                 {
