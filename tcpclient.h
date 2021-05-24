@@ -19,6 +19,7 @@
 #define USER_getUser 15
 #define pay 16
 #define SQLITE_getDiscount 17
+#define SQLITE_buyOneThing 18
 
 #define HOST "localhost"
 #define PORT 8848
@@ -36,7 +37,7 @@ public:
     int connectToServer();
     void disconnectFromServer();
     void sendData(QByteArray data);
-    QByteArray getData(QByteArray data, int msec = 20);
+    QByteArray getData(QByteArray data, int msec = 50);
 
 signals:
 

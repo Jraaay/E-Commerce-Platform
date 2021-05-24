@@ -93,7 +93,6 @@ void addProduct::selectPhotoFun()
             QByteArray ba;
             QBuffer buf(&ba);
             image.save(&buf, "png");
-            qDebug() << ba.toBase64();
             buf.close();
             photosList.push_back(ba.toBase64());
             QImage img;

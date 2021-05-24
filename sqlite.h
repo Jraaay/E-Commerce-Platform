@@ -37,7 +37,8 @@ public:
     void newDiscount(int id) const;
     void getDiscount(int userId, double &fooddiscount, double &clothesdiscount, double &bookdiscount) const;
     void setDiscount(int userId, double fooddiscount, double clothesdiscount, double bookdiscount) const;
-    int generateOrder(int userId, vector<productItem> orderList, vector<int> count, vector<double> price, double priceSum);
+    int generateOrder(int userId);
+    void buyOne(int userId, int productId);
     void getOrder(int orderId, bool &paied, long long &time, int &userId, vector<productItem *> &orderList, vector<int> &count, vector<double> &price, double &priceSum);
     void payOrder(int orderId);
     void getOrderList(int userId, vector<int> &orderId, vector<double> &priceSum, vector<long long> &time, vector<bool> &paid);

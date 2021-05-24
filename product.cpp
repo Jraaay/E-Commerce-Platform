@@ -619,11 +619,6 @@ void product::purchase()
     }
     if (purchaseProductList[productToPurchase]->remaining > 0 && curUser->balance >= purchaseProductList[productToPurchase]->getPrice())
     {
-        purchaseProductList[productToPurchase]->remaining--;
-
-        db->modifyData(*purchaseProductList[productToPurchase], 0);
-
-
         vector<sellerClass> sellerList = userManager::getSellerList();
         int numToChange;
         for (int i = 0; i < (int)sellerList.size(); i++)
@@ -659,8 +654,7 @@ void product::purchase()
         b.push_back(1);
         c.push_back(purchaseProductList[productToPurchase]->getPrice());
 
-        int orderId = db->generateOrder(curUser->uid, a, b, c, purchaseProductList[productToPurchase]->getPrice());
-        db->payOrder(orderId);
+        db->buyOne(curUser->uid, purchaseProductList[productToPurchase]->id);
 
 
         if (curUser->getUserType() == SELLERTYPE)

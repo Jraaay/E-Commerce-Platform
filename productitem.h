@@ -33,7 +33,6 @@ public:
     productItem(QJsonObject data);
     virtual double getPrice()
     {
-        qDebug() << discount;
         return discount;
     };
     virtual ~productItem()

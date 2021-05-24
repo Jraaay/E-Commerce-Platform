@@ -186,7 +186,7 @@ void Cart::showProduct(bool getFromDB)
         QImage img;
         if (productList[i]->photo.size() > 0)
         {
-            img.load(productList[i]->photo[productList[i]->mainPhoto]);
+            img.loadFromData(productList[i]->photo[productList[i]->mainPhoto]);
         }
         else
         {
@@ -261,7 +261,7 @@ void Cart::showPhoto()
     QImage img;
     if (itemToShow.photo.size() > 0)
     {
-        img.load(itemToShow.photo[mainPhoto]);
+        img.loadFromData(itemToShow.photo[mainPhoto]);
     }
     else
     {
@@ -280,7 +280,9 @@ void Cart::showPhoto()
         QPixmap photo;
         if (i + curFirstPhoto < int(itemToShow.photo.size()))
         {
-            photo = QPixmap::fromImage(QImage(itemToShow.photo[i + curFirstPhoto]));
+            QImage img;
+            img.loadFromData(itemToShow.photo[i + curFirstPhoto]);
+            photo = QPixmap::fromImage(img);
             photoLabelList[i]->setScaledContents(false);
         }
         else
@@ -451,7 +453,8 @@ void Cart::showBigPhoto()
         a->setWindowTitle("查看图片 Review image");
         a->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint);
         const QPixmap pixmap;
-        const QImage img(productList[curProduct]->photo[mainPhoto]);
+        QImage img;
+        img.loadFromData(productList[curProduct]->photo[mainPhoto]);
         pixmap.fromImage(img);
         int width = img.width();
         int height = img.height();
@@ -516,55 +519,7 @@ void Cart::selectAll()
 
 void Cart::generateOrder()
 {
-
-    for (int i = 0; i < (int)productList.size(); i++)
-    {
-        delete productList[i];
-    }
-    productList.clear();
-    numberList.clear();
-    checkedList.clear();
-    db->queryCart(curUser->uid, productList, numberList, checkedList);
-
-
-
-    vector<productItem> orderList;
-    vector<int> count;
-    vector<double> price;
-    double priceSum = 0;
-    for (int i = 0; i < (int)uiList.size(); i++)
-    {
-        if (uiList[i]->ui->number->text().toInt() > productList[i]->remaining)
-        {
-            for (int j = 0; j < i; j++)
-            {
-                if (uiList[i]->ui->buyCheck->isChecked())
-                {
-                    productList[i]->remaining+=uiList[i]->ui->number->text().toInt();
-
-                    db->modifyData(*productList[i], 0);
-
-                }
-            }
-            refresh();
-            promptBox *pb = new promptBox(nullptr, "商品: " + productList[i]->name + " 的库存不足");
-            pb->show();
-            break;
-        }
-        if (uiList[i]->ui->buyCheck->isChecked())
-        {
-            priceSum += productList[i]->getPrice() * uiList[i]->ui->number->text().toInt();
-            orderList.push_back(*productList[i]);
-            count.push_back(uiList[i]->ui->number->text().toInt());
-            price.push_back(productList[i]->getPrice());
-            productList[i]->remaining-=uiList[i]->ui->number->text().toInt();
-
-            db->modifyData(*productList[i], 0);
-
-        }
-    }
-
-    int orderId = db->generateOrder(curUser->uid, orderList, count, price, priceSum);
+    int orderId = db->generateOrder(curUser->uid);
 
     refresh();
     userClass *curUserToOrder;
