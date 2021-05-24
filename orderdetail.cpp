@@ -28,14 +28,14 @@ void OrderDetail::init()
 {
     ui->setupUi(this);
     db = new sqlite;
-    db->openDb();
+
     productList.clear();
     numberList.clear();
     checkedList.clear();
     count.clear();
     price.clear();
     db->getOrder(_orderId, paid, time, curUser->uid, productList, count, price, priceSum);
-    db->closeDb();
+
     char priceText[1000] = "";
     sprintf(priceText, "￥%.2lf", priceSum);
     if (paid)
@@ -60,7 +60,7 @@ void OrderDetail::showProduct(bool getFromDB)
     uiList.clear();
     if (getFromDB)
     {
-        db->openDb();
+
         for (int i = 0; i < (int)productList.size(); i++)
         {
             delete productList[i];
@@ -72,7 +72,7 @@ void OrderDetail::showProduct(bool getFromDB)
         count.clear();
         price.clear();
         db->getOrder(_orderId, paid, time, curUser->uid, productList, count, price, priceSum);
-        db->closeDb();
+
     }
     ui->listWidget->clear();
     ui->listWidget->verticalScrollBar()->setSingleStep(16);
@@ -128,7 +128,7 @@ void OrderDetail::showProduct(bool getFromDB)
         QImage img;
         if (productList[i]->photo.size() > 0)
         {
-            img.load(productList[i]->photo[productList[i]->mainPhoto]);
+            img.loadFromData(productList[i]->photo[productList[i]->mainPhoto]);
         }
         else
         {
@@ -216,9 +216,9 @@ void OrderDetail::payForOrder()
             outFile.open("sellerFile.json");
             outFile << byteArray.toStdString();
             outFile.close();
-            db->openDb();
+
             db->payOrder(_orderId);
-            db->closeDb();
+
             promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
             prompt->show();
         }
@@ -250,9 +250,9 @@ void OrderDetail::payForOrder()
             outFile.open("consumerFile.json");
             outFile << byteArray.toStdString();
             outFile.close();
-            db->openDb();
+
             db->payOrder(_orderId);
-            db->closeDb();
+
             promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
             prompt->show();
         }

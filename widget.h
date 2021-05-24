@@ -7,6 +7,7 @@
 #include <fstream>
 #include "user.h"
 #include <QTranslator>
+#include "tcpclient.h"
 
 using namespace std;
 

@@ -139,9 +139,9 @@ void Widget::loginRegFun()
                 outFile << array2.toStdString();
                 outFile.close();
                 sqlite db;
-                db.openDb();
+
                 db.newDiscount(tmp.uid);
-                db.closeDb();
+
             }
             else
             {

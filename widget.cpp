@@ -56,6 +56,9 @@ void Widget::setTypeConsumer()
 /* 初始化 */
 void Widget::init() // 初始化
 {
+    TcpClient tcpClient;
+    tcpClient.connectToServer();
+    tcpClient.disconnectFromServer();
     ui->warning->hide();                            // 隐藏用户名不合法提示
     const QRegExp regx1("^[a-zA-Z0-9_\\-]{0,16}$"); // 设置正则表达式
     const QValidator *validator1 = new QRegExpValidator(regx1, ui->userName);

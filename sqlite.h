@@ -10,13 +10,15 @@
 #include <QDir>
 #include <time.h>
 #include <QVariant>
+#include "tcpclient.h"
+#include <QJsonDocument>
 
 class sqlite
 {
 public:
     sqlite();
     // 打开数据库
-    bool openDb(void);
+
     // 创建数据表
     void createTable(void) const;
     // 判断数据表是否存在
@@ -33,14 +35,12 @@ public:
     // 删除数据
     void deleteData(int id) const;
     void newDiscount(int id) const;
-    vector<vector<double>> getDiscount() const;
-    void setDiscount(vector<vector<double>> discount) const;
+    void getDiscount(int userId, double &fooddiscount, double &clothesdiscount, double &bookdiscount) const;
+    void setDiscount(int userId, double fooddiscount, double clothesdiscount, double bookdiscount) const;
     int generateOrder(int userId, vector<productItem> orderList, vector<int> count, vector<double> price, double priceSum);
     void getOrder(int orderId, bool &paied, long long &time, int &userId, vector<productItem *> &orderList, vector<int> &count, vector<double> &price, double &priceSum);
     void payOrder(int orderId);
     void getOrderList(int userId, vector<int> &orderId, vector<double> &priceSum, vector<long long> &time, vector<bool> &paid);
-    // 关闭数据库
-    void closeDb(void);
 
 private:
     QSqlDatabase db;

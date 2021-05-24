@@ -54,7 +54,7 @@ public:
     vector<int> numberList;             // 购买量列表
     vector<bool> checkedList;           // 选中列表
     sqlite *db;                         // 数据库
-    vector<vector<double>> discount;    // 折扣列表
+
     vector<QListWidgetItem *> itemList; // item列表
     vector<CartItemUi *> uiList;        // item的ui的列表
 

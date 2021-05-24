@@ -10,6 +10,8 @@
 #include <vector>
 #include <QDebug>
 #include <math.h>
+#include <QJsonObject>
+#include <QJsonArray>
 
 using namespace std;
 
@@ -20,42 +22,32 @@ public:
     string description;
     double price;
     int remaining;
-    vector<QString> photo;
+    vector<QByteArray> photo;
     int mainPhoto;
     int type;
     int id;
     int seller;
-    productItem(string name, string description, double price, int remaining, vector<QString> photo, int mainPhoto, int type, int id = -1, int seller1 = -1);
+    double discount;
+    productItem(double discount1, string name, string description, double price, int remaining, vector<QByteArray> photo, int mainPhoto, int type, int id = -1, int seller1 = -1);
     productItem();
-    virtual double getPrice(vector<vector<double>> discount)
+    productItem(QJsonObject data);
+    virtual double getPrice()
     {
         qDebug() << discount;
-        return price;
+        return discount;
     };
     virtual ~productItem()
     {
     }
+    QJsonObject getJson();
 };
 
 class foodItem : public productItem
 {
 public:
-    virtual double getPrice(vector<vector<double>> discount) override
+    virtual double getPrice() override
     {
-        double discountThis = 1;
-        for (int i = 0; i < (int)discount.size(); i++)
-        {
-            if ((int)discount[i][3] == seller)
-            {
-                discountThis = discount[i][FOODTYPE - 1];
-                break;
-            }
-        }
-        if (discountThis == 1)
-        {
-            return price;
-        }
-        return (double)floor(price * discountThis * 100) / 100;
+        return discount;
     }
     virtual ~foodItem()
     {
@@ -65,22 +57,9 @@ public:
 class clothesItem : public productItem
 {
 public:
-    virtual double getPrice(vector<vector<double>> discount) override
+    virtual double getPrice() override
     {
-        double discountThis = 1;
-        for (int i = 0; i < (int)discount.size(); i++)
-        {
-            if ((int)discount[i][3] == seller)
-            {
-                discountThis = discount[i][CLOTHESTYPE - 1];
-                break;
-            }
-        }
-        if (discountThis == 1)
-        {
-            return price;
-        }
-        return (double)floor(price * discountThis * 100) / 100;
+        return discount;
     }
     virtual ~clothesItem()
     {
@@ -90,22 +69,9 @@ public:
 class bookItem : public productItem
 {
 public:
-    virtual double getPrice(vector<vector<double>> discount) override
+    virtual double getPrice() override
     {
-        double discountThis = 1;
-        for (int i = 0; i < (int)discount.size(); i++)
-        {
-            if ((int)discount[i][3] == seller)
-            {
-                discountThis = discount[i][BOOKTYPE - 1];
-                break;
-            }
-        }
-        if (discountThis == 1)
-        {
-            return price;
-        }
-        return (double)floor(price * discountThis * 100) / 100;
+        return discount;
     }
     virtual ~bookItem()
     {

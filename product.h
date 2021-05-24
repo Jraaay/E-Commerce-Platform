@@ -41,7 +41,6 @@ public:
     void setMainPhoto(int mainPhotoNo);
     void openUserCenter();
     void search();
-    void showBigPhoto() const;
     void defaultSort();
     void priceDescendSort();
     void priceAscendSort();
@@ -59,7 +58,7 @@ public:
     int sortMethod;                     // 排序方法
     vector<productItem *> productList;  // 商品列表
     sqlite *db;                         // 数据库
-    vector<vector<double>> discount;    // 折扣列表
+
     QTranslator *translatorPtr;         // 翻译器指针
     vector<QListWidgetItem *> itemList; // item列表
     vector<productListUi *> uiList;     // item的ui的列表

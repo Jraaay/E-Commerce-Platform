@@ -90,13 +90,13 @@ void Cart::init()
                                                        "}");
     ui->place->setFixedWidth(626);
     db = new sqlite;
-    db->openDb();
+
     productList.clear();
     numberList.clear();
     checkedList.clear();
     db->queryCart(curUser->uid, productList, numberList, checkedList);
-    discount = db->getDiscount();
-    db->closeDb();
+
+
     showProduct();
 }
 
@@ -111,7 +111,7 @@ void Cart::showProduct(bool getFromDB)
     uiList.clear();
     if (getFromDB)
     {
-        db->openDb();
+
         for (int i = 0; i < (int)productList.size(); i++)
         {
             delete productList[i];
@@ -120,8 +120,8 @@ void Cart::showProduct(bool getFromDB)
         numberList.clear();
         checkedList.clear();
         db->queryCart(curUser->uid, productList, numberList, checkedList);
-        discount = db->getDiscount();
-        db->closeDb();
+
+
     }
     ui->scrollArea->hide();
     ui->place->show();
@@ -144,7 +144,7 @@ void Cart::showProduct(bool getFromDB)
         w->setValidator();
         w->ui->name->setText(geteElidedText(w->ui->name->font(), productList[i]->name.c_str(), w->ui->name->width()));
         char priceText[1000] = "";
-        sprintf(priceText, "%.2lf", productList[i]->getPrice(discount));
+        sprintf(priceText, "%.2lf", productList[i]->getPrice());
         w->ui->price->setText(priceText);
         string remainText = w->ui->remain->text().toStdString() + to_string(productList[i]->remaining);
         w->ui->remain->setText(remainText.c_str());
@@ -161,7 +161,7 @@ void Cart::showProduct(bool getFromDB)
         }
         w->ui->type->setText(typeText.c_str());
 
-        if (productList[i]->getPrice(discount) != productList[i]->price)
+        if (productList[i]->getPrice() != productList[i]->price)
         {
             char priceRawText[1000] = "";
             sprintf(priceRawText, "￥%.2lf", productList[i]->price);
@@ -234,7 +234,7 @@ void Cart::onListMailItemClicked(QListWidgetItem *item)
     }
     ui->name->setText(productList[curItem]->name.c_str());
     char priceText[1000] = "";
-    sprintf(priceText, "%.2lf", productList[curItem]->getPrice(discount));
+    sprintf(priceText, "%.2lf", productList[curItem]->getPrice());
     ui->price->setText(priceText);
     string remainText;
     if (ui->refresh->text() == "刷新")
@@ -476,7 +476,7 @@ void Cart::showBigPhoto()
 /* 刷新 */
 void Cart::refresh()
 {
-    db->openDb();
+
     for (int i = 0; i < (int)productList.size(); i++)
     {
         delete productList[i];
@@ -485,8 +485,8 @@ void Cart::refresh()
     numberList.clear();
     checkedList.clear();
     db->queryCart(curUser->uid, productList, numberList, checkedList);
-    discount = db->getDiscount();
-    db->closeDb();
+
+
     showProduct();
 }
 
@@ -497,7 +497,7 @@ void Cart::countPrice()
     {
         if (uiList[i]->ui->buyCheck->isChecked())
         {
-            price += productList[i]->getPrice(discount) * uiList[i]->ui->number->text().toInt();
+            price += productList[i]->getPrice() * uiList[i]->ui->number->text().toInt();
         }
     }
     char priceText[1000] = "";
@@ -516,7 +516,7 @@ void Cart::selectAll()
 
 void Cart::generateOrder()
 {
-    db->openDb();
+
     for (int i = 0; i < (int)productList.size(); i++)
     {
         delete productList[i];
@@ -525,8 +525,8 @@ void Cart::generateOrder()
     numberList.clear();
     checkedList.clear();
     db->queryCart(curUser->uid, productList, numberList, checkedList);
-    discount = db->getDiscount();
-    db->closeDb();
+
+
 
     vector<productItem> orderList;
     vector<int> count;
@@ -541,9 +541,9 @@ void Cart::generateOrder()
                 if (uiList[i]->ui->buyCheck->isChecked())
                 {
                     productList[i]->remaining+=uiList[i]->ui->number->text().toInt();
-                    db->openDb();
+
                     db->modifyData(*productList[i], 0);
-                    db->closeDb();
+
                 }
             }
             refresh();
@@ -553,19 +553,19 @@ void Cart::generateOrder()
         }
         if (uiList[i]->ui->buyCheck->isChecked())
         {
-            priceSum += productList[i]->getPrice(discount) * uiList[i]->ui->number->text().toInt();
+            priceSum += productList[i]->getPrice() * uiList[i]->ui->number->text().toInt();
             orderList.push_back(*productList[i]);
             count.push_back(uiList[i]->ui->number->text().toInt());
-            price.push_back(productList[i]->getPrice(discount));
+            price.push_back(productList[i]->getPrice());
             productList[i]->remaining-=uiList[i]->ui->number->text().toInt();
-            db->openDb();
+
             db->modifyData(*productList[i], 0);
-            db->closeDb();
+
         }
     }
-    db->openDb();
+
     int orderId = db->generateOrder(curUser->uid, orderList, count, price, priceSum);
-    db->closeDb();
+
     refresh();
     userClass *curUserToOrder;
     if (curUser->getUserType() == CONSUMERTYPE)

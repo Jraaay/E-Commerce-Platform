@@ -39,12 +39,13 @@ public:
     void showOrders();
     vector<int> orderId;
     userClass *curUser;              // 当前用户
-    vector<vector<double>> discount; // 折扣列表
+
     int discountPlace = -1;          // 用于存哪一个商家
     product *fatherPtr;              // 父亲指针
     vector<QListWidgetItem *> itemList; // item列表
     vector<OrderItem *> uiList;     // item的ui的列表
     void onListMailItemClicked(QListWidgetItem *item);
+    double fooddiscount, clothesdiscount, bookdiscount;
 
 private:
     Ui::userCenter *ui;

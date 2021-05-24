@@ -4,359 +4,139 @@
 /* 构造函数设置数据库的连接参数 */
 sqlite::sqlite()
 {
-    if (QSqlDatabase::contains("qt_sql_default_connection"))
-    {
-        db = QSqlDatabase::database("qt_sql_default_connection");
-    }
-    else
-    {
-        // 建立和SQlite数据库的连接
-        db = QSqlDatabase::addDatabase("QSQLITE");
-        // 设置数据库文件的名字
-        db.setDatabaseName("E-Commerce-Platform.db");
-    }
-}
-
-/* 打开数据库 */
-bool sqlite::openDb()
-{
-    if (!db.open())
-    {
-        qDebug() << "Error: Failed to connect database." << db.lastError();
-    }
-    else
-    {
-        QString tableName = "productItem";
-        if (!isTableExist(tableName))
-        {
-            createTable();
-        }
-    }
-    return true;
-}
-
-/* 判断数据库中某个数据表是否存在 */
-bool sqlite::isTableExist(QString &tableName) const
-{
-    if (db.tables().contains(tableName))
-    {
-        return true;
-    }
-    return false;
-}
-
-/* 创建数据表 */
-void sqlite::createTable() const
-{
-    // 用于执行sql语句的对象
-    QSqlQuery sqlQuery;
-    // 构建创建数据库的sql语句字符串
-    QString createSql = QString("CREATE TABLE `productItem` (`id` INTEGER  PRIMARY KEY,`name` TEXT NOT NULL,`description` TEXT,`price` DOUBLE(32,2) NOT NULL,`remaining` INTEGER  NOT NULL,`mainPhoto` INTEGER ,`type` INTEGER  NOT NULL, `deleted` BOOLEAN DEFAULT false, `seller` INTEGER  NOT NULL);");
-    sqlQuery.prepare(createSql);
-    // 执行sql语句
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Table created!";
-    }
-    // 构建创建数据库的sql语句字符串
-    createSql = QString("CREATE TABLE `productPhoto` (`id` INTEGER PRIMARY KEY, `productId` INTEGER NOT NULL, `photo` TEXT NOT NULL);");
-    sqlQuery.prepare(createSql);
-    // 执行sql语句
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Table created!";
-    }
-    createSql = QString("CREATE TABLE `discount` (`fooddiscount` DOUBLE(32,2) NOT NULL,`clothesdiscount` DOUBLE(32,2) NOT NULL,`bookdiscount` DOUBLE(32,2) NOT NULL, `seller` INTEGER PRIMARY KEY NOT NULL);");
-    sqlQuery.prepare(createSql);
-    // 执行sql语句
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Table created!";
-    }
-    createSql = QString("CREATE TABLE `cart` (`id` INTEGER PRIMARY KEY, `userId` INTEGER NOT NULL,`productId` INTEGER NOT NULL, `number` INTEGER NOT NULL, `checked` BOOLEAN DEFAULT true);");
-    sqlQuery.prepare(createSql);
-    // 执行sql语句
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Table created!";
-    }
-    createSql = QString("CREATE TABLE `order` (`id` INTEGER PRIMARY KEY, `userId` INTEGER NOT NULL,`price` INTEGER NOT NULL, `time` INTEGER NOT NULL, `paied` BOOLEAN DEFAULT false);");
-    sqlQuery.prepare(createSql);
-    // 执行sql语句
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Table created!";
-    }
-    createSql = QString("CREATE TABLE `orderItem` (`id` INTEGER PRIMARY KEY, `orderId` INTEGER NOT NULL,`productId` INTEGER NOT NULL, `price` BOOLEAN DEFAULT false, `number` INTEGER NOT NULL);");
-    sqlQuery.prepare(createSql);
-    // 执行sql语句
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Table created!";
-    }
 }
 
 /* 插入单条数据 */
 void sqlite::singleInsertData(productItem item) const
 {
-    QSqlQuery sqlQuery;
-    sqlQuery.prepare("INSERT INTO `productItem` (`name`,`description`,`price`,`remaining`,`mainPhoto`,`type`, `seller`) VALUES (:name, :description, :price, :remaining, :mainPhoto, :type, :seller)");
-    sqlQuery.bindValue(":name", item.name.c_str());
-    sqlQuery.bindValue(":description", item.description.c_str());
-    sqlQuery.bindValue(":price", item.price);
-    sqlQuery.bindValue(":remaining", item.remaining);
-    sqlQuery.bindValue(":mainPhoto", item.mainPhoto);
-    sqlQuery.bindValue(":type", item.type);
-    sqlQuery.bindValue(":seller", item.seller);
-
-    // 执行sql语句
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to insert. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Insert successed!" << sqlQuery.lastInsertId().toInt();
-    }
-    int productId = sqlQuery.lastInsertId().toInt();
-    string destFolder = "./source/" + to_string(productId); // 图片保存到软件目录的source中防止删除源文件
-    QDir dir;
-    dir.mkpath(destFolder.c_str());
-    for (int i = 0; i < int(item.photo.size()); i++)
-    {
-        string dest = destFolder + "/" + to_string(i) + "." + QFileInfo(item.photo[i]).suffix().toStdString();
-        QFile::copy(item.photo[i], dest.c_str());
-        sqlQuery.prepare("INSERT INTO `productPhoto` (`productId`,`photo`) VALUES (:productId, :photo)");
-        sqlQuery.bindValue(":productId", productId);
-        sqlQuery.bindValue(":photo", dest.c_str());
-        if (!sqlQuery.exec())
-        {
-            qDebug() << "Error: Fail to insert. " << sqlQuery.lastError();
-        }
-        else
-        {
-            qDebug() << "Insert successed!" << sqlQuery.lastInsertId().toInt();
-        }
-    }
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_singleInsertData);
+    object.insert("data", item.getJson());
+    QJsonDocument document;
+    document.setObject(object);
+    client.getData(document.toJson(QJsonDocument::Compact));
+    client.disconnectFromServer();
 }
 
 /* 加购物车 */
 void sqlite::modifyItemInCart(int productId, int userId, int number, bool checked)
 {
-    QSqlQuery sqlQuery;
-    bool exist = false;
-    sqlQuery.prepare("SELECT * FROM `cart` WHERE `userId`==:userId AND `productId`==:productId ");
-    sqlQuery.bindValue(":userId", userId);
-    sqlQuery.bindValue(":productId", productId);
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to query table. " << sqlQuery.lastError();
-    }
-    else
-    {
-        while (sqlQuery.next())
-        {
-            if (number == -1)
-            {
-                number = sqlQuery.value(3).toInt() + 1;
-            }
-            QSqlQuery sqlQuery2;
-            sqlQuery2.prepare("UPDATE `cart` SET "
-                             "`userId`=:userId,"
-                             "`productId`=:productId,"
-                             "`number`=:number,"
-                             "`checked`=:checked "
-                             "WHERE `id`==:id;");
-            sqlQuery2.bindValue(":userId", userId);
-            sqlQuery2.bindValue(":productId", productId);
-            sqlQuery2.bindValue(":number", number);
-            sqlQuery2.bindValue(":checked", checked);
-            sqlQuery2.bindValue(":id", sqlQuery.value(0).toInt());
-            if (!sqlQuery2.exec())
-            {
-                qDebug() << "Error: Fail to update. " << sqlQuery2.lastError();
-            }
-            else
-            {
-                qDebug() << "Update successed!";
-            }
-            exist = true;
-        }
-    }
-    if (!exist)
-    {
-        if (number == -1)
-        {
-            number = 1;
-        }
-        sqlQuery.prepare("INSERT INTO `cart` (`userId`,`productId`, `number`) VALUES (:userId, :productId, :number)");
-        sqlQuery.bindValue(":userId", userId);
-        sqlQuery.bindValue(":productId", productId);
-        sqlQuery.bindValue(":number", number);
-
-        // 执行sql语句
-        if (!sqlQuery.exec())
-        {
-            qDebug() << "Error: Fail to insert. " << sqlQuery.lastError();
-        }
-        else
-        {
-            qDebug() << "Insert successed!" << sqlQuery.lastInsertId().toInt();
-        }
-    }
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_modifyItemInCart);
+    QJsonObject data;
+    data.insert("productId", productId);
+    data.insert("userId", userId);
+    data.insert("number", number);
+    data.insert("checked", checked);
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
+    client.getData(document.toJson(QJsonDocument::Compact));
+    client.disconnectFromServer();
 }
 
 /* 删除购物车物品 */
 void sqlite::deleteItemFromCart(int productId, int userId)
 {
-    QSqlQuery sqlQuery;
-    sqlQuery.prepare("DELETE FROM `cart` "
-                     "WHERE `productId`=:productId AND `userId`==:userId ;");
-    sqlQuery.bindValue(":productId", productId);
-    sqlQuery.bindValue(":userId", userId);
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to delete item from cart. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Delete item from cart successed!" << sqlQuery.lastInsertId().toInt();
-    }
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_deleteItemFromCart);
+    QJsonObject data;
+    data.insert("productId", productId);
+    data.insert("userId", userId);
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
+    client.getData(document.toJson(QJsonDocument::Compact));
+    client.disconnectFromServer();
 }
 
 /* 列出购物车 */
 void sqlite::queryCart(int userId, vector<productItem *> &productList, vector<int> &numberList, vector<bool> &checkedList)
 {
-    QSqlQuery sqlQuery;
-    sqlQuery.prepare("SELECT * FROM `cart` WHERE `userId`==:userId ");
-    sqlQuery.bindValue(":userId", userId);
-    if (!sqlQuery.exec())
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_queryCart);
+    QJsonObject data;
+    data.insert("userId", userId);
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 100);
+
+    QJsonParseError jsonError;
+    QJsonArray productJsonList;
+    QJsonArray numberJsonList;
+    QJsonArray checkedJsonList;
+    document = QJsonDocument::fromJson(json,&jsonError);
+    if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
     {
-        qDebug() << "Error: Fail to query table. " << sqlQuery.lastError();
-    }
-    else
-    {
-        while (sqlQuery.next())
+        if(document.isObject())
         {
-            QSqlQuery sqlQuery2;
-            sqlQuery2.prepare("SELECT * FROM `productItem` WHERE `id`==:productId ");
-            sqlQuery2.bindValue(":productId", sqlQuery.value(2).toInt());
-            sqlQuery2.exec();
-            while (sqlQuery2.next())
+            QJsonObject object = document.object();
+            if(object.contains("productList"))
             {
-                productItem *tmp;
-                switch (sqlQuery2.value(6).toInt())
-                {
-                case FOODTYPE:
-                    tmp = new foodItem;
-                    break;
-                case CLOTHESTYPE:
-                    tmp = new clothesItem;
-                    break;
-                case BOOKTYPE:
-                    tmp = new bookItem;
-                    break;
-                default:
-                    tmp = new productItem;
-                }
-                tmp->id = sqlQuery2.value(0).toInt();
-                tmp->name = sqlQuery2.value(1).toString().toStdString();
-                tmp->description = sqlQuery2.value(2).toString().toStdString();
-                tmp->price = sqlQuery2.value(3).toDouble();
-                tmp->remaining = sqlQuery2.value(4).toInt();
-                tmp->mainPhoto = sqlQuery2.value(5).toInt();
-                tmp->type = sqlQuery2.value(6).toInt();
-                tmp->seller = sqlQuery2.value(8).toInt();
-                QSqlQuery sqlQueryPhoto;
-                sqlQueryPhoto.exec("SELECT * FROM `productPhoto` WHERE `productId` LIKE " + sqlQuery2.value(0).toString());
-                while (sqlQueryPhoto.next())
-                {
-                    tmp->photo.push_back(sqlQueryPhoto.value(2).toString());
-                }
-                productList.push_back(tmp);
-                numberList.push_back(sqlQuery.value(3).toInt());
-                checkedList.push_back(sqlQuery.value(4).toBool());
+                productJsonList = object.value("productList").toArray();
+            }
+            if (object.contains("numberList"))
+            {
+                numberJsonList = object.value("numberList").toArray();
+            }
+            if (object.contains("checkedList"))
+            {
+                checkedJsonList = object.value("checkedList").toArray();
             }
         }
+        for (int i = 0; i < productJsonList.size(); i++)
+        {
+            productList.push_back(new productItem(productJsonList[i].toObject()));
+            numberList.push_back(numberJsonList[i].toInt());
+            checkedList.push_back(checkedJsonList[i].toBool());
+        }
     }
+    client.disconnectFromServer();
 }
 
 /* 查询全部数据 */
 vector<productItem *> sqlite::queryTable(string LIKE, string SORT) const
 {
     vector<productItem *> productList;
-    QSqlQuery sqlQuery;
-    string sqlCommand = "SELECT * FROM `productItem` WHERE `deleted`==false ";
-    if (LIKE != "")
-    {
-        sqlCommand += " AND (`name` LIKE '%" + LIKE + "%' OR `description` LIKE '%" + LIKE + "%')";
-    }
-    sqlCommand += SORT;
-    qDebug() << sqlCommand.c_str();
-    sqlQuery.exec(sqlCommand.c_str());
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to query table. " << sqlQuery.lastError();
-    }
-    else
-    {
-        while (sqlQuery.next())
-        {
-            productItem *tmp;
-            switch (sqlQuery.value(6).toInt())
-            {
-            case FOODTYPE:
-                tmp = new foodItem;
-                break;
-            case CLOTHESTYPE:
-                tmp = new clothesItem;
-                break;
-            case BOOKTYPE:
-                tmp = new bookItem;
-                break;
-            default:
-                tmp = new productItem;
-            }
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_queryTable);
+    QJsonObject data;
+    data.insert("LIKE", LIKE.c_str());
+    data.insert("SORT", SORT.c_str());
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
 
-            tmp->id = sqlQuery.value(0).toInt();
-            tmp->name = sqlQuery.value(1).toString().toStdString();
-            tmp->description = sqlQuery.value(2).toString().toStdString();
-            tmp->price = sqlQuery.value(3).toDouble();
-            tmp->remaining = sqlQuery.value(4).toInt();
-            tmp->mainPhoto = sqlQuery.value(5).toInt();
-            tmp->type = sqlQuery.value(6).toInt();
-            tmp->seller = sqlQuery.value(8).toInt();
-            QSqlQuery sqlQueryPhoto;
-            sqlQueryPhoto.exec("SELECT * FROM `productPhoto` WHERE `productId` LIKE " + sqlQuery.value(0).toString());
-            while (sqlQueryPhoto.next())
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 100);
+    client.disconnectFromServer();
+
+    QJsonParseError jsonError;
+    QJsonArray productJsonList;
+    document = QJsonDocument::fromJson(json,&jsonError);
+    if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
+    {
+        if(document.isObject())
+        {
+            QJsonObject object = document.object();
+            if(object.contains("productList"))
             {
-                tmp->photo.push_back(sqlQueryPhoto.value(2).toString());
+                productJsonList = object.value("productList").toArray();
             }
-            productList.push_back(tmp);
+        }
+        for (int i = 0; i < productJsonList.size(); i++)
+        {
+            productList.push_back(new productItem(productJsonList[i].toObject()));
         }
     }
     return productList;
@@ -365,344 +145,294 @@ vector<productItem *> sqlite::queryTable(string LIKE, string SORT) const
 /* 更新单条数据 */
 void sqlite::modifyData(productItem item, int updateImage) const
 {
-    QSqlQuery sqlQuery;
-    sqlQuery.prepare("UPDATE `productItem` SET "
-                     "`name`=:name,"
-                     "`description`=:description,"
-                     "`price`=:price,"
-                     "`remaining`=:remaining,"
-                     "`mainPhoto`=:mainPhoto,"
-                     "`type`=:type "
-                     "WHERE `id`=:id;");
-    sqlQuery.bindValue(":name", item.name.c_str());
-    sqlQuery.bindValue(":description", item.description.c_str());
-    sqlQuery.bindValue(":price", item.price);
-    sqlQuery.bindValue(":remaining", item.remaining);
-    sqlQuery.bindValue(":mainPhoto", item.mainPhoto);
-    sqlQuery.bindValue(":type", item.type);
-    sqlQuery.bindValue(":id", item.id);
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_modifyData);
+    QJsonObject data;
+    data.insert("item", item.getJson());
+    data.insert("updateImage", updateImage);
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
 
-    // 执行sql语句
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to update. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Update successed!";
-    }
-    if (updateImage) //对图片更改进行处理
-    {
-        const int productId = item.id;
-        sqlQuery.prepare("DELETE FROM `productPhoto` "
-                         "WHERE `productId`=:productId;");
-        sqlQuery.bindValue(":productId", productId);
-        if (!sqlQuery.exec())
-        {
-            qDebug() << "Error: Fail to delete old photos. " << sqlQuery.lastError();
-        }
-        else
-        {
-            qDebug() << "Old photos deleting successed!";
-        }
-        string destFolder = "./source/" + to_string(productId);
-        QDir dir;
-        dir.setPath(destFolder.c_str());
-        bool oldFolderExist = dir.exists();
-        if (oldFolderExist)
-        {
-            destFolder = "./source/" + to_string(productId) + "_tmp";
-        }
-        dir.setPath(".");
-        dir.mkpath((destFolder).c_str());
-        for (int i = 0; i < int(item.photo.size()); i++)
-        {
-            string dest = destFolder + "/" + to_string(i) + "." + QFileInfo(item.photo[i]).suffix().toStdString();
-            QFile::copy(item.photo[i], dest.c_str());
-            sqlQuery.prepare("INSERT INTO `productPhoto` (`productId`,`photo`) VALUES (:productId, :photo)");
-            sqlQuery.bindValue(":productId", productId);
-            sqlQuery.bindValue(":photo", ("./source/" + to_string(productId) + "/" + to_string(i) + "." + QFileInfo(item.photo[i]).suffix().toStdString()).c_str());
-            if (!sqlQuery.exec())
-            {
-                qDebug() << "Error: Fail to update photos. " << sqlQuery.lastError();
-            }
-            else
-            {
-                qDebug() << "Photos update successed!";
-            }
-        }
-        if (oldFolderExist)
-        {
-            dir.setPath(("./source/" + to_string(productId)).c_str());
-            dir.removeRecursively();
-            dir.setPath(".");
-            qDebug() << destFolder.c_str() << endl
-                     << ("./source/" + to_string(productId)).c_str();
-            while (!dir.rename((destFolder).c_str(), ("./source/" + to_string(productId)).c_str()))
-            {
-                qDebug() << "Rename failed";
-            }
-        }
-    }
+    client.getData(document.toJson(QJsonDocument::Compact));
+    client.disconnectFromServer();
 }
 
 /* 删除单条数据 */
 void sqlite::deleteData(int id) const
 {
-    QSqlQuery sqlQuery;
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_deleteData);
+    QJsonObject data;
+    data.insert("id", id);
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
 
-    sqlQuery.prepare("UPDATE `productItem` SET "
-                     "`deleted`=true "
-                     "WHERE `id`=:id;");
-    sqlQuery.bindValue(":id", id);
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to delete. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Deleting successed!";
-    }
+    client.getData(document.toJson(QJsonDocument::Compact));
+    client.disconnectFromServer();
 }
 
 /* 新账户初始化 */
 void sqlite::newDiscount(int id) const
 {
-    QSqlQuery sqlQuery;
-    QString createSql = QString("INSERT INTO `discount` (`fooddiscount`,`clothesdiscount`, `bookdiscount`, `seller`) VALUES (1, 1, 1, :seller)");
-    sqlQuery.prepare(createSql);
-    sqlQuery.bindValue(":seller", id);
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to insert discount. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Insert success!";
-    }
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_newDiscount);
+    QJsonObject data;
+    data.insert("id", id);
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
+
+    client.getData(document.toJson(QJsonDocument::Compact));
+    client.disconnectFromServer();
 }
 
-/* 获取所有折扣 */
-vector<vector<double>> sqlite::getDiscount() const
+void sqlite::getDiscount(int userId, double &fooddiscount, double &clothesdiscount, double &bookdiscount) const
 {
-    vector<vector<double>> discount;
-    QSqlQuery sqlQuery;
-    QString sqlCommand = "SELECT * FROM `discount`;";
-    sqlQuery.prepare(sqlCommand);
-    if (!sqlQuery.exec())
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_getDiscount);
+    QJsonObject data;
+    data.insert("userId", userId);
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
+
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact));
+
+    QJsonParseError jsonError;
+    QJsonArray productJsonList;
+    QJsonArray numberJsonList;
+    QJsonArray checkedJsonList;
+    document = QJsonDocument::fromJson(json,&jsonError);
+    if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
     {
-        qDebug() << "Error: Fail to query table. " << sqlQuery.lastError();
-    }
-    else
-    {
-        while (sqlQuery.next())
+        if(document.isObject())
         {
-            vector<double> tmp;
-            tmp.push_back(sqlQuery.value(0).toDouble());
-            tmp.push_back(sqlQuery.value(1).toDouble());
-            tmp.push_back(sqlQuery.value(2).toDouble());
-            tmp.push_back(sqlQuery.value(3).toInt());
-            discount.push_back(tmp);
+            QJsonObject object = document.object();
+            if(object.contains("fooddiscount"))
+            {
+                fooddiscount = object.value("fooddiscount").toDouble();
+            }
+            if(object.contains("clothesdiscount"))
+            {
+                clothesdiscount = object.value("clothesdiscount").toDouble();
+            }
+            if(object.contains("bookdiscount"))
+            {
+                bookdiscount = object.value("bookdiscount").toDouble();
+            }
         }
     }
-    return discount;
+    client.disconnectFromServer();
 }
 
 /* 保存折扣 */
-void sqlite::setDiscount(vector<vector<double>> discount) const
+void sqlite::setDiscount(int userId, double fooddiscount, double clothesdiscount, double bookdiscount) const
 {
-    QSqlQuery sqlQuery;
-    for (int i = 0; i < (int)discount.size(); i++)
-    {
-        QString createSql = QString("UPDATE `discount` SET `fooddiscount`=:fooddiscount, `clothesdiscount`=:clothesdiscount, `bookdiscount`=:bookdiscount WHERE `seller`=:seller;");
-        sqlQuery.prepare(createSql);
-        sqlQuery.bindValue(":seller", discount[i][3]);
-        sqlQuery.bindValue(":fooddiscount", discount[i][0]);
-        sqlQuery.bindValue(":clothesdiscount", discount[i][1]);
-        sqlQuery.bindValue(":bookdiscount", discount[i][2]);
-        if (!sqlQuery.exec())
-        {
-            qDebug() << "Error: Fail to create table. " << sqlQuery.lastError();
-        }
-        else
-        {
-            qDebug() << "Table created!";
-        }
-    }
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_setDiscount);
+    QJsonObject data;
+    data.insert("userId", userId);
+    data.insert("fooddiscount", fooddiscount);
+    data.insert("clothesdiscount", clothesdiscount);
+    data.insert("bookdiscount", bookdiscount);
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
+
+    client.getData(document.toJson(QJsonDocument::Compact));
+    client.disconnectFromServer();
 }
 
 int sqlite::generateOrder(int userId, vector<productItem> orderList, vector<int> count, vector<double> price, double priceSum)
 {
-    int orderId;
-    QSqlQuery sqlQuery;
-    //(`id` INTEGER PRIMARY KEY, `userId` INTEGER NOT NULL,`price` INTEGER NOT NULL, `time` INTEGER NOT NULL, `paied` BOOLEAN DEFAULT false)
-    sqlQuery.prepare("INSERT INTO `order` (`userId`, `price`, `time`) VALUES (:userId, :price, :time)");
-    sqlQuery.bindValue(":userId", userId);
-    sqlQuery.bindValue(":price", priceSum);
-    time_t t;
-    time(&t);
-    qDebug() << t;
-    sqlQuery.bindValue(":time", QVariant::fromValue(t));
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to generate order. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Order generated!";
-        orderId = sqlQuery.lastInsertId().toInt();
-    }
+    int orderId = 0;
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_generateOrder);
+    QJsonObject data;
+    data.insert("userId", userId);
+    QJsonArray orderJsonList;
+    QJsonArray countJson;
+    QJsonArray priceJson;
     for (int i = 0; i < (int)orderList.size(); i++)
     {
-        deleteItemFromCart(orderList[i].id, userId);
-        sqlQuery.prepare("INSERT INTO `orderItem` (`orderId`, `productId`, `price`, `number`) VALUES (:orderId, :productId, :price, :number)");
-        sqlQuery.bindValue(":orderId", orderId);
-        sqlQuery.bindValue(":productId", orderList[i].id);
-        sqlQuery.bindValue(":price", price[i]);
-        sqlQuery.bindValue(":number", count[i]);
-        if (!sqlQuery.exec())
+        orderJsonList.push_back(orderList[i].getJson());
+        countJson.push_back(count[i]);
+        priceJson.push_back(price[i]);
+    }
+    data.insert("orderList", orderJsonList);
+    data.insert("count", countJson);
+    data.insert("price", priceJson);
+    data.insert("priceSum", priceSum);
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
+
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact));
+
+    QJsonParseError jsonError;
+    QJsonArray productJsonList;
+    QJsonArray numberJsonList;
+    QJsonArray checkedJsonList;
+    document = QJsonDocument::fromJson(json,&jsonError);
+    if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
+    {
+        if(document.isObject())
         {
-            qDebug() << "Error: Fail to generate order. " << sqlQuery.lastError();
-        }
-        else
-        {
-            qDebug() << "Order generated!";
+            QJsonObject object = document.object();
+            if(object.contains("orderId"))
+            {
+                orderId = object.value("orderId").toInt();
+            }
         }
     }
+    client.disconnectFromServer();
     return orderId;
+
 }
 
 void sqlite::getOrder(int orderId, bool &paied, long long &time, int &userId, vector<productItem *> &orderList, vector<int> &count, vector<double> &price, double &priceSum)
 {
-    QSqlQuery sqlQuery;
-    sqlQuery.prepare("SELECT * FROM `order` WHERE `id`==:orderId");
-    sqlQuery.bindValue(":orderId", orderId);
-    if (!sqlQuery.exec())
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_getOrder);
+    QJsonObject data;
+    data.insert("orderId", orderId);
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
+
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact));
+
+    QJsonParseError jsonError;
+    QJsonArray orderJsonList;
+    QJsonArray countJsonList;
+    QJsonArray priceJsonList;
+    document = QJsonDocument::fromJson(json,&jsonError);
+    if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
     {
-        qDebug() << "Error: Fail to query table. " << sqlQuery.lastError();
-    }
-    else
-    {
-        while (sqlQuery.next())
+        if(document.isObject())
         {
-            paied = sqlQuery.value(4).toBool();
-            time = sqlQuery.value(3).toLongLong();
-            priceSum = sqlQuery.value(2).toDouble();
-            userId = sqlQuery.value(1).toInt();
-            QSqlQuery sqlQuery2;
-            sqlQuery2.prepare("SELECT * FROM `orderItem` WHERE `orderId`==:orderId ");
-            sqlQuery2.bindValue(":orderId", sqlQuery.value(0).toInt());
-            sqlQuery2.exec();
-            while (sqlQuery2.next())
+            QJsonObject object = document.object();
+            if(object.contains("paied"))
             {
-                QSqlQuery sqlQuery3;
-                sqlQuery3.prepare("SELECT * FROM `productItem` WHERE `id`==:productId ");
-                sqlQuery3.bindValue(":productId", sqlQuery2.value(2).toInt());
-                sqlQuery3.exec();
-                while (sqlQuery3.next())
-                {
-                    productItem *tmp;
-                    switch (sqlQuery3.value(6).toInt())
-                    {
-                    case FOODTYPE:
-                        tmp = new foodItem;
-                        break;
-                    case CLOTHESTYPE:
-                        tmp = new clothesItem;
-                        break;
-                    case BOOKTYPE:
-                        tmp = new bookItem;
-                        break;
-                    default:
-                        tmp = new productItem;
-                    }
-                    tmp->id = sqlQuery3.value(0).toInt();
-                    tmp->name = sqlQuery3.value(1).toString().toStdString();
-                    tmp->description = sqlQuery3.value(2).toString().toStdString();
-                    tmp->price = sqlQuery3.value(3).toDouble();
-                    tmp->remaining = sqlQuery3.value(4).toInt();
-                    tmp->mainPhoto = sqlQuery3.value(5).toInt();
-                    tmp->type = sqlQuery3.value(6).toInt();
-                    tmp->seller = sqlQuery3.value(8).toInt();
-                    QSqlQuery sqlQueryPhoto;
-                    sqlQueryPhoto.exec("SELECT * FROM `productPhoto` WHERE `productId` LIKE " + sqlQuery3.value(0).toString());
-                    while (sqlQueryPhoto.next())
-                    {
-                        tmp->photo.push_back(sqlQueryPhoto.value(2).toString());
-                    }
-                    //(`id` INTEGER PRIMARY KEY, `orderId` INTEGER NOT NULL,`productId` INTEGER NOT NULL, `price` BOOLEAN DEFAULT false, `number` INTEGER NOT NULL)
-                    orderList.push_back(tmp);
-                    price.push_back(sqlQuery2.value(3).toDouble());
-                    count.push_back(sqlQuery2.value(4).toInt());
-                }
+                paied = object.value("paied").toBool();
+            }
+            if (object.contains("time"))
+            {
+                time = object.value("time").toVariant().toLongLong();
+            }
+            if (object.contains("userId"))
+            {
+                userId = object.value("userId").toInt();
+            }
+            if (object.contains("priceSum"))
+            {
+                priceSum = object.value("priceSum").toDouble();
+            }
+            if (object.contains("orderList"))
+            {
+                orderJsonList = object.value("orderList").toArray();
+            }
+            if (object.contains("price"))
+            {
+                priceJsonList = object.value("price").toArray();
+            }
+            if (object.contains("count"))
+            {
+                countJsonList = object.value("count").toArray();
             }
         }
+        for (int i = 0; i < orderJsonList.size(); i++)
+        {
+            orderList.push_back(new productItem(orderJsonList[i].toObject()));
+            count.push_back(countJsonList[i].toInt());
+            price.push_back(priceJsonList[i].toDouble());
+        }
     }
+    client.disconnectFromServer();
 }
 
 void sqlite::payOrder(int orderId)
 {
-    QSqlQuery sqlQuery;
-    sqlQuery.prepare("UPDATE `order` SET "
-                     "`paied`=true "
-                     "WHERE `id`==:id;");
-    sqlQuery.bindValue(":id", orderId);
-    if (!sqlQuery.exec())
-    {
-        qDebug() << "Error: Fail to pay order. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Order paied!";
-    }
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", pay);
+    QJsonObject data;
+    data.insert("orderId", orderId);
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
+
+    client.getData(document.toJson(QJsonDocument::Compact));
+    client.disconnectFromServer();
 }
 
 
 void sqlite::getOrderList(int userId, vector<int> &orderId, vector<double> &priceSum, vector<long long> &time, vector<bool> &paid)
 {
-    QSqlQuery sqlQuery;
-    sqlQuery.prepare("SELECT * FROM `order` WHERE `userId`==:userId  ORDER BY `time` DESC");
-    sqlQuery.bindValue(":userId", userId);
-    if (!sqlQuery.exec())
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_getOrderList);
+    QJsonObject data;
+    data.insert("userId", userId);
+    object.insert("data", data);
+    QJsonDocument document;
+    document.setObject(object);
+
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact));
+
+    QJsonParseError jsonError;
+    QJsonArray orderIdJsonList;
+    QJsonArray priceSumJsonList;
+    QJsonArray timeJsonList;
+    QJsonArray paidJsonList;
+    document = QJsonDocument::fromJson(json,&jsonError);
+    if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
     {
-        qDebug() << "Error: Fail to get orders. " << sqlQuery.lastError();
-    }
-    else
-    {
-        qDebug() << "Order get!";
-        while (sqlQuery.next())
+        if(document.isObject())
         {
-            orderId.push_back(sqlQuery.value(0).toInt());
-            priceSum.push_back(sqlQuery.value(2).toDouble());
-            time.push_back(sqlQuery.value(3).toLongLong());
-            paid.push_back(sqlQuery.value(4).toBool());
+            QJsonObject object = document.object();
+            if (object.contains("orderId"))
+            {
+                orderIdJsonList = object.value("orderId").toArray();
+            }
+            if (object.contains("priceSum"))
+            {
+                priceSumJsonList = object.value("priceSum").toArray();
+            }
+            if (object.contains("time"))
+            {
+                timeJsonList = object.value("time").toArray();
+            }
+            if (object.contains("paid"))
+            {
+                paidJsonList = object.value("paid").toArray();
+            }
+        }
+        for (int i = 0; i < orderIdJsonList.size(); i++)
+        {
+            orderId.push_back(orderIdJsonList[i].toInt());
+            priceSum.push_back(priceSumJsonList[i].toDouble());
+            time.push_back(priceSumJsonList[i].toVariant().toLongLong());
+            paid.push_back(paidJsonList[i].toBool());
         }
     }
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* 关闭数据库 */
-void sqlite::closeDb(void)
-{
-    db.close();
+    client.disconnectFromServer();
 }

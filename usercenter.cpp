@@ -22,28 +22,17 @@ void userCenter::init()
     const QValidator *validator1 = new QRegExpValidator(regx1, ui->usernameEdit);
     ui->usernameEdit->setValidator(validator1); // 正则匹配
     sqlite *db = new sqlite();
-    db->openDb();
-    discount = db->getDiscount(); // 获取折扣数组
-    db->closeDb();
-    delete db;
     if (curUser->getUserType() == SELLERTYPE)
     {
+        db->getDiscount(curUser->uid, fooddiscount, clothesdiscount, bookdiscount);
 
-        for (int i = 0; i < (int)discount.size(); i++) // 找到该商家的折扣
-        {
-            if (discount[i][3] == curUser->uid)
-            {
-                discountPlace = i;
-                break;
-            }
-        }
         // 设置样式和折扣
         ui->food->setTextMargins(5, 0, 0, 0);
         ui->clothes->setTextMargins(5, 0, 0, 0);
         ui->book->setTextMargins(5, 0, 0, 0);
-        ui->food->setText(QString::number((1 - discount[discountPlace][0]) * 100));
-        ui->clothes->setText(QString::number((1 - discount[discountPlace][1]) * 100));
-        ui->book->setText(QString::number((1 - discount[discountPlace][2]) * 100));
+        ui->food->setText(QString::number((1 - fooddiscount) * 100));
+        ui->clothes->setText(QString::number((1 - clothesdiscount) * 100));
+        ui->book->setText(QString::number((1 - bookdiscount) * 100));
 
         //设置正则匹配
         QRegExp *regx1 = new QRegExp("^(100|(([1-9]){1}[0-9]?|0{1})((\\.)([0-9]){1,2})?)$");
@@ -359,13 +348,13 @@ void userCenter::changePassword()
 void userCenter::showOrders()
 {
     sqlite db;
-    db.openDb();
+
     vector<double> priceSum;
     vector<long long> time;
     vector<bool> paid;
     orderId.clear();
     db.getOrderList(curUser->uid, orderId, priceSum, time, paid);
-    db.closeDb();
+
     for (int i = 0; i < (int)itemList.size(); i++)
     {
         delete itemList[i];
@@ -531,21 +520,18 @@ void userCenter::rechargeConfirm(double moneyToCharge)
 /* 重置折扣 */
 void userCenter::resetDiscount() const
 {
-    ui->food->setText(QString::number(1 - discount[discountPlace][0]));
-    ui->clothes->setText(QString::number(1 - discount[discountPlace][1]));
-    ui->book->setText(QString::number(1 - discount[discountPlace][2]));
+    ui->food->setText(QString::number((1 - fooddiscount) * 100));
+    ui->clothes->setText(QString::number((1 - clothesdiscount) * 100));
+    ui->book->setText(QString::number((1 - bookdiscount) * 100));
 }
 
 /* 保存折扣 */
 void userCenter::saveDiscount()
 {
-    discount[discountPlace][0] = 1 - ui->food->text().toDouble() * 0.01;
-    discount[discountPlace][1] = 1 - ui->clothes->text().toDouble() * 0.01;
-    discount[discountPlace][2] = 1 - ui->book->text().toDouble() * 0.01;
     sqlite *db = new sqlite();
-    db->openDb();
-    db->setDiscount(discount);
-    db->closeDb();
+
+    db->setDiscount(curUser->uid, 1 - ui->food->text().toDouble() * 0.01, 1 - ui->clothes->text().toDouble() * 0.01, 1 - ui->book->text().toDouble() * 0.01);
+
     delete db;
     promptBox *prompt = new promptBox(nullptr, "保存成功\nSave successfully");
     prompt->show();

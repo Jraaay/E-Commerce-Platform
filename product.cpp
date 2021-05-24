@@ -24,7 +24,6 @@ void product::init()
     connect(ui->addProduct, &QPushButton::clicked, this, &product::openAddProduct);
     connect(ui->nextPhoto, &QPushButton::clicked, this, &product::nextPhoto);
     connect(ui->prePhoto, &QPushButton::clicked, this, &product::prePhoto);
-    connect(ui->mainPhoto, &QPushButton::clicked, this, &product::showBigPhoto);
     connect(ui->search, &QLineEdit::textChanged, this, &product::search);
     connect(ui->defaultSort, &QPushButton::clicked, this, &product::defaultSort);
     connect(ui->priceAscend, &QPushButton::clicked, this, &product::priceAscendSort);
@@ -83,10 +82,10 @@ void product::init()
     }
     ui->userCenter->setText(curUser->name.c_str());
     db = new sqlite;
-    db->openDb();
+
     productList = db->queryTable();
-    discount = db->getDiscount();
-    db->closeDb();
+
+
     showProduct();
 }
 
@@ -128,15 +127,15 @@ void product::showProduct(bool getFromDB)
     uiList.clear();
     if (getFromDB)
     {
-        db->openDb();
+
         for (int i = 0; i < (int)productList.size(); i++)
         {
             delete productList[i];
         }
         productList.clear();
         productList = db->queryTable();
-        discount = db->getDiscount();
-        db->closeDb();
+
+
     }
     ui->scrollArea->hide();
     ui->place->show();
@@ -157,7 +156,7 @@ void product::showProduct(bool getFromDB)
         uiList.push_back(w);
         w->ui->name->setText(geteElidedText(w->ui->name->font(), productList[i]->name.c_str(), w->ui->name->width()));
         char priceText[1000] = "";
-        sprintf(priceText, "%.2lf", productList[i]->getPrice(discount));
+        sprintf(priceText, "%.2lf", productList[i]->getPrice());
         w->ui->price->setText(priceText);
         string remainText = w->ui->remain->text().toStdString() + to_string(productList[i]->remaining);
         w->ui->remain->setText(remainText.c_str());
@@ -172,7 +171,7 @@ void product::showProduct(bool getFromDB)
         }
         w->ui->type->setText(typeText.c_str());
 
-        if (productList[i]->getPrice(discount) != productList[i]->price)
+        if (productList[i]->getPrice() != productList[i]->price)
         {
             char priceRawText[1000] = "";
             sprintf(priceRawText, "￥%.2lf", productList[i]->price);
@@ -197,7 +196,7 @@ void product::showProduct(bool getFromDB)
         QImage img;
         if (productList[i]->photo.size() > 0)
         {
-            img.load(productList[i]->photo[productList[i]->mainPhoto]);
+            img.loadFromData(productList[i]->photo[productList[i]->mainPhoto]);
         }
         else
         {
@@ -254,7 +253,7 @@ void product::onListMailItemClicked(QListWidgetItem *item)
     }
     ui->name->setText(productList[curItem]->name.c_str());
     char priceText[1000] = "";
-    sprintf(priceText, "%.2lf", productList[curItem]->getPrice(discount));
+    sprintf(priceText, "%.2lf", productList[curItem]->getPrice());
     ui->price->setText(priceText);
     string remainText;
     if (ui->purchase->text() == "Buy now")
@@ -281,7 +280,7 @@ void product::showPhoto() const
     QImage img;
     if (itemToShow.photo.size() > 0)
     {
-        img.load(itemToShow.photo[mainPhoto]);
+        img.loadFromData(itemToShow.photo[mainPhoto]);
     }
     else
     {
@@ -300,7 +299,9 @@ void product::showPhoto() const
         QPixmap photo;
         if (i + curFirstPhoto < int(itemToShow.photo.size()))
         {
-            photo = QPixmap::fromImage(QImage(itemToShow.photo[i + curFirstPhoto]));
+            QImage img;
+            img.loadFromData(itemToShow.photo[i + curFirstPhoto]);
+            photo = QPixmap::fromImage(img);
             photoLabelList[i]->setScaledContents(false);
         }
         else
@@ -461,42 +462,10 @@ void product::nextPhoto()
     }
 }
 
-/* 展示大图 */
-void product::showBigPhoto() const
-{
-    if (productList[curProduct]->photo.size() > 0)
-    {
-        QDialog *a = new QDialog;
-        a->setWindowIcon(QIcon(":/image/logo.png"));
-        a->setWindowTitle("查看图片 Review image");
-        a->setWindowFlags(Qt::CustomizeWindowHint | Qt::WindowCloseButtonHint);
-        const QPixmap pixmap;
-        const QImage img(productList[curProduct]->photo[mainPhoto]);
-        pixmap.fromImage(img);
-        int width = img.width();
-        int height = img.height();
-        if (width > 1920)
-        {
-            height = (double)height / (double)width * 1920;
-            width = 1920;
-        }
-        if (height > 1080)
-        {
-            width = (double)width / (double)height * 1920;
-            height = 1920;
-        }
-        a->setMinimumSize(width, height);
-        a->setMaximumSize(width, height);
-        const string stylesheet = "background-image:url(" + productList[curProduct]->photo[mainPhoto].toStdString() + ");background-position: center;background-repeat: no-repeat;";
-        a->setStyleSheet(stylesheet.c_str());
-        a->show();
-    }
-}
-
 /* 搜索商品 */
 void product::search()
 {
-    db->openDb();
+
     for (int i = 0; i < (int)productList.size(); i++)
     {
         delete productList[i];
@@ -505,7 +474,7 @@ void product::search()
     if (sortMethod == DEFAULT_SORT)
     {
         productList = db->queryTable(ui->search->text().toStdString());
-        discount = db->getDiscount();
+
     }
     else if (sortMethod == PRICE_DESCEND_SORT)
     {
@@ -514,7 +483,7 @@ void product::search()
         {
             for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[j + 1]->getPrice(discount) > productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice() > productList[j]->getPrice())
                 {
                     productItem *tmp = productList[j + 1];
                     productList[j + 1] = productList[j];
@@ -522,7 +491,7 @@ void product::search()
                 }
             }
         }
-        discount = db->getDiscount();
+
     }
     else
     {
@@ -531,7 +500,7 @@ void product::search()
         {
             for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[j + 1]->getPrice(discount) < productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice() < productList[j]->getPrice())
                 {
                     productItem *tmp = productList[j + 1];
                     productList[j + 1] = productList[j];
@@ -539,9 +508,9 @@ void product::search()
                 }
             }
         }
-        discount = db->getDiscount();
+
     }
-    db->closeDb();
+
     showProduct();
 }
 
@@ -549,15 +518,15 @@ void product::search()
 void product::defaultSort()
 {
     sortMethod = DEFAULT_SORT;
-    db->openDb();
+
     for (int i = 0; i < (int)productList.size(); i++)
     {
         delete productList[i];
     }
     productList.clear();
     productList = db->queryTable(ui->search->text().toStdString());
-    discount = db->getDiscount();
-    db->closeDb();
+
+
     showProduct();
     ui->defaultSort->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;color:rgb(28, 135, 255)");
     ui->priceDescend->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;");
@@ -568,19 +537,19 @@ void product::defaultSort()
 void product::priceDescendSort()
 {
     sortMethod = PRICE_DESCEND_SORT;
-    db->openDb();
+
     for (int i = 0; i < (int)productList.size(); i++)
     {
         delete productList[i];
     }
     productList.clear();
     productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
-    discount = db->getDiscount();
+
     for (int i = 0; i < (int)productList.size() - 1; i++)
     {
         for (int j = 0; j < (int)productList.size() - 1 - i; j++)
         {
-            if (productList[j + 1]->getPrice(discount) > productList[j]->getPrice(discount))
+            if (productList[j + 1]->getPrice() > productList[j]->getPrice())
             {
                 productItem *tmp = productList[j + 1];
                 productList[j + 1] = productList[j];
@@ -588,7 +557,7 @@ void product::priceDescendSort()
             }
         }
     }
-    db->closeDb();
+
     showProduct();
     ui->priceDescend->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;color:rgb(28, 135, 255)");
     ui->defaultSort->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;");
@@ -599,19 +568,19 @@ void product::priceDescendSort()
 void product::priceAscendSort()
 {
     sortMethod = PRICE_ASCEND_SORT;
-    db->openDb();
+
     for (int i = 0; i < (int)productList.size(); i++)
     {
         delete productList[i];
     }
     productList.clear();
     productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
-    discount = db->getDiscount();
+
     for (int i = 0; i < (int)productList.size() - 1; i++)
     {
         for (int j = 0; j < (int)productList.size() - 1 - i; j++)
         {
-            if (productList[j + 1]->getPrice(discount) < productList[j]->getPrice(discount))
+            if (productList[j + 1]->getPrice() < productList[j]->getPrice())
             {
                 productItem *tmp = productList[j + 1];
                 productList[j + 1] = productList[j];
@@ -619,7 +588,7 @@ void product::priceAscendSort()
             }
         }
     }
-    db->closeDb();
+
     showProduct();
     ui->priceAscend->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;color:rgb(28, 135, 255)");
     ui->priceDescend->setStyleSheet("background-color: rgb(255,255,255);border:none;padding: -1;");
@@ -635,10 +604,10 @@ void product::purchase()
         prompt->show();
         return;
     }
-    db->openDb();
+
     const vector<productItem *> purchaseProductList = db->queryTable();
-    discount = db->getDiscount();
-    db->closeDb();
+
+
     int productToPurchase = 0;
     for (int i = 0; i < (int)purchaseProductList.size(); i++)
     {
@@ -648,12 +617,12 @@ void product::purchase()
             break;
         }
     }
-    if (purchaseProductList[productToPurchase]->remaining > 0 && curUser->balance >= purchaseProductList[productToPurchase]->getPrice(discount))
+    if (purchaseProductList[productToPurchase]->remaining > 0 && curUser->balance >= purchaseProductList[productToPurchase]->getPrice())
     {
         purchaseProductList[productToPurchase]->remaining--;
-        db->openDb();
+
         db->modifyData(*purchaseProductList[productToPurchase], 0);
-        db->closeDb();
+
 
         vector<sellerClass> sellerList = userManager::getSellerList();
         int numToChange;
@@ -664,7 +633,7 @@ void product::purchase()
                 numToChange = i;
             }
         }
-        sellerList[numToChange].balance += purchaseProductList[productToPurchase]->getPrice(discount);
+        sellerList[numToChange].balance += purchaseProductList[productToPurchase]->getPrice();
         QVector<QString> sellerJsonList;
         for (int i = 0; i < (int)sellerList.size(); i++)
         {
@@ -688,11 +657,11 @@ void product::purchase()
         tmp.id = purchaseProductList[productToPurchase]->id;
         a.push_back(tmp);
         b.push_back(1);
-        c.push_back(purchaseProductList[productToPurchase]->getPrice(discount));
-        db->openDb();
-        int orderId = db->generateOrder(curUser->uid, a, b, c, purchaseProductList[productToPurchase]->getPrice(discount));
+        c.push_back(purchaseProductList[productToPurchase]->getPrice());
+
+        int orderId = db->generateOrder(curUser->uid, a, b, c, purchaseProductList[productToPurchase]->getPrice());
         db->payOrder(orderId);
-        db->closeDb();
+
 
         if (curUser->getUserType() == SELLERTYPE)
         {
@@ -706,7 +675,7 @@ void product::purchase()
                     numToChange = i;
                 }
             }
-            sellerList[numToChange].balance -= purchaseProductList[productToPurchase]->getPrice(discount);
+            sellerList[numToChange].balance -= purchaseProductList[productToPurchase]->getPrice();
             QVector<QString> sellerJsonList;
             for (int i = 0; i < (int)sellerList.size(); i++)
             {
@@ -737,7 +706,7 @@ void product::purchase()
                     numToChange = i;
                 }
             }
-            consumerList[numToChange].balance -= purchaseProductList[productToPurchase]->getPrice(discount);
+            consumerList[numToChange].balance -= purchaseProductList[productToPurchase]->getPrice();
             QVector<QString> consumerJsonList;
             for (int i = 0; i < (int)consumerList.size(); i++)
             {
@@ -762,12 +731,12 @@ void product::purchase()
         promptBox *prompt = new promptBox(nullptr, "商品数量不足\nOut of stock");
         prompt->show();
     }
-    else if (curUser->balance < purchaseProductList[productToPurchase]->getPrice(discount))
+    else if (curUser->balance < purchaseProductList[productToPurchase]->getPrice())
     {
         promptBox *prompt = new promptBox(nullptr, "余额不足\nLack of balance");
         prompt->show();
     }
-    db->openDb();
+
     for (int i = 0; i < (int)productList.size(); i++)
     {
         delete productList[i];
@@ -776,7 +745,7 @@ void product::purchase()
     if (sortMethod == DEFAULT_SORT)
     {
         productList = db->queryTable(ui->search->text().toStdString());
-        discount = db->getDiscount();
+
     }
     else if (sortMethod == PRICE_DESCEND_SORT)
     {
@@ -785,7 +754,7 @@ void product::purchase()
         {
             for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[j + 1]->getPrice(discount) > productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice() > productList[j]->getPrice())
                 {
                     productItem *tmp = productList[j + 1];
                     productList[j + 1] = productList[j];
@@ -793,7 +762,7 @@ void product::purchase()
                 }
             }
         }
-        discount = db->getDiscount();
+
     }
     else
     {
@@ -802,7 +771,7 @@ void product::purchase()
         {
             for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[j + 1]->getPrice(discount) < productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice() < productList[j]->getPrice())
                 {
                     productItem *tmp = productList[j + 1];
                     productList[j + 1] = productList[j];
@@ -810,9 +779,9 @@ void product::purchase()
                 }
             }
         }
-        discount = db->getDiscount();
+
     }
-    db->closeDb();
+
     showProduct();
 
     for (int i = 0; i < (int)purchaseProductList.size(); i++)
@@ -824,7 +793,7 @@ void product::purchase()
 /* 刷新 */
 void product::refresh()
 {
-    db->openDb();
+
     for (int i = 0; i < (int)productList.size(); i++)
     {
         delete productList[i];
@@ -833,17 +802,17 @@ void product::refresh()
     if (sortMethod == DEFAULT_SORT)
     {
         productList = db->queryTable(ui->search->text().toStdString());
-        discount = db->getDiscount();
+
     }
     else if (sortMethod == PRICE_DESCEND_SORT)
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` DESC");
-        discount = db->getDiscount();
+
         for (int i = 0; i < (int)productList.size() - 1; i++)
         {
             for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[j + 1]->getPrice(discount) > productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice() > productList[j]->getPrice())
                 {
                     productItem *tmp = productList[j + 1];
                     productList[j + 1] = productList[j];
@@ -855,12 +824,12 @@ void product::refresh()
     else
     {
         productList = db->queryTable(ui->search->text().toStdString(), " ORDER BY `price` ASC");
-        discount = db->getDiscount();
+
         for (int i = 0; i < (int)productList.size() - 1; i++)
         {
             for (int j = 0; j < (int)productList.size() - 1 - i; j++)
             {
-                if (productList[j + 1]->getPrice(discount) < productList[j]->getPrice(discount))
+                if (productList[j + 1]->getPrice() < productList[j]->getPrice())
                 {
                     productItem *tmp = productList[j + 1];
                     productList[j + 1] = productList[j];
@@ -869,7 +838,7 @@ void product::refresh()
             }
         }
     }
-    db->closeDb();
+
     showProduct();
 }
 
@@ -908,9 +877,9 @@ void product::openCart()
 
 void product::addToCart()
 {
-    db->openDb();
+
     db->modifyItemInCart(productList[curProduct]->id, curUser->uid);
-    db->closeDb();
+
     promptBox *pb = new promptBox(nullptr, "成功加入购物车\nSuccessfully add to cart");
     pb->show();
 }

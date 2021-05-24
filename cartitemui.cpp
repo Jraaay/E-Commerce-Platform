@@ -45,9 +45,9 @@ void CartItemUi::numberChange()
         ui->number->setText(QString::number(0));
     }
     sqlite db;
-    db.openDb();
+
     db.modifyItemInCart(_productId, _userId, ui->number->text().toInt(), ui->buyCheck->checkState());
-    db.closeDb();
+
     if (ui->number->text().toInt() >= remain)
     {
         ui->plus->setEnabled(false);
@@ -77,17 +77,17 @@ void CartItemUi::setValidator()
 void CartItemUi::deleteCart()
 {
     sqlite db;
-    db.openDb();
+
     db.deleteItemFromCart(_productId, _userId);
-    db.closeDb();
+
     ((Cart *)_father)->refresh();
 }
 
 void CartItemUi::checkedChange()
 {
     sqlite db;
-    db.openDb();
+
     db.modifyItemInCart(_productId, _userId, ui->number->text().toInt(), ui->buyCheck->checkState());
-    db.closeDb();
+
     ((Cart *)_father)->countPrice();
 }

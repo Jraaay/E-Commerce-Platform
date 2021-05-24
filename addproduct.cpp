@@ -61,7 +61,7 @@ void addProduct::init(productItem productToModify)
         for (int i = 0; i < (int)photosList.size(); i++)
         {
             QImage img;
-            img.load(photosList[i]);
+            img.loadFromData(photosList[i]);
             QPixmap pixmap = QPixmap::fromImage(img);
             int width = 80;
             int height = 100;
@@ -89,7 +89,13 @@ void addProduct::selectPhotoFun()
         const QString photoNameTmp = photosNameTmp[i];
         if (photoNameTmp != "")
         {
-            photosList.push_back(photoNameTmp);
+            QImage image(photoNameTmp);
+            QByteArray ba;
+            QBuffer buf(&ba);
+            image.save(&buf, "png");
+            qDebug() << ba.toBase64();
+            buf.close();
+            photosList.push_back(ba.toBase64());
             QImage img;
             img.load(photoNameTmp);
             QPixmap pixmap = QPixmap::fromImage(img);
@@ -145,7 +151,7 @@ void addProduct::photoShow() const
     if (mainPhoto >= 0 && mainPhoto < int(photosList.size()) && int(photosList.size()) > 0)
     {
         QImage img;
-        img.load(photosList[mainPhoto]);
+        img.loadFromData(photosList[mainPhoto]);
         QPixmap pixmap = QPixmap::fromImage(img);
         int width = 155;
         int height = 200;
@@ -326,6 +332,7 @@ void addProduct::saveProduct()
         return;
     }
     productToSave.price = ui->price->text().toDouble();
+    productToSave.discount = ui->price->text().toDouble();
     if (ui->remain->text().toStdString() == "")
     {
         promptBox *prompt = new promptBox(nullptr, "没有填写产品余量呢\nPlease input stock");
@@ -346,7 +353,7 @@ void addProduct::saveProduct()
     productToSave.id = modifyId;
     productToSave.seller = sellerId;
     sqlite db;
-    db.openDb();
+
     if (modifyId != -1)
     {
 
@@ -356,7 +363,7 @@ void addProduct::saveProduct()
     {
         db.singleInsertData(productToSave);
     }
-    db.closeDb();
+
     if (father != nullptr)
     {
         ((product *)father)->showProduct(true);
@@ -368,9 +375,9 @@ void addProduct::saveProduct()
 void addProduct::delProduct()
 {
     sqlite db;
-    db.openDb();
+
     db.deleteData(modifyId);
-    db.closeDb();
+
     if (father != nullptr)
     {
         ((product *)father)->showProduct(true);

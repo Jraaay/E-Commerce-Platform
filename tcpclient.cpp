@@ -6,16 +6,17 @@ TcpClient::TcpClient(QObject *parent) : QObject(parent)
 }
 
 
-void TcpClient::connectToServer()
+int TcpClient::connectToServer()
 {
     tcpSocket = new QTcpSocket();
     tcpSocket->connectToHost(HOST, PORT);
-    if(!tcpSocket->waitForConnected(30000))
+    if(!tcpSocket->waitForConnected(1000))
     {
         qDebug() << "Connection failed!" ;
-        return;
+        return 1;
     }
     qDebug() << "Connect successfully!";
+    return 0;
 }
 
 void TcpClient::sendData(QByteArray data)
@@ -25,6 +26,22 @@ void TcpClient::sendData(QByteArray data)
         connectToServer();
     }
     tcpSocket->write(data);
+}
+
+QByteArray TcpClient::getData(QByteArray data, int msec)
+{
+    if (tcpSocket==nullptr)
+    {
+        connectToServer();
+    }
+    tcpSocket->write(data);
+    QByteArray buffer;
+    while(tcpSocket->waitForReadyRead(msec))
+    {
+        //读取缓冲区数据
+        buffer.append(tcpSocket->readAll());
+    }
+    return buffer;
 }
 
 void TcpClient::disconnectFromServer()
