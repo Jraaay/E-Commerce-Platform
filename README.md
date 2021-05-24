@@ -36,7 +36,8 @@
      - [x] 要求2：支持一定的错误场景处理能力，如生成订单失败，支付失败等。
 
 ## 题目三：电商交易平台（网络版）
-> [服务端开源地址](https://https://github.com/Jraaay/E-Commerce-Platform-Server)
+> [服务端开源地址](https://github.com/Jraaay/E-Commerce-Platform-Server)
+
 在题目一、二的基础上，将单机版电商交易系统修改为网络版。网络版要求实现如下功能：
  - [x] 用户登录：用户通过客户端以账号密码登录平台。
  - [x] 展示平台商品信息：通过客户端展示平台商品信息。
