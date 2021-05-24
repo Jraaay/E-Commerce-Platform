@@ -16,7 +16,7 @@ void sqlite::singleInsertData(productItem item) const
     object.insert("data", item.getJson());
     QJsonDocument document;
     document.setObject(object);
-    client.getData(document.toJson(QJsonDocument::Compact));
+    client.getData(document.toJson(QJsonDocument::Compact), 0, false);
     client.disconnectFromServer();
 }
 
@@ -35,7 +35,7 @@ void sqlite::modifyItemInCart(int productId, int userId, int number, bool checke
     object.insert("data", data);
     QJsonDocument document;
     document.setObject(object);
-    client.getData(document.toJson(QJsonDocument::Compact));
+    client.getData(document.toJson(QJsonDocument::Compact), 0, false);
     client.disconnectFromServer();
 }
 
@@ -52,7 +52,7 @@ void sqlite::deleteItemFromCart(int productId, int userId)
     object.insert("data", data);
     QJsonDocument document;
     document.setObject(object);
-    client.getData(document.toJson(QJsonDocument::Compact));
+    client.getData(document.toJson(QJsonDocument::Compact), 0, false);
     client.disconnectFromServer();
 }
 
@@ -173,7 +173,7 @@ void sqlite::deleteData(int id) const
     QJsonDocument document;
     document.setObject(object);
 
-    client.getData(document.toJson(QJsonDocument::Compact));
+    client.getData(document.toJson(QJsonDocument::Compact), 0, false);
     client.disconnectFromServer();
 }
 
@@ -190,7 +190,7 @@ void sqlite::newDiscount(int id) const
     QJsonDocument document;
     document.setObject(object);
 
-    client.getData(document.toJson(QJsonDocument::Compact));
+    client.getData(document.toJson(QJsonDocument::Compact), 0, false);
     client.disconnectFromServer();
 }
 
@@ -206,7 +206,7 @@ void sqlite::getDiscount(int userId, double &fooddiscount, double &clothesdiscou
     QJsonDocument document;
     document.setObject(object);
 
-    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact));
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 1000, false);
 
     QJsonParseError jsonError;
     QJsonArray productJsonList;
@@ -251,7 +251,7 @@ void sqlite::setDiscount(int userId, double fooddiscount, double clothesdiscount
     QJsonDocument document;
     document.setObject(object);
 
-    client.getData(document.toJson(QJsonDocument::Compact));
+    client.getData(document.toJson(QJsonDocument::Compact), 0, false);
     client.disconnectFromServer();
 }
 
@@ -268,7 +268,7 @@ int sqlite::generateOrder(int userId)
     QJsonDocument document;
     document.setObject(object);
 
-    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 200);
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 1000, false);
 
     QJsonParseError jsonError;
     QJsonArray productJsonList;
@@ -291,8 +291,9 @@ int sqlite::generateOrder(int userId)
 
 }
 
-void sqlite::buyOne(int userId, int productId)
+int sqlite::buyOne(int userId, int productId)
 {
+    int payStatus = -1;
     TcpClient client;
     client.connectToServer();
     QJsonObject object;
@@ -303,8 +304,26 @@ void sqlite::buyOne(int userId, int productId)
     object.insert("data", data);
     QJsonDocument document;
     document.setObject(object);
-    client.getData(document.toJson(QJsonDocument::Compact));
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 1000, false);
+
+    QJsonParseError jsonError;
+    QJsonArray productJsonList;
+    QJsonArray numberJsonList;
+    QJsonArray checkedJsonList;
+    document = QJsonDocument::fromJson(json,&jsonError);
+    if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
+    {
+        if(document.isObject())
+        {
+            QJsonObject object = document.object();
+            if(object.contains("payStatus"))
+            {
+                payStatus = object.value("payStatus").toInt();
+            }
+        }
+    }
     client.disconnectFromServer();
+    return payStatus;
 }
 
 void sqlite::getOrder(int orderId, bool &paied, long long &time, int &userId, vector<productItem *> &orderList, vector<int> &count, vector<double> &price, double &priceSum)
@@ -370,8 +389,9 @@ void sqlite::getOrder(int orderId, bool &paied, long long &time, int &userId, ve
     client.disconnectFromServer();
 }
 
-void sqlite::payOrder(int orderId)
+int sqlite::payOrder(int orderId)
 {
+    int payStatus = -1;
     TcpClient client;
     client.connectToServer();
     QJsonObject object;
@@ -381,9 +401,27 @@ void sqlite::payOrder(int orderId)
     object.insert("data", data);
     QJsonDocument document;
     document.setObject(object);
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 1000, false);
 
-    client.getData(document.toJson(QJsonDocument::Compact));
+    QJsonParseError jsonError;
+    QJsonArray orderIdJsonList;
+    QJsonArray priceSumJsonList;
+    QJsonArray timeJsonList;
+    QJsonArray paidJsonList;
+    document = QJsonDocument::fromJson(json,&jsonError);
+    if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
+    {
+        if(document.isObject())
+        {
+            QJsonObject object = document.object();
+            if (object.contains("payStatus"))
+            {
+                payStatus = object.value("payStatus").toInt();
+            }
+        }
+    }
     client.disconnectFromServer();
+    return payStatus;
 }
 
 
@@ -399,7 +437,7 @@ void sqlite::getOrderList(int userId, vector<int> &orderId, vector<double> &pric
     QJsonDocument document;
     document.setObject(object);
 
-    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact));
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 100);
 
     QJsonParseError jsonError;
     QJsonArray orderIdJsonList;

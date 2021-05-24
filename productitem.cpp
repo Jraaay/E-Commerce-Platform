@@ -41,7 +41,12 @@ productItem::productItem(QJsonObject data)
     {
         seller = data.value("seller").toInt();
     }
+    if (data.contains("sellerName"))
+    {
+        sellerName = data.value("sellerName").toString().toStdString();
+    }
 }
+
 QJsonObject productItem::getJson()
 {
     QJsonObject object;
@@ -50,6 +55,7 @@ QJsonObject productItem::getJson()
     object.insert("type", type);
     object.insert("price", price);
     object.insert("seller", seller);
+    object.insert("sellerName", sellerName.c_str());
     object.insert("discount", discount);
     object.insert("mainPhoto", mainPhoto);
     object.insert("remaining", remaining);

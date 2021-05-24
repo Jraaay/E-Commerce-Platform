@@ -28,7 +28,9 @@ void OrderDetail::init()
 {
     ui->setupUi(this);
     db = new sqlite;
-
+    ui->listWidget->verticalScrollBar()->setStyleSheet("QScrollBar:vertical { width:8px; background:rgba(0,0,0,0%); margin:0px,0px,0px,0px; padding-top:9px; padding-bottom:9px; } QScrollBar::handle:vertical { width:8px; background:rgba(0,0,0,25%);  border-radius:4px; min-height:20; } QScrollBar::handle:vertical:hover { width:8px; background:rgba(0,0,0,50%);  border-radius:4px; min-height:20; } QScrollBar::add-line:vertical { height:9px;width:8px; border-image:url(:/images/a/3.png); subcontrol-position:bottom; } QScrollBar::sub-line:vertical { height:9px;width:8px; border-image:url(:/images/a/1.png); subcontrol-position:top; } QScrollBar::add-line:vertical:hover { height:9px;width:8px; border-image:url(:/images/a/4.png); subcontrol-position:bottom; } QScrollBar::sub-line:vertical:hover { height:9px;width:8px; border-image:url(:/images/a/2.png); subcontrol-position:top; } QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical { background:rgba(0,0,0,10%); border-radius:4px; }");
+    ui->listWidget->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
+    ui->listWidget->verticalScrollBar()->setSingleStep(16);
     productList.clear();
     numberList.clear();
     checkedList.clear();
@@ -79,8 +81,6 @@ void OrderDetail::showProduct(bool getFromDB)
     const string typeList[4] = {"", "食物", "衣服", "书籍"};
     const string typeListEn[4] = {"", "Food", "Clothes", "Book"};
 
-    vector<sellerClass> sellerList = userManager::getSellerList();
-
     for (int i = 0; i < (int)productList.size(); i++) // 循环添加所有商品
     {
         QListWidgetItem *tmp = new QListWidgetItem();
@@ -114,15 +114,7 @@ void OrderDetail::showProduct(bool getFromDB)
         w->ui->type->setText(typeText.c_str());
         w->ui->priceRaw->setText("");
 
-        int numToShow;
-        for (int j = 0; j < (int)sellerList.size(); j++)
-        {
-            if (sellerList[j].uid == productList[i]->seller)
-            {
-                numToShow = j;
-            }
-        }
-        string sellerText = w->ui->seller->text().toStdString() + sellerList[numToShow].name;
+        string sellerText = w->ui->seller->text().toStdString() + productList[i]->sellerName;
         w->ui->seller->setText(sellerText.c_str());
 
         QImage img;
@@ -159,103 +151,12 @@ QString OrderDetail::geteElidedText(QFont font, QString str, int MaxWidth)
 /* 支付 */
 void OrderDetail::payForOrder()
 {
-    if (curUser->balance >= priceSum)
+    sqlite db;
+    int payStatus = db.payOrder(_orderId);
+    if (payStatus == 0)
     {
-        vector<sellerClass> sellerList = userManager::getSellerList();
-        for (int i = 0; i < (int)productList.size(); i++)
-        {
-            int numToChange;
-            for (int j = 0; j < (int)sellerList.size(); j++)
-            {
-                if (sellerList[j].uid == productList[i]->seller)
-                {
-                    numToChange = j;
-                }
-            }
-            sellerList[numToChange].balance += price[i] * count[i];
-        }
-        QVector<QString> sellerJsonList;
-        for (int i = 0; i < (int)sellerList.size(); i++)
-        {
-            sellerJsonList.push_back(sellerList[i].getJson().c_str());
-        }
-        QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
-        QJsonObject object;
-        object.insert("data", array);
-        QJsonDocument document;
-        document.setObject(object);
-        QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-        ofstream outFile;
-        outFile.open("sellerFile.json");
-        outFile << byteArray.toStdString();
-        outFile.close();
-        if (curUser->getUserType() == SELLERTYPE)
-        {
-            vector<sellerClass> sellerList = userManager::getSellerList();
-            int numToChange;
-            for (int i = 0; i < (int)sellerList.size(); i++)
-            {
-                if (sellerList[i].uid == curUser->uid)
-                {
-                    numToChange = i;
-                }
-            }
-            sellerList[numToChange].balance -= priceSum;
-            QVector<QString> sellerJsonList;
-            for (int i = 0; i < (int)sellerList.size(); i++)
-            {
-                sellerJsonList.push_back(sellerList[i].getJson().c_str());
-            }
-            QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
-            QJsonObject object;
-            object.insert("data", array);
-            QJsonDocument document;
-            document.setObject(object);
-            QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-            ofstream outFile;
-            outFile.open("sellerFile.json");
-            outFile << byteArray.toStdString();
-            outFile.close();
-
-            db->payOrder(_orderId);
-
-            promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
-            prompt->show();
-        }
-        else
-        {
-            vector<consumerClass> consumerList = userManager::getConsumerList();
-
-            int numToChange;
-            for (int i = 0; i < (int)consumerList.size(); i++)
-            {
-                if (consumerList[i].uid == curUser->uid)
-                {
-                    numToChange = i;
-                }
-            }
-            consumerList[numToChange].balance -= priceSum;
-            QVector<QString> consumerJsonList;
-            for (int i = 0; i < (int)consumerList.size(); i++)
-            {
-                consumerJsonList.push_back(consumerList[i].getJson().c_str());
-            }
-            QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(consumerJsonList));
-            QJsonObject object;
-            object.insert("data", array);
-            QJsonDocument document;
-            document.setObject(object);
-            QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-            ofstream outFile;
-            outFile.open("consumerFile.json");
-            outFile << byteArray.toStdString();
-            outFile.close();
-
-            db->payOrder(_orderId);
-
-            promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
-            prompt->show();
-        }
+        promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
+        prompt->show();
         if (_father != nullptr)
         {
             ((userCenter *)_father)->showOrders();

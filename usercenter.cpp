@@ -19,6 +19,9 @@ userCenter::~userCenter()
 void userCenter::init()
 {
     ui->orderListWidget->verticalScrollBar()->setStyleSheet("QScrollBar:vertical { width:8px; background:rgba(0,0,0,0%); margin:0px,0px,0px,0px; padding-top:9px; padding-bottom:9px; } QScrollBar::handle:vertical { width:8px; background:rgba(0,0,0,25%);  border-radius:4px; min-height:20; } QScrollBar::handle:vertical:hover { width:8px; background:rgba(0,0,0,50%);  border-radius:4px; min-height:20; } QScrollBar::add-line:vertical { height:9px;width:8px; border-image:url(:/images/a/3.png); subcontrol-position:bottom; } QScrollBar::sub-line:vertical { height:9px;width:8px; border-image:url(:/images/a/1.png); subcontrol-position:top; } QScrollBar::add-line:vertical:hover { height:9px;width:8px; border-image:url(:/images/a/4.png); subcontrol-position:bottom; } QScrollBar::sub-line:vertical:hover { height:9px;width:8px; border-image:url(:/images/a/2.png); subcontrol-position:top; } QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical { background:rgba(0,0,0,10%); border-radius:4px; }");
+    ui->orderListWidget->verticalScrollBar()->setSingleStep(10);
+    ui->orderListWidget->setVerticalScrollMode(QListWidget::ScrollPerPixel);
+    ui->orderListWidget->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
     const QRegExp regx1("^[a-zA-Z0-9_\\-]{0,16}$");
     const QValidator *validator1 = new QRegExpValidator(regx1, ui->usernameEdit);
     ui->usernameEdit->setValidator(validator1); // 正则匹配
@@ -105,121 +108,30 @@ void userCenter::changeUserName()
     }
     else
     {
-        if (curUser->getUserType() == SELLERTYPE)
+        int status = userManager::changeUserName(curUser->uid, ui->usernameEdit->text().toStdString());
+        if (status == 0)
         {
-            vector<sellerClass> sellerList = userManager::getSellerList();
-            bool only = true;
-            int numToChange;
-            for (int i = 0; i < (int)sellerList.size(); i++)
+            curUser->name = ui->usernameEdit->text().toStdString();
+            promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
+            fatherPtr->refreshUser();
+            prompt->show();
+            ui->usernameEdit->hide();
+            ui->username->setText(ui->usernameEdit->text());
+            ui->username->show();
+            if (ui->changeUsername->text() == "保存")
             {
-                if (sellerList[i].name == ui->usernameEdit->text().toStdString() && sellerList[i].name != curUser->name)
-                {
-                    only = false;
-                    break;
-                }
-                if (sellerList[i].uid == curUser->uid)
-                {
-                    numToChange = i;
-                }
-            }
-            if (only)
-            {
-                curUser->name = ui->usernameEdit->text().toStdString();
-                sellerList[numToChange].name = ui->usernameEdit->text().toStdString();
-                QVector<QString> sellerJsonList;
-                for (int i = 0; i < (int)sellerList.size(); i++)
-                {
-                    sellerJsonList.push_back(sellerList[i].getJson().c_str());
-                }
-                QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
-                QJsonObject object;
-                object.insert("data", array);
-                QJsonDocument document;
-                document.setObject(object);
-                QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-                ofstream outFile;
-                outFile.open("sellerFile.json");
-                outFile << byteArray.toStdString();
-                outFile.close();
-                promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
-                fatherPtr->refreshUser();
-                prompt->show();
-                ui->usernameEdit->hide();
-                ui->username->setText(ui->usernameEdit->text());
-                ui->username->show();
-                if (ui->changeUsername->text() == "保存")
-                {
-                    ui->changeUsername->setText("修改");
-                }
-                else
-                {
-                    ui->changeUsername->setText("Change");
-                }
+                ui->changeUsername->setText("修改");
             }
             else
             {
-                promptBox *prompt = new promptBox(nullptr, "用户名已经存在\nUsername already exist");
-                prompt->show();
-                ui->usernameEdit->setText(ui->username->text());
+                ui->changeUsername->setText("Change");
             }
         }
         else
         {
-            vector<consumerClass> consumerList = userManager::getConsumerList();
-            bool only = true;
-            int numToChange;
-            for (int i = 0; i < (int)consumerList.size(); i++)
-            {
-                if (consumerList[i].name == ui->usernameEdit->text().toStdString() && consumerList[i].name != curUser->name)
-                {
-                    only = false;
-                    break;
-                }
-                if (consumerList[i].uid == curUser->uid)
-                {
-                    numToChange = i;
-                }
-            }
-            if (only)
-            {
-                curUser->name = ui->usernameEdit->text().toStdString();
-                consumerList[numToChange].name = ui->usernameEdit->text().toStdString();
-                QVector<QString> consumerJsonList;
-                for (int i = 0; i < (int)consumerList.size(); i++)
-                {
-                    consumerJsonList.push_back(consumerList[i].getJson().c_str());
-                }
-                QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(consumerJsonList));
-                QJsonObject object;
-                object.insert("data", array);
-                QJsonDocument document;
-                document.setObject(object);
-                QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-                ofstream outFile;
-                outFile.open("consumerFile.json");
-                outFile << byteArray.toStdString();
-                outFile.close();
-                promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
-                fatherPtr->refreshUser();
-                prompt->show();
-                ui->usernameEdit->hide();
-                ui->username->setText(ui->usernameEdit->text());
-                ui->username->show();
-                if (ui->changeUsername->text() == "保存")
-                {
-                    ui->changeUsername->setText("修改");
-                }
-                else
-                {
-                    ui->changeUsername->setText("Change");
-                }
-            }
-            else
-            {
-                promptBox *prompt = new promptBox(nullptr, "用户名已经存在\nUsername already exist");
-                prompt->show();
-                ui->usernameEdit->setText(ui->username->text());
-            }
+            promptBox *prompt = new promptBox(nullptr, "用户名已经存在\nUsername already exist");
+            prompt->show();
+            ui->usernameEdit->setText(ui->username->text());
         }
     }
 }
@@ -245,103 +157,26 @@ void userCenter::changePassword()
     }
     else
     {
-        if (curUser->getUserType() == SELLERTYPE)
+        if (ui->password->text() != ui->passwordAgain->text())
         {
-            vector<sellerClass> sellerList = userManager::getSellerList();
-            int numToChange = 0;
-            for (int i = 0; i < (int)sellerList.size(); i++)
-            {
-                if (sellerList[i].uid == curUser->uid)
-                {
-                    numToChange = i;
-                    break;
-                }
-            }
-            if (ui->password->text() != ui->passwordAgain->text())
-            {
-                promptBox *prompt = new promptBox(nullptr, "两次密码不一致，修改失败\nTwo passwords are not the same");
-                prompt->show();
-            }
-            else
-            {
-                sellerList[numToChange].setPass(QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString()); // 密码MD5加密
-                QVector<QString> sellerJsonList;
-                for (int i = 0; i < (int)sellerList.size(); i++)
-                {
-                    sellerJsonList.push_back(sellerList[i].getJson().c_str());
-                }
-                QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
-                QJsonObject object;
-                object.insert("data", array);
-                QJsonDocument document;
-                document.setObject(object);
-                QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-                ofstream outFile;
-                outFile.open("sellerFile.json");
-                outFile << byteArray.toStdString();
-                outFile.close();
-                promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
-                prompt->show();
-            }
-            ui->password->hide();
-            ui->passwordAgain->hide();
-            if (ui->changePassword->text() == "保存")
-            {
-                ui->changePassword->setText("修改密码");
-            }
-            else
-            {
-                ui->changePassword->setText("Change Password");
-            }
+            promptBox *prompt = new promptBox(nullptr, "两次密码不一致，修改失败\nTwo passwords are not the same");
+            prompt->show();
         }
         else
         {
-            vector<consumerClass> consumerList = userManager::getConsumerList();
-            int numToChange = 0;
-            for (int i = 0; i < (int)consumerList.size(); i++)
-            {
-                if (consumerList[i].uid == curUser->uid)
-                {
-                    numToChange = i;
-                    break;
-                }
-            }
-            if (ui->password->text() != ui->passwordAgain->text())
-            {
-                promptBox *prompt = new promptBox(nullptr, "两次密码不一致，修改失败\nTwo passwords are not the same");
-                prompt->show();
-            }
-            else
-            {
-                consumerList[numToChange].setPass(QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString()); // 密码MD5加密
-                QVector<QString> consumerJsonList;
-                for (int i = 0; i < (int)consumerList.size(); i++)
-                {
-                    consumerJsonList.push_back(consumerList[i].getJson().c_str());
-                }
-                QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(consumerJsonList));
-                QJsonObject object;
-                object.insert("data", array);
-                QJsonDocument document;
-                document.setObject(object);
-                QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-                ofstream outFile;
-                outFile.open("consumerFile.json");
-                outFile << byteArray.toStdString();
-                outFile.close();
-                promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
-                prompt->show();
-            }
-            ui->password->hide();
-            ui->passwordAgain->hide();
-            if (ui->changePassword->text() == "保存")
-            {
-                ui->changePassword->setText("修改密码");
-            }
-            else
-            {
-                ui->changePassword->setText("Change Password");
-            }
+            userManager::changePassword(curUser->uid, QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString());
+            promptBox *prompt = new promptBox(nullptr, "修改成功\nChange successfully");
+            prompt->show();
+        }
+        ui->password->hide();
+        ui->passwordAgain->hide();
+        if (ui->changePassword->text() == "保存")
+        {
+            ui->changePassword->setText("修改密码");
+        }
+        else
+        {
+            ui->changePassword->setText("Change Password");
         }
     }
 }
@@ -450,68 +285,9 @@ void userCenter::recharge()
 void userCenter::rechargeConfirm(double moneyToCharge)
 {
     curUser->recharge(moneyToCharge);
-    if (curUser->getUserType() == SELLERTYPE)
-    {
-        vector<sellerClass> sellerList = userManager::getSellerList();
-        int numToChange = 0;
-        for (int i = 0; i < (int)sellerList.size(); i++)
-        {
-            if (sellerList[i].uid == curUser->uid)
-            {
-                numToChange = i;
-                break;
-            }
-        }
-        sellerList[numToChange].balance += moneyToCharge;
-        QVector<QString> sellerJsonList;
-        for (int i = 0; i < (int)sellerList.size(); i++)
-        {
-            sellerJsonList.push_back(sellerList[i].getJson().c_str());
-        }
-        QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
-        QJsonObject object;
-        object.insert("data", array);
-        QJsonDocument document;
-        document.setObject(object);
-        QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-        ofstream outFile;
-        outFile.open("sellerFile.json");
-        outFile << byteArray.toStdString();
-        outFile.close();
-        promptBox *prompt = new promptBox(nullptr, "充值成功\nRecharge successfully");
-        prompt->show();
-    }
-    else
-    {
-        vector<consumerClass> consumerList = userManager::getConsumerList();
-        int numToChange = 0;
-        for (int i = 0; i < (int)consumerList.size(); i++)
-        {
-            if (consumerList[i].uid == curUser->uid)
-            {
-                numToChange = i;
-                break;
-            }
-        }
-        consumerList[numToChange].balance += moneyToCharge;
-        QVector<QString> consumerJsonList;
-        for (int i = 0; i < (int)consumerList.size(); i++)
-        {
-            consumerJsonList.push_back(consumerList[i].getJson().c_str());
-        }
-        QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(consumerJsonList));
-        QJsonObject object;
-        object.insert("data", array);
-        QJsonDocument document;
-        document.setObject(object);
-        QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-        ofstream outFile;
-        outFile.open("consumerFile.json");
-        outFile << byteArray.toStdString();
-        outFile.close();
-        promptBox *prompt = new promptBox(nullptr, "充值成功\nRecharge successfully");
-        prompt->show();
-    }
+    userManager::recharge(curUser->uid, moneyToCharge);
+    promptBox *prompt = new promptBox(nullptr, "充值成功\nRecharge successfully");
+    prompt->show();
     char priceText[1000] = "";
     sprintf(priceText, "%.2lf", curUser->balance);
     ui->balanceText->setText(priceText);

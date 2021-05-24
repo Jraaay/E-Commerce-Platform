@@ -13,6 +13,11 @@ using namespace std;
 class userClass
 {
 public:
+    userClass()
+    {
+
+    }
+    userClass(QJsonObject data);
     string name;
     double balance;
     int type;
@@ -30,7 +35,7 @@ public:
     {
         balance += money;
     }
-    string getJson();
+    QJsonObject getJson();
     virtual ~userClass()
     {
     }
@@ -42,6 +47,11 @@ private:
 class consumerClass : public userClass
 {
 public:
+    consumerClass()
+    {
+
+    }
+    consumerClass(QJsonObject data);
     int getUserType() override
     {
         return type;
@@ -54,6 +64,11 @@ public:
 class sellerClass : public userClass
 {
 public:
+    sellerClass()
+    {
+
+    }
+    sellerClass(QJsonObject data);
     int getUserType() override
     {
         return type;

@@ -144,8 +144,6 @@ void product::showProduct(bool getFromDB)
     const string typeList[4] = {"", "食物", "衣服", "书籍"};
     const string typeListEn[4] = {"", "Food", "Clothes", "Book"};
 
-    vector<sellerClass> sellerList = userManager::getSellerList();
-
     for (int i = 0; i < (int)productList.size(); i++) // 循环添加所有商品
     {
         QListWidgetItem *tmp = new QListWidgetItem();
@@ -182,15 +180,7 @@ void product::showProduct(bool getFromDB)
             w->ui->priceRaw->setText("");
         }
 
-        int numToShow;
-        for (int j = 0; j < (int)sellerList.size(); j++)
-        {
-            if (sellerList[j].uid == productList[i]->seller)
-            {
-                numToShow = j;
-            }
-        }
-        string sellerText = w->ui->seller->text().toStdString() + sellerList[numToShow].name;
+        string sellerText = w->ui->seller->text().toStdString() + productList[i]->sellerName;
         w->ui->seller->setText(sellerText.c_str());
 
         QImage img;
@@ -617,117 +607,20 @@ void product::purchase()
             break;
         }
     }
-    if (purchaseProductList[productToPurchase]->remaining > 0 && curUser->balance >= purchaseProductList[productToPurchase]->getPrice())
+    int payStatus = db->buyOne(curUser->uid, purchaseProductList[productToPurchase]->id);
+    if (payStatus == 0)
     {
-        vector<sellerClass> sellerList = userManager::getSellerList();
-        int numToChange;
-        for (int i = 0; i < (int)sellerList.size(); i++)
-        {
-            if (sellerList[i].uid == productList[i]->seller)
-            {
-                numToChange = i;
-            }
-        }
-        sellerList[numToChange].balance += purchaseProductList[productToPurchase]->getPrice();
-        QVector<QString> sellerJsonList;
-        for (int i = 0; i < (int)sellerList.size(); i++)
-        {
-            sellerJsonList.push_back(sellerList[i].getJson().c_str());
-        }
-        QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
-        QJsonObject object;
-        object.insert("data", array);
-        QJsonDocument document;
-        document.setObject(object);
-        QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-        ofstream outFile;
-        outFile.open("sellerFile.json");
-        outFile << byteArray.toStdString();
-        outFile.close();
-
-        vector<productItem> a;
-        vector<int> b;
-        vector<double> c;
-        productItem tmp;
-        tmp.id = purchaseProductList[productToPurchase]->id;
-        a.push_back(tmp);
-        b.push_back(1);
-        c.push_back(purchaseProductList[productToPurchase]->getPrice());
-
-        db->buyOne(curUser->uid, purchaseProductList[productToPurchase]->id);
-
-
-        if (curUser->getUserType() == SELLERTYPE)
-        {
-            vector<sellerClass> sellerList = userManager::getSellerList();
-
-            int numToChange;
-            for (int i = 0; i < (int)sellerList.size(); i++)
-            {
-                if (sellerList[i].uid == curUser->uid)
-                {
-                    numToChange = i;
-                }
-            }
-            sellerList[numToChange].balance -= purchaseProductList[productToPurchase]->getPrice();
-            QVector<QString> sellerJsonList;
-            for (int i = 0; i < (int)sellerList.size(); i++)
-            {
-                sellerJsonList.push_back(sellerList[i].getJson().c_str());
-            }
-            QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
-            QJsonObject object;
-            object.insert("data", array);
-            QJsonDocument document;
-            document.setObject(object);
-            QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-            ofstream outFile;
-            outFile.open("sellerFile.json");
-            outFile << byteArray.toStdString();
-            outFile.close();
-            promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
-            prompt->show();
-        }
-        else
-        {
-            vector<consumerClass> consumerList = userManager::getConsumerList();
-
-            int numToChange;
-            for (int i = 0; i < (int)consumerList.size(); i++)
-            {
-                if (consumerList[i].uid == curUser->uid)
-                {
-                    numToChange = i;
-                }
-            }
-            consumerList[numToChange].balance -= purchaseProductList[productToPurchase]->getPrice();
-            QVector<QString> consumerJsonList;
-            for (int i = 0; i < (int)consumerList.size(); i++)
-            {
-                consumerJsonList.push_back(consumerList[i].getJson().c_str());
-            }
-            QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(consumerJsonList));
-            QJsonObject object;
-            object.insert("data", array);
-            QJsonDocument document;
-            document.setObject(object);
-            QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-            ofstream outFile;
-            outFile.open("consumerFile.json");
-            outFile << byteArray.toStdString();
-            outFile.close();
-            promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
-            prompt->show();
-        }
-    }
-    else if (purchaseProductList[productToPurchase]->remaining <= 0)
-    {
-        promptBox *prompt = new promptBox(nullptr, "商品数量不足\nOut of stock");
+        promptBox *prompt = new promptBox(nullptr, "购买成功\nBuy successfully");
         prompt->show();
     }
-    else if (curUser->balance < purchaseProductList[productToPurchase]->getPrice())
+    else if (payStatus == LACKOFBALANCE)
     {
         promptBox *prompt = new promptBox(nullptr, "余额不足\nLack of balance");
+        prompt->show();
+    }
+    else if (payStatus == LACKOFPRODUCT)
+    {
+        promptBox *prompt = new promptBox(nullptr, "商品数量不足\nOut of stock");
         prompt->show();
     }
 

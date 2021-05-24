@@ -7,79 +7,33 @@ void Widget::loginRegFun()
 {
     const string loginName = ui->userName->text().toStdString();
     const string loginPassword = QString(QCryptographicHash::hash(ui->password->text().toUtf8(), QCryptographicHash::Md5).toHex()).toStdString();
-    vector<sellerClass> sellerList;
-    vector<consumerClass> consumerList;
-    int uidMax = userManager::getMaxUid();
-
-
-    if (curType == SELLERTYPE)
-    {
-        sellerList = userManager::getSellerList();
-    }
-    if (curType == CONSUMERTYPE)
-    {
-        consumerList = userManager::getConsumerList();
-    }
     if (ui->login->text() == "登录" || ui->login->text() == "Sign in")
     {
-        bool logined = false;
+        int loginStatus;
         qDebug() << "login now";
-        bool flag = true;
-        if (curType == SELLERTYPE)
+        QJsonObject curUserJson;
+        loginStatus = userManager::loginCheck(curType, loginName, loginPassword, curUserJson);
+        if (loginStatus == 0)
         {
-            for (int i = 0; i < (int)sellerList.size(); i++)
+            if (curType == SELLERTYPE)
             {
-                if (sellerList[i].name == loginName)
-                {
-                    flag = false;
-                    if (sellerList[i].getPass() == loginPassword)
-                    {
-                        logined = true;
-                        curSeller = sellerList[i];
-                    }
-                    else
-                    {
-                        promptBox *prompt = new promptBox(nullptr, "密码错误\nPassword wrong");
-                        prompt->show();
-                    }
-                    break;
-                }
+                curSeller = sellerClass(curUserJson);
             }
-            if (flag)
+            else
             {
-                promptBox *prompt = new promptBox(nullptr, "未找到用户\nUser doesn't exist");
-                prompt->show();
+                curConsumer = consumerClass(curUserJson);
             }
+            showProduct();
+        }
+        else if (loginStatus == PASSWORDWRONG)
+        {
+            promptBox *prompt = new promptBox(nullptr, "密码错误\nPassword wrong");
+            prompt->show();
         }
         else
         {
-            for (int i = 0; i < (int)consumerList.size(); i++)
-            {
-                if (consumerList[i].name == loginName)
-                {
-                    flag = false;
-                    if (consumerList[i].getPass() == loginPassword)
-                    {
-                        curConsumer = consumerList[i];
-                        logined = true;
-                    }
-                    else
-                    {
-                        promptBox *prompt = new promptBox(nullptr, "密码错误\nPassword wrong");
-                        prompt->show();
-                    }
-                    break;
-                }
-            }
-            if (flag)
-            {
-                promptBox *prompt = new promptBox(nullptr, "未找到用户\nUser doesn't exist");
-                prompt->show();
-            }
-        }
-        if (logined)
-        {
-            showProduct();
+            promptBox *prompt = new promptBox(nullptr, "未找到用户\nUser doesn't exist");
+            prompt->show();
         }
     }
     else
@@ -91,118 +45,16 @@ void Widget::loginRegFun()
             prompt->show();
             return;
         }
-        if (curType == SELLERTYPE)
+        int regStatus = userManager::createUser(curType, loginName, loginPassword);
+        if (regStatus == 0)
         {
-            bool only = true;
-            for (int i = 0; i < (int)sellerList.size(); i++)
-            {
-                if (sellerList[i].name == loginName)
-                {
-                    only = false;
-                    break;
-                }
-            }
-            if (only)
-            {
-                sellerClass tmp;
-                tmp.uid = uidMax + 1;
-                uidMax++;
-                tmp.name = loginName;
-                tmp.setPass(loginPassword);
-                tmp.type = SELLERTYPE;
-                tmp.balance = 0;
-                sellerList.push_back(tmp);
-                QVector<QString> sellerJsonList;
-                for (int i = 0; i < (int)sellerList.size(); i++)
-                {
-                    sellerJsonList.push_back(sellerList[i].getJson().c_str());
-                }
-                QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(sellerJsonList));
-                QJsonObject object;
-                object.insert("data", array);
-                QJsonDocument document;
-                document.setObject(object);
-                QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-                ofstream outFile;
-                outFile.open("sellerFile.json");
-                outFile << byteArray.toStdString();
-                outFile.close();
-                promptBox *prompt = new promptBox(nullptr, "注册成功\nRegister successfully");
-                prompt->show();
-                QJsonObject object2;
-                object2.insert("uid", uidMax);
-                QJsonDocument document2;
-                document2.setObject(object2);
-                QByteArray array2 = document.toJson(QJsonDocument::Compact);
-                ofstream outFile2;
-                outFile.open("uidMaxFile.json");
-                outFile << array2.toStdString();
-                outFile.close();
-                sqlite db;
-
-                db.newDiscount(tmp.uid);
-
-            }
-            else
-            {
-                promptBox *prompt = new promptBox(nullptr, "用户已经存在\nUser exists");
-                prompt->show();
-            }
+            promptBox *prompt = new promptBox(nullptr, "注册成功\nRegister successfully");
+            prompt->show();
         }
         else
         {
-            bool only = true;
-            for (int i = 0; i < (int)consumerList.size(); i++)
-            {
-                if (consumerList[i].name == loginName)
-                {
-                    only = false;
-                    break;
-                }
-            }
-            if (only)
-            {
-                consumerClass tmp;
-                tmp.uid = uidMax + 1;
-                uidMax++;
-                tmp.name = loginName;
-                tmp.setPass(loginPassword);
-                tmp.type = CONSUMERTYPE;
-                tmp.balance = 0;
-                consumerList.push_back(tmp);
-                QVector<QString> consumerJsonList;
-                for (int i = 0; i < (int)consumerList.size(); i++)
-                {
-                    consumerJsonList.push_back(consumerList[i].getJson().c_str());
-                }
-                QJsonArray array = QJsonArray::fromStringList(QStringList::fromVector(consumerJsonList));
-                QJsonObject object;
-                object.insert("data", array);
-                QJsonDocument document;
-                document.setObject(object);
-                QByteArray byteArray = document.toJson(QJsonDocument::Compact);
-                ofstream outFile;
-                outFile.open("consumerFile.json");
-                outFile << byteArray.toStdString();
-                outFile.close();
-                promptBox *prompt = new promptBox(nullptr, "注册成功\nRegister successfully");
-                prompt->show();
-
-                QJsonObject object2;
-                object2.insert("uid", uidMax);
-                QJsonDocument document2;
-                document2.setObject(object2);
-                QByteArray array2 = document.toJson(QJsonDocument::Compact);
-                ofstream outFile2;
-                outFile.open("uidMaxFile.json");
-                outFile << array2.toStdString();
-                outFile.close();
-            }
-            else
-            {
-                promptBox *prompt = new promptBox(nullptr, "用户已经存在\nUser exists");
-                prompt->show();
-            }
+            promptBox *prompt = new promptBox(nullptr, "用户已经存在\nUser exists");
+            prompt->show();
         }
     }
 }

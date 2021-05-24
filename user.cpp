@@ -1,6 +1,33 @@
 #include "user.h"
 
-string userClass::getJson()
+userClass::userClass(QJsonObject data)
+{
+    uid = data.value("uid").toInt();
+    name = data.value("name").toString().toStdString();
+    balance = data.value("balance").toDouble();
+    type = data.value("type").toInt();
+    password = data.value("password").toString().toStdString();
+}
+
+sellerClass::sellerClass(QJsonObject data)
+{
+    uid = data.value("uid").toInt();
+    name = data.value("name").toString().toStdString();
+    balance = data.value("balance").toDouble();
+    type = data.value("type").toInt();
+    setPass(data.value("password").toString().toStdString());
+}
+
+consumerClass::consumerClass(QJsonObject data)
+{
+    uid = data.value("uid").toInt();
+    name = data.value("name").toString().toStdString();
+    balance = data.value("balance").toDouble();
+    type = data.value("type").toInt();
+    setPass(data.value("password").toString().toStdString());
+}
+
+QJsonObject userClass::getJson()
 {
     QJsonObject object;
     object.insert("uid",this->uid);
@@ -8,8 +35,5 @@ string userClass::getJson()
     object.insert("balance",this->balance);
     object.insert("type",this->type);
     object.insert("password",this->password.c_str());
-    QJsonDocument document;
-    document.setObject(object);
-    string jsonStr = document.toJson(QJsonDocument::Compact).toStdString();
-    return jsonStr;
+    return object;
 }

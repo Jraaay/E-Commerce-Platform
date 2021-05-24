@@ -37,57 +37,11 @@ void Cart::init()
     ui->image_3->installEventFilter(this);
     ui->image_4->installEventFilter(this);
     ui->image_5->installEventFilter(this);
-    ui->scrollArea->verticalScrollBar()->setStyleSheet("QScrollBar:vertical"
-                                                       "{"
-                                                       "width:8px;"
-                                                       "background:rgba(0,0,0,0%);"
-                                                       "margin:0px,0px,0px,0px;"
-                                                       "padding-top:9px;"
-                                                       "padding-bottom:9px;"
-                                                       "}"
-                                                       "QScrollBar::handle:vertical"
-                                                       "{"
-                                                       "width:8px;"
-                                                       "background:rgba(0,0,0,25%);"
-                                                       " border-radius:4px;"
-                                                       "min-height:20;"
-                                                       "}"
-                                                       "QScrollBar::handle:vertical:hover"
-                                                       "{"
-                                                       "width:8px;"
-                                                       "background:rgba(0,0,0,50%);"
-                                                       " border-radius:4px;"
-                                                       "min-height:20;"
-                                                       "}"
-                                                       "QScrollBar::add-line:vertical"
-                                                       "{"
-                                                       "height:9px;width:8px;"
-                                                       "border-image:url(:/images/a/3.png);"
-                                                       "subcontrol-position:bottom;"
-                                                       "}"
-                                                       "QScrollBar::sub-line:vertical"
-                                                       "{"
-                                                       "height:9px;width:8px;"
-                                                       "border-image:url(:/images/a/1.png);"
-                                                       "subcontrol-position:top;"
-                                                       "}"
-                                                       "QScrollBar::add-line:vertical:hover"
-                                                       "{"
-                                                       "height:9px;width:8px;"
-                                                       "border-image:url(:/images/a/4.png);"
-                                                       "subcontrol-position:bottom;"
-                                                       "}"
-                                                       "QScrollBar::sub-line:vertical:hover"
-                                                       "{"
-                                                       "height:9px;width:8px;"
-                                                       "border-image:url(:/images/a/2.png);"
-                                                       "subcontrol-position:top;"
-                                                       "}"
-                                                       "QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical"
-                                                       "{"
-                                                       "background:rgba(0,0,0,10%);"
-                                                       "border-radius:4px;"
-                                                       "}");
+    ui->listWidget->verticalScrollBar()->setStyleSheet("QScrollBar:vertical { width:8px; background:rgba(0,0,0,0%); margin:0px,0px,0px,0px; padding-top:9px; padding-bottom:9px; } QScrollBar::handle:vertical { width:8px; background:rgba(0,0,0,25%);  border-radius:4px; min-height:20; } QScrollBar::handle:vertical:hover { width:8px; background:rgba(0,0,0,50%);  border-radius:4px; min-height:20; } QScrollBar::add-line:vertical { height:9px;width:8px; border-image:url(:/images/a/3.png); subcontrol-position:bottom; } QScrollBar::sub-line:vertical { height:9px;width:8px; border-image:url(:/images/a/1.png); subcontrol-position:top; } QScrollBar::add-line:vertical:hover { height:9px;width:8px; border-image:url(:/images/a/4.png); subcontrol-position:bottom; } QScrollBar::sub-line:vertical:hover { height:9px;width:8px; border-image:url(:/images/a/2.png); subcontrol-position:top; } QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical { background:rgba(0,0,0,10%); border-radius:4px; }");
+    ui->scrollArea->verticalScrollBar()->setStyleSheet("QScrollBar:vertical { width:8px; background:rgba(0,0,0,0%); margin:0px,0px,0px,0px; padding-top:9px; padding-bottom:9px; } QScrollBar::handle:vertical { width:8px; background:rgba(0,0,0,25%);  border-radius:4px; min-height:20; } QScrollBar::handle:vertical:hover { width:8px; background:rgba(0,0,0,50%);  border-radius:4px; min-height:20; } QScrollBar::add-line:vertical { height:9px;width:8px; border-image:url(:/images/a/3.png); subcontrol-position:bottom; } QScrollBar::sub-line:vertical { height:9px;width:8px; border-image:url(:/images/a/1.png); subcontrol-position:top; } QScrollBar::add-line:vertical:hover { height:9px;width:8px; border-image:url(:/images/a/4.png); subcontrol-position:bottom; } QScrollBar::sub-line:vertical:hover { height:9px;width:8px; border-image:url(:/images/a/2.png); subcontrol-position:top; } QScrollBar::add-page:vertical,QScrollBar::sub-page:vertical { background:rgba(0,0,0,10%); border-radius:4px; }");
+    ui->listWidget->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
+    ui->scrollArea->verticalScrollBar()->setContextMenuPolicy(Qt::NoContextMenu);
+    ui->listWidget->verticalScrollBar()->setSingleStep(16);
     ui->place->setFixedWidth(626);
     db = new sqlite;
 
@@ -130,8 +84,6 @@ void Cart::showProduct(bool getFromDB)
     const string typeList[4] = {"", "食物", "衣服", "书籍"};
     const string typeListEn[4] = {"", "Food", "Clothes", "Book"};
 
-    vector<sellerClass> sellerList = userManager::getSellerList();
-
 
     for (int i = 0; i < (int)productList.size(); i++) // 循环添加所有商品
     {
@@ -172,15 +124,8 @@ void Cart::showProduct(bool getFromDB)
             w->ui->priceRaw->setText("");
         }
 
-        int numToShow;
-        for (int j = 0; j < (int)sellerList.size(); j++)
-        {
-            if (sellerList[j].uid == productList[i]->seller)
-            {
-                numToShow = j;
-            }
-        }
-        string sellerText = w->ui->seller->text().toStdString() + sellerList[numToShow].name;
+
+        string sellerText = w->ui->seller->text().toStdString() + productList[i]->sellerName;
         w->ui->seller->setText(sellerText.c_str());
 
         QImage img;
@@ -520,6 +465,19 @@ void Cart::selectAll()
 void Cart::generateOrder()
 {
     int orderId = db->generateOrder(curUser->uid);
+    if (orderId == -1)
+    {
+        promptBox *prompt = new promptBox(nullptr, "商品余量不足\nThere is a shortage of goods");
+        prompt->show();
+        return;
+    }
+    else if (orderId == -2)
+    {
+        promptBox *prompt = new promptBox(nullptr, "没有可以购买的商品\nThere are no goods to buy");
+        prompt->show();
+        return;
+    }
+
 
     refresh();
     userClass *curUserToOrder;

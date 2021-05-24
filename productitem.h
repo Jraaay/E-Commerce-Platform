@@ -19,6 +19,7 @@ class productItem
 {
 public:
     string name;
+    string sellerName;
     string description;
     double price;
     int remaining;

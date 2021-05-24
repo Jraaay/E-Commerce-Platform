@@ -28,7 +28,7 @@ void TcpClient::sendData(QByteArray data)
     tcpSocket->write(data);
 }
 
-QByteArray TcpClient::getData(QByteArray data, int msec)
+QByteArray TcpClient::getData(QByteArray data, int msec, bool whileOrIf) // while true, if false
 {
     if (tcpSocket==nullptr)
     {
@@ -36,10 +36,21 @@ QByteArray TcpClient::getData(QByteArray data, int msec)
     }
     tcpSocket->write(data);
     QByteArray buffer;
-    while(tcpSocket->waitForReadyRead(msec))
+    if (whileOrIf)
     {
-        //读取缓冲区数据
-        buffer.append(tcpSocket->readAll());
+        while(tcpSocket->waitForReadyRead(msec))
+        {
+            //读取缓冲区数据
+            buffer.append(tcpSocket->readAll());
+        }
+    }
+    else
+    {
+        if (tcpSocket->waitForReadyRead(msec))
+        {
+            //读取缓冲区数据
+            buffer.append(tcpSocket->readAll());
+        }
     }
     return buffer;
 }
