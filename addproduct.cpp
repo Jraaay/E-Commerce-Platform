@@ -17,6 +17,7 @@ addProduct::addProduct(productItem productToModify, QWidget *parent) : QWidget(p
 {
     ui->setupUi(this);
     modifyId = productToModify.id;
+    sellerId = productToModify.seller;
     init(productToModify);
 }
 
@@ -94,7 +95,7 @@ void addProduct::selectPhotoFun()
             QBuffer buf(&ba);
             image.save(&buf, "png");
             buf.close();
-            photosList.push_back(ba.toBase64());
+            photosList.push_back(ba);
             QImage img;
             img.load(photoNameTmp);
             QPixmap pixmap = QPixmap::fromImage(img);
@@ -348,6 +349,10 @@ void addProduct::saveProduct()
         return;
     }
     productToSave.type = ui->type->currentIndex() + 1;
+    for (int i = 0; i < (int)photosList.size(); i++)
+    {
+        photosList[i] = photosList[i].toBase64();
+    }
     productToSave.photo = photosList;
     productToSave.id = modifyId;
     productToSave.seller = sellerId;

@@ -71,7 +71,7 @@ int userManager::createUser(int curType, string loginName, string loginPassword)
     ifstream infile;
     QJsonDocument document;
     document.setObject(object);
-    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 1000, false);
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 5000, false);
 
     QJsonParseError jsonError;
     QJsonArray productJsonList;
@@ -161,7 +161,7 @@ int userManager::changeUserName(int userId, string userName)
     object.insert("key", key.c_str());
     QJsonDocument document;
     document.setObject(object);
-    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 1000, false);
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 5000, false);
 
     QJsonParseError jsonError;
     QJsonArray productJsonList;
@@ -200,7 +200,7 @@ void userManager::getUser(int userId, userClass &user)
     object.insert("key", key.c_str());
     QJsonDocument document;
     document.setObject(object);
-    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 1000, false);
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 5000, false);
 
     QJsonParseError jsonError;
     QJsonArray productJsonList;
