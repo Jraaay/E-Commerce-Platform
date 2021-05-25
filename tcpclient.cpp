@@ -43,7 +43,7 @@ QByteArray TcpClient::getData(QByteArray data, int msec, bool whileOrIf) // whil
     }
     if (whileOrIf)
     {
-        while(tcpSocket->waitForReadyRead(10))
+        while(tcpSocket->waitForReadyRead(50))
         {
             //读取缓冲区数据
             buffer.append(tcpSocket->readAll());
