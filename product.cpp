@@ -92,6 +92,7 @@ void product::init()
 /* 登出 */
 void product::logoutFun()
 {
+    userManager::logout();
     Widget *w;
     w = new Widget(translatorPtr);
     w->show();

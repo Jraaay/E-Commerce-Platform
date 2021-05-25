@@ -21,6 +21,7 @@ class userManager
 {
 public:
     userManager();
+    static void logout();
     static void recharge(int userId, double moneyToCharge);
     static void changePassword(int userId, string password);
     static int loginCheck(int curType, string loginName, string loginPassword, QJsonObject &curUserJson);

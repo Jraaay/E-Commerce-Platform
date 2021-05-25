@@ -5,6 +5,13 @@ userManager::userManager()
 
 }
 
+void userManager::logout()
+{
+    ofstream outfile;
+    outfile.open("key");
+    outfile.close();
+}
+
 void userManager::changePassword(int userId, string password)
 {
     TcpClient client;
@@ -16,8 +23,15 @@ void userManager::changePassword(int userId, string password)
     data.insert("password", password.c_str());
     object.insert("data", data);
     QJsonDocument document;
+    ifstream infile;
+    infile.open("key");
+    string key;
+    infile >> key;
+    infile.close();
+    object.insert("key", key.c_str());
     document.setObject(object);
     client.getData(document.toJson(QJsonDocument::Compact), 0, false);
+    client.disconnectFromServer();
 }
 
 void userManager::recharge(int userId, double moneyToCharge)
@@ -30,9 +44,16 @@ void userManager::recharge(int userId, double moneyToCharge)
     data.insert("userId", userId);
     data.insert("moneyToCharge", moneyToCharge);
     object.insert("data", data);
+    ifstream infile;
+    infile.open("key");
+    string key;
+    infile >> key;
+    infile.close();
+    object.insert("key", key.c_str());
     QJsonDocument document;
     document.setObject(object);
     client.getData(document.toJson(QJsonDocument::Compact), 0, false);
+    client.disconnectFromServer();
 }
 
 int userManager::createUser(int curType, string loginName, string loginPassword)
@@ -47,6 +68,7 @@ int userManager::createUser(int curType, string loginName, string loginPassword)
     data.insert("loginName", loginName.c_str());
     data.insert("loginPassword", loginPassword.c_str());
     object.insert("data", data);
+    ifstream infile;
     QJsonDocument document;
     document.setObject(object);
     QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 1000, false);
@@ -105,6 +127,15 @@ int userManager::loginCheck(int curType, string loginName, string loginPassword,
             {
                 curUserJson = object.value("curUser").toObject();
             }
+            if (object.contains("key"))
+            {
+                string key;
+                key = object.value("key").toString().toStdString();
+                ofstream outfile;
+                outfile.open("key");
+                outfile << key;
+                outfile.close();
+            }
         }
     }
     client.disconnectFromServer();
@@ -122,6 +153,12 @@ int userManager::changeUserName(int userId, string userName)
     data.insert("userId", userId);
     data.insert("userName", userName.c_str());
     object.insert("data", data);
+    ifstream infile;
+    infile.open("key");
+    string key;
+    infile >> key;
+    infile.close();
+    object.insert("key", key.c_str());
     QJsonDocument document;
     document.setObject(object);
     QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 1000, false);
@@ -155,6 +192,12 @@ void userManager::getUser(int userId, userClass &user)
     QJsonObject data;
     data.insert("userId", userId);
     object.insert("data", data);
+    ifstream infile;
+    infile.open("key");
+    string key;
+    infile >> key;
+    infile.close();
+    object.insert("key", key.c_str());
     QJsonDocument document;
     document.setObject(object);
     QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 1000, false);

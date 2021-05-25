@@ -30,6 +30,7 @@ using namespace std;
 
 #include <QObject>
 #include <QTcpSocket>
+#include <fstream>
 class TcpClient : public QObject
 {
     Q_OBJECT
