@@ -169,7 +169,6 @@ vector<productItem *> sqlite::queryTable(string LIKE, string SORT) const
             productList.push_back(new productItem(productJsonList[i].toObject()));
         }
     }
-    client.disconnectFromServer();
     return productList;
 }
 
