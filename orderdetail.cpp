@@ -167,9 +167,9 @@ void OrderDetail::payForOrder()
             int numToChange;
             for (int j = 0; j < (int)sellerList.size(); j++)
             {
-                if (sellerList[i].uid == productList[i]->seller)
+                if (sellerList[j].uid == productList[i]->seller)
                 {
-                    numToChange = i;
+                    numToChange = j;
                 }
             }
             sellerList[numToChange].balance += price[i] * count[i];
