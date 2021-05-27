@@ -538,11 +538,11 @@ void Cart::generateOrder()
         {
             for (int j = 0; j < i; j++)
             {
-                if (uiList[i]->ui->buyCheck->isChecked())
+                if (uiList[j]->ui->buyCheck->isChecked())
                 {
-                    productList[i]->remaining+=uiList[i]->ui->number->text().toInt();
+                    productList[j]->remaining+=uiList[j]->ui->number->text().toInt();
                     db->openDb();
-                    db->modifyData(*productList[i], 0);
+                    db->modifyData(*productList[j], 0);
                     db->closeDb();
                 }
             }
