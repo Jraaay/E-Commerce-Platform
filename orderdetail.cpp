@@ -36,7 +36,7 @@ void OrderDetail::init()
     checkedList.clear();
     count.clear();
     price.clear();
-    db->getOrder(_orderId, paid, time, curUser->uid, productList, count, price, priceSum);
+    db->getOrder(_orderId, canceled, paid, time, curUser->uid, productList, count, price, priceSum);
 
     char priceText[1000] = "";
     sprintf(priceText, "￥%.2lf", priceSum);
@@ -44,11 +44,19 @@ void OrderDetail::init()
     {
         ui->buy->setText("已支付");
         ui->buy->setEnabled(false);
+        ui->cancel->hide();
+    }
+    if (canceled)
+    {
+        ui->buy->setText("已取消");
+        ui->buy->setEnabled(false);
+        ui->cancel->hide();
     }
     ui->priceSum->setText(priceText);
     ui->orderId->setText(ui->orderId->text() + QString::number(_orderId));
     showProduct();
     connect(ui->buy, &QPushButton::clicked, this, &OrderDetail::payForOrder);
+    connect(ui->cancel, &QPushButton::clicked, this, &OrderDetail::cancelOrder);
 }
 
 void OrderDetail::showProduct(bool getFromDB)
@@ -73,7 +81,7 @@ void OrderDetail::showProduct(bool getFromDB)
         checkedList.clear();
         count.clear();
         price.clear();
-        db->getOrder(_orderId, paid, time, curUser->uid, productList, count, price, priceSum);
+        db->getOrder(_orderId, canceled, paid, time, curUser->uid, productList, count, price, priceSum);
 
     }
     ui->listWidget->clear();
@@ -163,9 +171,40 @@ void OrderDetail::payForOrder()
         }
         close();
     }
+    else if (payStatus == PAYORDERCANCELED)
+    {
+        promptBox *prompt = new promptBox(nullptr, "订单已被取消\nThe order has been cancelled");
+        prompt->show();
+    }
     else
     {
         promptBox *prompt = new promptBox(nullptr, "余额不足\nLack of balance");
+        prompt->show();
+    }
+}
+/*取消订单*/
+void OrderDetail::cancelOrder()
+{
+    sqlite db;
+    int cancelStatus = db.cancelOrder(_orderId);
+    if (cancelStatus == 0)
+    {
+        promptBox *prompt = new promptBox(nullptr, "取消成功\nCancel successfully");
+        prompt->show();
+        if (_father != nullptr)
+        {
+            ((userCenter *)_father)->showOrders();
+        }
+        close();
+    }
+    else if (cancelStatus == ORDERPAID)
+    {
+        promptBox *prompt = new promptBox(nullptr, "订单已被支付\nThe order has been paied");
+        prompt->show();
+    }
+    else if (cancelStatus == ORDERCANCELED)
+    {
+        promptBox *prompt = new promptBox(nullptr, "订单已被取消\nThe order has been cancelled");
         prompt->show();
     }
 }

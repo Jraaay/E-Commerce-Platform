@@ -188,8 +188,9 @@ void userCenter::showOrders()
     vector<double> priceSum;
     vector<long long> time;
     vector<bool> paid;
+    vector<bool> canceled;
     orderId.clear();
-    db.getOrderList(curUser->uid, orderId, priceSum, time, paid);
+    db.getOrderList(curUser->uid, orderId, priceSum, time, paid, canceled);
 
     for (int i = 0; i < (int)itemList.size(); i++)
     {
@@ -221,6 +222,10 @@ void userCenter::showOrders()
         if (!paid[i])
         {
             w->ui->paid->setIcon(QIcon(":/image/unpaid.png"));
+        }
+        if (canceled[i])
+        {
+            w->ui->paid->setIcon(QIcon(":/image/canceled.png"));
         }
         ui->orderListWidget->setItemWidget(tmp, w);
     }

@@ -398,7 +398,7 @@ int sqlite::buyOne(int userId, int productId)
     return payStatus;
 }
 
-void sqlite::getOrder(int orderId, bool &paied, long long &time, int &userId, vector<productItem *> &orderList, vector<int> &count, vector<double> &price, double &priceSum)
+void sqlite::getOrder(int orderId, bool &canceled, bool &paied, long long &time, int &userId, vector<productItem *> &orderList, vector<int> &count, vector<double> &price, double &priceSum)
 {
     TcpClient client;
     client.connectToServer();
@@ -431,6 +431,10 @@ void sqlite::getOrder(int orderId, bool &paied, long long &time, int &userId, ve
             if(object.contains("paied"))
             {
                 paied = object.value("paied").toBool();
+            }
+            if(object.contains("canceled"))
+            {
+                canceled = object.value("canceled").toBool();
             }
             if (object.contains("time"))
             {
@@ -508,8 +512,48 @@ int sqlite::payOrder(int orderId)
     return payStatus;
 }
 
+int sqlite::cancelOrder(int orderId)
+{
+    int cancelStatus = -1;
+    TcpClient client;
+    client.connectToServer();
+    QJsonObject object;
+    object.insert("type", SQLITE_cancelOrder);
+    QJsonObject data;
+    data.insert("orderId", orderId);
+    object.insert("data", data);
+    ifstream infile;
+    infile.open("key");
+    string key;
+    infile >> key;
+    infile.close();
+    object.insert("key", key.c_str());
+    QJsonDocument document;
+    document.setObject(object);
+    QByteArray json = client.getData(document.toJson(QJsonDocument::Compact), 5000, false);
 
-void sqlite::getOrderList(int userId, vector<int> &orderId, vector<double> &priceSum, vector<long long> &time, vector<bool> &paid)
+    QJsonParseError jsonError;
+    QJsonArray orderIdJsonList;
+    QJsonArray priceSumJsonList;
+    QJsonArray timeJsonList;
+    QJsonArray paidJsonList;
+    document = QJsonDocument::fromJson(json,&jsonError);
+    if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
+    {
+        if(document.isObject())
+        {
+            QJsonObject object = document.object();
+            if (object.contains("cancelStatus"))
+            {
+                cancelStatus = object.value("cancelStatus").toInt();
+            }
+        }
+    }
+    client.disconnectFromServer();
+    return cancelStatus;
+}
+
+void sqlite::getOrderList(int userId, vector<int> &orderId, vector<double> &priceSum, vector<long long> &time, vector<bool> &paid, vector<bool> &canceled)
 {
     TcpClient client;
     client.connectToServer();
@@ -534,6 +578,7 @@ void sqlite::getOrderList(int userId, vector<int> &orderId, vector<double> &pric
     QJsonArray priceSumJsonList;
     QJsonArray timeJsonList;
     QJsonArray paidJsonList;
+    QJsonArray canceledJsonList;
     document = QJsonDocument::fromJson(json,&jsonError);
     if(!document.isNull() && (jsonError.error == QJsonParseError::NoError))
     {
@@ -556,6 +601,10 @@ void sqlite::getOrderList(int userId, vector<int> &orderId, vector<double> &pric
             {
                 paidJsonList = object.value("paid").toArray();
             }
+            if (object.contains("canceled"))
+            {
+                canceledJsonList = object.value("canceled").toArray();
+            }
         }
         for (int i = 0; i < orderIdJsonList.size(); i++)
         {
@@ -563,6 +612,7 @@ void sqlite::getOrderList(int userId, vector<int> &orderId, vector<double> &pric
             priceSum.push_back(priceSumJsonList[i].toDouble());
             time.push_back(timeJsonList[i].toVariant().toLongLong());
             paid.push_back(paidJsonList[i].toBool());
+            canceled.push_back(canceledJsonList[i].toBool());
         }
     }
     client.disconnectFromServer();

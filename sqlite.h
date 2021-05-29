@@ -15,6 +15,9 @@
 
 #define LACKOFBALANCE 1
 #define LACKOFPRODUCT 2
+#define PAYORDERCANCELED 3
+#define ORDERPAID 1
+#define ORDERCANCELED 2
 
 class sqlite
 {
@@ -42,9 +45,10 @@ public:
     void setDiscount(int userId, double fooddiscount, double clothesdiscount, double bookdiscount) const;
     int generateOrder(int userId);
     int buyOne(int userId, int productId);
-    void getOrder(int orderId, bool &paied, long long &time, int &userId, vector<productItem *> &orderList, vector<int> &count, vector<double> &price, double &priceSum);
+    void getOrder(int orderId, bool &canceled, bool &paied, long long &time, int &userId, vector<productItem *> &orderList, vector<int> &count, vector<double> &price, double &priceSum);
     int payOrder(int orderId);
-    void getOrderList(int userId, vector<int> &orderId, vector<double> &priceSum, vector<long long> &time, vector<bool> &paid);
+    void getOrderList(int userId, vector<int> &orderId, vector<double> &priceSum, vector<long long> &time, vector<bool> &paid, vector<bool> &canceled);
+    int cancelOrder(int orderId);
 
 private:
     QSqlDatabase db;
