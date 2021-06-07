@@ -96,7 +96,7 @@ void sqlite::createTable() const
     {
         qDebug() << "Table created!";
     }
-    createSql = QString("CREATE TABLE `order` (`id` INTEGER PRIMARY KEY, `userId` INTEGER NOT NULL,`price` INTEGER NOT NULL, `time` INTEGER NOT NULL, `paied` BOOLEAN DEFAULT false);");
+    createSql = QString("CREATE TABLE `order` (`id` INTEGER PRIMARY KEY, `userId` INTEGER NOT NULL,`price` DOUBLE(32,2) NOT NULL, `time` INTEGER NOT NULL, `paied` BOOLEAN DEFAULT false);");
     sqlQuery.prepare(createSql);
     // 执行sql语句
     if (!sqlQuery.exec())
@@ -107,7 +107,7 @@ void sqlite::createTable() const
     {
         qDebug() << "Table created!";
     }
-    createSql = QString("CREATE TABLE `orderItem` (`id` INTEGER PRIMARY KEY, `orderId` INTEGER NOT NULL,`productId` INTEGER NOT NULL, `price` BOOLEAN DEFAULT false, `number` INTEGER NOT NULL);");
+    createSql = QString("CREATE TABLE `orderItem` (`id` INTEGER PRIMARY KEY, `orderId` INTEGER NOT NULL,`productId` INTEGER NOT NULL, `price` DOUBLE(32,2) NOT NULL, `number` INTEGER NOT NULL);");
     sqlQuery.prepare(createSql);
     // 执行sql语句
     if (!sqlQuery.exec())
@@ -186,11 +186,11 @@ void sqlite::modifyItemInCart(int productId, int userId, int number, bool checke
             }
             QSqlQuery sqlQuery2;
             sqlQuery2.prepare("UPDATE `cart` SET "
-                             "`userId`=:userId,"
-                             "`productId`=:productId,"
-                             "`number`=:number,"
-                             "`checked`=:checked "
-                             "WHERE `id`==:id;");
+                              "`userId`=:userId,"
+                              "`productId`=:productId,"
+                              "`number`=:number,"
+                              "`checked`=:checked "
+                              "WHERE `id`==:id;");
             sqlQuery2.bindValue(":userId", userId);
             sqlQuery2.bindValue(":productId", productId);
             sqlQuery2.bindValue(":number", number);
@@ -657,7 +657,6 @@ void sqlite::payOrder(int orderId)
     }
 }
 
-
 void sqlite::getOrderList(int userId, vector<int> &orderId, vector<double> &priceSum, vector<long long> &time, vector<bool> &paid)
 {
     QSqlQuery sqlQuery;
@@ -679,27 +678,6 @@ void sqlite::getOrderList(int userId, vector<int> &orderId, vector<double> &pric
         }
     }
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 /* 关闭数据库 */
 void sqlite::closeDb(void)
