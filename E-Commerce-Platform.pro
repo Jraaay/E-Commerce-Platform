@@ -31,7 +31,6 @@ SOURCES += \
     productitem.cpp \
     productlistui.cpp \
     promptbox.cpp \
-    protocol.cpp \
     rechargepage.cpp \
     sqlite.cpp \
     tcpclient.cpp \
@@ -51,7 +50,6 @@ HEADERS += \
     productitem.h \
     productlistui.h \
     promptbox.h \
-    protocol.h \
     rechargepage.h \
     sqlite.h \
     tcpclient.h \
